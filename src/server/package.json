@@ -1,7 +1,7 @@
 {
-  "name": "postgres-fiddle-server",
+  "name": "login-fiddle-server",
   "version": "0.0.0",
-  "description": "Server modules for postgres-fiddle",
+  "description": "Server modules for login-fiddle",
   "private": true,
   "dependencies": {
     "body-parser": "1.12.x",

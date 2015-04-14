@@ -6,7 +6,7 @@ extract the files from any install archive to where they should be installed fir
 - Guides user through configuration file changes
 - Sets up and configures the database and database schema
 - Executes further database-level tasks like index creation (optional)
-- Symlinks the desired application directory (e.g. /opt/postgres-fiddle/app) to the install location
+- Symlinks the desired application directory (e.g. /opt/login-fiddle/app) to the install location
 
 Assumptions:
 - That the database engine is running and listening

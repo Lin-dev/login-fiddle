@@ -1,16 +1,16 @@
 {
-  "name": "postgres-fiddle",
+  "name": "login-fiddle",
   "author": {
     "name": "Christo Fogelberg",
     "email": "cfogelberg@gmail.com",
     "url": "http://qualocustech.wordpress.com"
   },
   "version": "0.1.1",
-  "description": "An impl fiddle that demos postgres in a Node.JS single page webapp",
+  "description": "An impl fiddle that demos passport.js logins with postgres in a Node.JS single page webapp",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:cfogelberg/postgres-fiddle.git"
+    "url": "git@bitbucket.org:cfogelberg/login-fiddle.git"
   },
   "devDependencies": {
     "blanket": "1.1.x",

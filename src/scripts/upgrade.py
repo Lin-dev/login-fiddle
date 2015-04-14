@@ -1,7 +1,7 @@
 '''
 Upgrades an existing application, reading from the current configuration and writing to the new one
 
-After prompting for the application directory symlink (e.g. /opt/postgres-fiddle/app), this script guides the user
+After prompting for the application directory symlink (e.g. /opt/login-fiddle/app), this script guides the user
 through any configuration changes and updates the symlink to point to the install location that this script is in. Does
 not make any changes to the database. Does not restart the webservers.
 
