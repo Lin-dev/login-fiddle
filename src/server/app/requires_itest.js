@@ -71,6 +71,12 @@ describe('requires', function() {
   describe('util', function() {
     var tests_executed = 0;
 
+    it('app/util/https_redirect', function() {
+      tests_executed++;
+      var result = require('app/util/https_redirect');
+      result.should.not.be.undefined;
+    });
+
     it('app/util/logger', function() {
       tests_executed++;
       var result = require('app/util/logger');

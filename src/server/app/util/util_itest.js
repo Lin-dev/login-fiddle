@@ -14,6 +14,11 @@ describe('app/util - exported functions', function() {
    */
   var num_funcs = {};
 
+  it('app/util/https_redirect/index', function() {
+    var name = 'app/util/https_redirect/index';
+    num_funcs[name] = 0;
+  });
+
   it('app/util/logger/index', function() {
     var name = 'app/util/logger/index';
     var module = require(name);
