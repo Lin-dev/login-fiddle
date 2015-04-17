@@ -11,7 +11,7 @@
     "express": "4.11.x",
     "express-session": "1.11.x",
     "https-redirect-server": "1.0.x",
-    "log4js": "git://github.com/cfogelberg/log4js-node.git",
+    "log4js": "0.6.x",
     "method-override": "2.3.x",
     "moment": "2.9.x",
     "pg": "4.2.x",
