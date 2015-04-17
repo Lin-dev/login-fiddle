@@ -33,6 +33,7 @@ var Utils = require('./utils')
  *
  * @see {Sequelize#define}
  * @mixin Hooks
+ * @name Hooks
  */
 
 var hookTypes = {
@@ -179,24 +180,28 @@ Hooks.hasHooks = Hooks.hasHook;
  * A hook that is run before validation
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with instance, options, callback(err)
+ * @name beforeValidate
  */
 
 /**
  * A hook that is run after validation
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with instance, options, callback(err)
+ * @name afterValidate
  */
 
 /**
  * A hook that is run before creating a single instance
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with attributes, options, callback(err)
+ * @name beforeCreate
  */
 
 /**
  * A hook that is run after creating a single instance
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with attributes, options, callback(err)
+ * @name afterCreate
  */
 
 /**
@@ -204,6 +209,7 @@ Hooks.hasHooks = Hooks.hasHook;
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with instance, options, callback(err)
  *
+ * @name beforeDestroy
  * @alias beforeDelete
  */
 
@@ -212,6 +218,7 @@ Hooks.hasHooks = Hooks.hasHook;
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with instance, options, callback(err)
  *
+ * @name afterDestroy
  * @alias afterDelete
  */
 
@@ -219,24 +226,28 @@ Hooks.hasHooks = Hooks.hasHook;
  * A hook that is run before updating a single instance
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with instance, options, callback(err)
+ * @name beforeUpdate
  */
 
 /**
  * A hook that is run after updating a single instance
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with instance, options, callback(err)
+ * @name afterUpdate
  */
 
 /**
  * A hook that is run before creating instances in bulk
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with instances, options, callback(err)
+ * @name beforeBulkCreate
  */
 
 /**
  * A hook that is run after creating instances in bulk
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with instances, options, callback(err)
+ * @name afterBulkCreate
  */
 
 /**
@@ -244,6 +255,7 @@ Hooks.hasHooks = Hooks.hasHook;
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with options, callback(err)
  *
+ * @name beforeBulkDestroy
  * @alias beforeBulkDelete
  */
 
@@ -252,6 +264,7 @@ Hooks.hasHooks = Hooks.hasHook;
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with options, callback(err)
  *
+ * @name afterBulkDestroy
  * @alias afterBulkDelete
  */
 
@@ -259,60 +272,70 @@ Hooks.hasHooks = Hooks.hasHook;
  * A hook that is run after updating instances in bulk
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with options, callback(err)
+ * @name beforeBulkUpdate
  */
 
 /**
  * A hook that is run after updating instances in bulk
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with options, callback(err)
+ * @name afterBulkUpdate
  */
 
 /**
  * A hook that is run before a find (select) query
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with options, callback(err)
+ * @name beforeFind
  */
 
 /**
  * A hook that is run before a find (select) query, after any { include: {all: ...} } options are expanded
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with options, callback(err)
+ * @name beforeFindAfterExpandIncludeAll
  */
 
 /**
  * A hook that is run before a find (select) query, after all option parsing is complete
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with options, callback(err)
+ * @name beforeFindAfterOptions
  */
 
 /**
  * A hook that is run after a find (select) query
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with instance(s), options, callback(err)
+ * @name afterFind
  */
 
 /**
  * A hook that is run before a define call
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with attributes, options, callback(err)
+ * @name beforeDefine
  */
 
 /**
  * A hook that is run after a define call
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with factory, callback(err)
+ * @name afterDefine
  */
 
 /**
  * A hook that is run before Sequelize() call
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with config, options, callback(err)
+ * @name beforeInit
  */
 
 /**
  * A hook that is run after Sequelize() call
  * @param {String}   name
  * @param {Function} fn   A callback function that is called with sequelize, callback(err)
+ * @name afterInit
  */
 
 module.exports = {
