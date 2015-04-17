@@ -1,7 +1,7 @@
 'use strict';
 
-var http = require('http');
 var https = require('https');
+var https_redirect = require('https-redirect-server');
 var fs = require('fs');
 var express = require('express');
 var compression = require('compression');
@@ -30,22 +30,12 @@ process.on('uncaughtException', function(error) {
 
 Error.stackTraceLimit = Infinity;
 q.longStackSupport = server_config.q_longStackSupport;
-var http_server = create_http_redirect_server();
+var http_redirect_server = https_redirect(server_config.http_port, server_config.https_port).server();
+logger.info('HttpsRedirectServer redirecting from ' + server_config.http_port + ' to ' + server_config.https_port);
 var https_server = create_https_server();
-http_server.listen(server_config.http_port, function() {
-  logger.info('Express HTTP server listening on port ' + server_config.http_port);
-});
 https_server.listen(server_config.https_port, function() {
   logger.info('Express HTTPS server listening on port ' + server_config.https_port);
 });
-
-
-
-function create_http_redirect_server() {
-  var app = express();
-  app.use(require('app/util/https_redirect'));
-  return http.createServer(app);
-}
 
 
 
