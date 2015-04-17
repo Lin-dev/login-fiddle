@@ -9,7 +9,7 @@ module.exports = {
   /**
    * Returns JSON for all entries which match an (optional) tag string, does not call next()
    */
-  get_entries: function (pr, req, res, next) {
+  get_entries: function(pr, req, res, next) {
     logger.trace('exports.get_entries -- enter');
     if(req.params.tag_string) {
       pr.pr.entry.tag.find({
@@ -35,7 +35,7 @@ module.exports = {
   /**
    * Returns JSON for all tags, does not call next()
    */
-  get_tags: function (pr, req, res, next) {
+  get_tags: function(pr, req, res, next) {
     logger.trace('exports.get_tags -- enter');
     pr.pr.entry.tag.findAll()
     .then(function(tag_instances) {
