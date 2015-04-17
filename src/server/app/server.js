@@ -1,6 +1,8 @@
 'use strict';
 
 var http = require('http');
+var https = require('https');
+var fs = require('fs');
 var express = require('express');
 var compression = require('compression');
 var serve_favicon = require('serve-favicon');
@@ -28,16 +30,26 @@ process.on('uncaughtException', function(error) {
 
 Error.stackTraceLimit = Infinity;
 q.longStackSupport = server_config.q_longStackSupport;
-var app = express();
-configure_express_middleware(app);
-var http_server = http.createServer(app);
+var http_server = create_http_redirect_server();
+var https_server = create_https_server();
 http_server.listen(server_config.http_port, function() {
   logger.info('Express HTTP server listening on port ' + server_config.http_port);
+});
+https_server.listen(server_config.https_port, function() {
+  logger.info('Express HTTPS server listening on port ' + server_config.https_port);
 });
 
 
 
-function configure_express_middleware(app) {
+function create_http_redirect_server() {
+  var app = express();
+  app.use(require('app/util/https_redirect'));
+  return http.createServer(app);
+}
+
+
+
+function configure_app_middleware(app) {
   var logger_config = require('app/config/logger');
 
   app.use(compression());
@@ -67,4 +79,20 @@ function configure_express_middleware(app) {
   });
   // TODO not appropriate for a prod site, see SES / http://calv.info/node-and-express-tips/ for another approach:
   app.use(errorhandler());
+}
+
+
+
+/**
+ * Creates HTTPS server object for application
+ * @return {Object} Express server object with initialised middleware
+ */
+function create_https_server() {
+  var https_creds = {
+    key: fs.readFileSync(path.join(server_config.security_dir, 'lv-key.pem')),
+    cert: fs.readFileSync(path.join(server_config.security_dir, 'lv-cert.pem'))
+  };
+  var app = express();
+  configure_app_middleware(app);
+  return https.createServer(https_creds, app);
 }
