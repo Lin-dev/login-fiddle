@@ -4,6 +4,7 @@ var https = require('https');
 var https_redirect = require('https-redirect-server');
 var fs = require('fs');
 var express = require('express');
+var session = require('express-session');
 var compression = require('compression');
 var serve_favicon = require('serve-favicon');
 var body_parser = require('body-parser');
@@ -12,6 +13,7 @@ var errorhandler = require('errorhandler');
 var log4js = require('log4js');
 var path = require('path');
 var q = require('q');
+var RedisStore = require('connect-redis')(session);
 
 var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
@@ -30,7 +32,7 @@ process.on('uncaughtException', function(error) {
 
 Error.stackTraceLimit = Infinity;
 q.longStackSupport = server_config.q_longStackSupport;
-var http_redirect_server = https_redirect(server_config.http_port, server_config.https_port).server();
+https_redirect(server_config.http_port, server_config.https_port).server();
 logger.info('HttpsRedirectServer redirecting from ' + server_config.http_port + ' to ' + server_config.https_port);
 var https_server = create_https_server();
 https_server.listen(server_config.https_port, function() {
@@ -51,11 +53,31 @@ function configure_app_middleware(app) {
     format: logger_config.express_format,
     tokens: logger_config.custom_tokens
   }));
+  app.use(session({
+    cookie: {
+      maxAge: server_config.session.cookie.maxAge,
+      secure: server_config.session.cookie.secure
+    },
+    resave: server_config.session.resave,
+    saveUninitialized: false,
+    secret: server_config.session.secret,
+    store: new RedisStore({
+      host: server_config.session.store.host,
+      port: server_config.session.store.port,
+      db: server_config.session.store.db
+    })
+  }));
   app.use(body_parser.json());
   app.use(body_parser.urlencoded({ extended: false }));
   app.use(method_override('X-HTTP-Method'));          // Microsoft
   app.use(method_override('X-HTTP-Method-Override')); // Google/GData
   app.use(method_override('X-Method-Override'));      // IBM
+  app.use(function(req, res, next) { // TODO - temp init of session, factor this out somewhere
+    if(!req.session.start) {
+      req.session.start = new Date();
+    }
+    next();
+  });
   app.use('/api', require('app/api/router'));
   app.use('/assets', express.static(path.join(server_config.client_root, 'assets'),
     { maxAge: server_config.static_max_age }));

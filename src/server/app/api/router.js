@@ -6,5 +6,6 @@ var express = require('express');
 var router = new express.Router();
 
 router.use('/entry', require('app/api/entry/router'));
+router.use('/session', require('app/api/session/router'));
 
 module.exports = router;
