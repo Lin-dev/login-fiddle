@@ -38,7 +38,8 @@ require([
   'js/apps/header/header_app',
   'js/apps/home/home_app',
   'js/apps/about/about_app',
-  'js/apps/entry/entry_app'
+  'js/apps/entry/entry_app',
+  'js/apps/session/session_app'
 ], function(PF){
   'use strict';
 
