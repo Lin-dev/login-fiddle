@@ -1,7 +1,5 @@
 'use strict';
 
-var _ = require('underscore');
-
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/api/session/router_impl');
 
@@ -11,11 +9,12 @@ module.exports = {
    */
   get_session: function(req, res, next) {
     logger.trace('exports.get_session -- enter');
-    req.session.views = req.session.views ? req.session.views++ : 1;
+    req.session.views = req.session.views ? req.session.views + 1 : 1;
     var result = {
       start: req.session.start,
       views: req.session.views
-    }
+    };
+    logger.debug('exports.get_session -- sending: ' + JSON.stringify(result));
     res.status(200).send(result);
   }
 };
