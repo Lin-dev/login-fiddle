@@ -31,9 +31,10 @@ define(function(require) {
     var initialize_navitems = function() {
       logger.trace('initialize_navitems -- enter');
       Entities.navitem_collection = new Entities.NavItemCollection([
-        { name: 'Home Page',  url: 'home',  nav_trigger: 'home:show',   icon: 'glyphicon-home' },
-        { name: 'Entries',    url: 'entry', nav_trigger: 'entry:list',  icon: 'glyphicon-th-list' },
-        { name: 'About',      url: 'about', nav_trigger: 'about:show',  icon: 'glyphicon-tree-conifer' }
+        { name: 'Home Page',  url: 'home',     nav_trigger: 'home:show',     icon: 'glyphicon-home' },
+        { name: 'Entries',    url: 'entry',    nav_trigger: 'entry:list',    icon: 'glyphicon-th-list' },
+        { name: 'Session',    url: 'session',  nav_trigger: 'session:show',  icon: 'glyphicon-book' },
+        { name: 'About',      url: 'about',    nav_trigger: 'about:show',    icon: 'glyphicon-tree-conifer' }
       ]);
       logger.trace('initialize_navitems -- exit');
     };
