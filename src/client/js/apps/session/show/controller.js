@@ -13,7 +13,7 @@ define(function(require) {
         var session_promise = PF.request('sessionapp:entities:info');
         session_promise.then(function(session_info) {
           logger.debug('show_session_info -- received: ' + JSON.stringify(session_info));
-          var session_info_view = new Views.SessionInfoView({ model: session_info }); // TODO CHECK THIS IS RIGHT
+          var session_info_view = new Views.SessionInfoView({ model: session_info });
           PF.region_main.show(session_info_view);
           logger.debug('show_session_info -- show complete');
         });
