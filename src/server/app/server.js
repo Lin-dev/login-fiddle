@@ -1,19 +1,20 @@
 'use strict';
 
+var body_parser = require('body-parser');
+var compression = require('compression');
+var RedisStore = require('connect-redis')(session);
+var errorhandler = require('errorhandler');
+var express = require('express');
+var fs = require('fs');
 var https = require('https');
 var https_redirect = require('https-redirect-server');
-var fs = require('fs');
-var express = require('express');
-var session = require('express-session');
-var compression = require('compression');
-var serve_favicon = require('serve-favicon');
-var body_parser = require('body-parser');
 var method_override = require('method-override');
-var errorhandler = require('errorhandler');
 var log4js = require('log4js');
 var path = require('path');
 var q = require('q');
-var RedisStore = require('connect-redis')(session);
+var serve_favicon = require('serve-favicon');
+var session = require('express-session');
+
 
 var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
