@@ -3,7 +3,7 @@
 
 'use strict';
 
-var should = require('should');
+var should = require('should'); // jshint ignore:line
 
 var test_lib = require('test/lib');
 
@@ -37,19 +37,8 @@ describe('app/util - exported methods', function() {
   });
 
   // This test must be last in its suite
-  it('tests check for all expected exported methods', function() {
-    var js_files = test_lib.js_app_files_not_router_in_dir('./src/server/app/util/');
-    js_files.forEach(function(js_file) {
-      var req_path = js_file.replace(/\.\/src\/server\//, '').replace(/\.js$/, ''); // file path to require-able path
-      should(num_funcs[req_path]).not.be.type('undefined', req_path + ' method exports not checked');
-      if(num_funcs[req_path]) {
-        var nf_tested = num_funcs[req_path];
-        var nf_in_module = test_lib.num_func_in_module(req_path);
-        nf_tested.should.equal(nf_in_module,
-          req_path + ' only ' + nf_tested + ' of ' + nf_in_module + ' method exports checked');
-      }
-    });
-  });
+  test_lib.create_test_to_check_exports('tests check for all expected exported methods',
+    './src/server/app/util/', 'method exports', num_funcs, test_lib.num_func_in_module);
 });
 
 
@@ -83,17 +72,7 @@ describe('app/util - exported properties', function() {
     num_nonfuncs[name] = 0;
   });
 
-  it('tests check for all expected exported properties', function() {
-    var js_files = test_lib.js_app_files_not_router_in_dir('./src/server/app/util/');
-    js_files.forEach(function(js_file) {
-      var req_path = js_file.replace(/\.\/src\/server\//, '').replace(/\.js$/, ''); // file path to require-able path
-      should(num_nonfuncs[req_path]).not.be.type('undefined', req_path + ' non-method exports not checked');
-      if(num_nonfuncs[req_path]) {
-        var nnf_tested = num_nonfuncs[req_path];
-        var nnf_in_module = test_lib.num_nonfunc_in_module(req_path);
-        nnf_tested.should.equal(nnf_in_module,
-          req_path + ' only ' + nnf_tested + ' of ' + nnf_in_module + ' non-method exports checked');
-      }
-    });
-  });
+  // This test must be last in its suite
+  test_lib.create_test_to_check_exports('tests check for all expected exported properties',
+    './src/server/app/util/', 'non-method exports', num_nonfuncs, test_lib.num_nonfunc_in_module);
 });

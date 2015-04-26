@@ -1,6 +1,3 @@
-// Allow statements that are not assignments or function calls (e.g. should statements)
-/* jshint -W030 */
-
 'use strict';
 
 var _ = require('underscore');
