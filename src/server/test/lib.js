@@ -20,6 +20,19 @@ module.exports = {
   },
 
   /**
+   * Returns an array with all application JS files, filtering out test files (*_utest.js, *_itest.js) and any files
+   * called router.js (they are Express Router objects)
+   *
+   * @param  {String} dir The directory to search inside
+   * @return {Array}      Array of String with the relative paths to the files in dir
+   */
+  js_app_files_not_router_in_dir: function(dir) {
+    return glob.sync(dir + '/**/*.js').filter(is_application_file).filter(function(filename) {
+      return !/.*\/router.js/.test(filename);
+    });
+  },
+
+  /**
    * Returns the number of functions exported by a module
    * @param  {String} require_path The path to the module for require
    * @return {Number}              The number of functions

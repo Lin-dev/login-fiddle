@@ -38,10 +38,7 @@ describe('app/util - exported functions', function() {
 
   // This test must be last in its suite
   it('tests check for all expected exported functions', function() {
-    var js_files = test_lib.js_app_files_in_dir('./src/server/app/util/').filter(function(filename) {
-      // Filter out all files called router.js - they are Express Router objects and these tests do not check them
-      return !/.*\/router.js/.test(filename);
-    });
+    var js_files = test_lib.js_app_files_not_router_in_dir('./src/server/app/util/');
     js_files.forEach(function(js_file) {
       var req_path = js_file.replace(/\.\/src\/server\//, '').replace(/\.js$/, '');
       should(num_funcs[req_path]).not.be.type('undefined', req_path + ' exports not checked');
