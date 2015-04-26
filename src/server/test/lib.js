@@ -9,15 +9,6 @@ var is_application_file = function(filename) {
   return !/.*_itest\.js/.test(filename) && !/.*_utest\.js/.test(filename);
 };
 
-/**
- * Used by exports.create_test_to_check_exports so defined separately here
- */
-var js_app_files_not_router_in_dir = function(dir) {
-  return glob.sync(dir + '/**/*.js').filter(is_application_file).filter(function(filename) {
-    return !/.*\/router.js/.test(filename);
-  });
-};
-
 module.exports = {
   /**
    * Return an array with all application JS files, filtering out test files (*_utest.js, *_itest.js)
@@ -37,7 +28,9 @@ module.exports = {
    * @return {Array}      Array of String with the relative paths to the files in dir
    */
   js_app_files_not_router_in_dir: function(dir) {
-    return js_app_files_not_router_in_dir(dir);
+    return glob.sync(dir + '/**/*.js').filter(is_application_file).filter(function(filename) {
+      return !/.*\/router.js/.test(filename);
+    });
   },
 
   /**
@@ -87,8 +80,10 @@ module.exports = {
    * @return {[type]}                    A should it() test
    */
   create_test_to_check_exports: function(description_string, load_path, export_type_string, comp_map, comp_func) {
+    var that = this;
+
     return it(description_string, function() {
-      var js_files = js_app_files_not_router_in_dir(load_path);
+      var js_files = that.js_app_files_not_router_in_dir(load_path);
       js_files.forEach(function(js_file) {
         var req_path = js_file.replace(/\.\/src\/server\//, '').replace(/\.js$/, '');
         should(comp_map[req_path]).not.be.type('undefined', req_path + ' ' + export_type_string + ' not checked');
