@@ -3,7 +3,7 @@
 
 'use strict';
 
-var should = require('should'); // jshint ignore:line
+require('should');
 
 var test_lib = require('test/lib');
 
