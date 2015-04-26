@@ -2,7 +2,6 @@
 
 var body_parser = require('body-parser');
 var compression = require('compression');
-var RedisStore = require('connect-redis')(session);
 var errorhandler = require('errorhandler');
 var express = require('express');
 var fs = require('fs');
@@ -15,6 +14,7 @@ var q = require('q');
 var serve_favicon = require('serve-favicon');
 var session = require('express-session');
 
+var RedisStore = require('connect-redis')(session);
 
 var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
