@@ -32,6 +32,24 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
   });
 
+  it('app/api/user/router_impl - expected methods found', function() {
+    var name = 'app/api/user/router_impl';
+    var module = require(name);
+    num_funcs[name] = 0;
+    module.get_user.should.be.a.function;
+    num_funcs[name]++;
+    module.put_user.should.be.a.function;
+    num_funcs[name]++;
+    module.delete_user.should.be.a.function;
+    num_funcs[name]++;
+    module.login.should.be.a.function;
+    num_funcs[name]++;
+    module.logout.should.be.a.function;
+    num_funcs[name]++;
+    module.signup.should.be.a.function;
+    num_funcs[name]++;
+  });
+
   // This test must be last in its suite
   test_lib.create_test_to_check_exports('tests check for all expected exported methods',
     './src/server/app/api/', 'method exports', num_funcs, test_lib.num_func_in_module);
