@@ -33,7 +33,8 @@ define(function(require) {
       Entities.navitem_collection = new Entities.NavItemCollection([
         { name: 'Home Page',  url: 'home',     nav_trigger: 'home:show',     icon: 'glyphicon-home' },
         { name: 'Entries',    url: 'entry',    nav_trigger: 'entry:list',    icon: 'glyphicon-th-list' },
-        { name: 'Session',    url: 'session',  nav_trigger: 'session:show',  icon: 'glyphicon-book' },
+        { name: 'Session',    url: 'session',  nav_trigger: 'session:show',  icon: 'glyphicon-book'  },
+        { name: 'Profile',    url: 'user',     nav_trigger: 'user:profile',  icon: 'glyphicon-user' },
         { name: 'About',      url: 'about',    nav_trigger: 'about:show',    icon: 'glyphicon-tree-conifer' }
       ]);
       logger.trace('initialize_navitems -- exit');
