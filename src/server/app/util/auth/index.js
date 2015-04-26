@@ -22,7 +22,7 @@ passport.deserializeUser(function(id, done) {
     done(undefined, user);
   })
   .fail(function(error) {
-    logger.warn('pr.pr.auth.user.find(' + id + ') failed with error: ' + error);
+    logger.error('pr.pr.auth.user.find(' + id + ') failed with error: ' + error);
     done(error , undefined);
   });
 });
@@ -47,7 +47,7 @@ passport.use('local-signup', new LocalStrategy({
           return done(null, user);
         })
         .fail(function(error) {
-          logger.warn('local-signup callback for email ' + email + ' failed user creation: ' + error);
+          logger.error('local-signup callback for email ' + email + ' failed user creation: ' + error);
           return done(error, undefined);
         });
       }
@@ -56,7 +56,7 @@ passport.use('local-signup', new LocalStrategy({
       }
     })
     .fail(function(error) {
-      logger.warn('local-signup callback for ' + email + ' failed while checking if email already used: ' + error);
+      logger.error('local-signup callback for ' + email + ' failed while checking if email already used: ' + error);
       return done(error, undefined);
     });
   });
