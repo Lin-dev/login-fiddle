@@ -95,6 +95,12 @@ describe('requires', function() {
       result.should.not.be.undefined;
     });
 
+    it('app/util/pr/auth', function() {
+      tests_executed++;
+      var result = require('app/util/pr/auth');
+      result.should.not.be.undefined;
+    });
+
     it('app/util/pr/entry', function() {
       tests_executed++;
       var result = require('app/util/pr/entry');

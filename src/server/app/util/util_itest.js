@@ -31,6 +31,12 @@ describe('app/util - exported methods', function() {
   });
 
   /** Sequelize model module export is a function, not an object with functions - rely on Sequelize tests - no funcs */
+  it('app/util/pr/auth - expected methods found', function() {
+    var name = 'app/util/pr/auth';
+    num_funcs[name] = 0;
+  });
+
+  /** Sequelize model module export is a function, not an object with functions - rely on Sequelize tests - no funcs */
   it('app/util/pr/entry - expected methods found', function() {
     var name = 'app/util/pr/entry';
     num_funcs[name] = 0;
@@ -64,6 +70,12 @@ describe('app/util - exported properties', function() {
     num_nonfuncs[name]++;
     module.sq.should.be.an.Object;
     num_nonfuncs[name]++;
+  });
+
+  /** Sequelize model module export is a function, not an object with functions - rely on Sequelize tests - no funcs */
+  it('app/util/pr/auth - expected properties found', function() {
+    var name = 'app/util/pr/auth';
+    num_nonfuncs[name] = 0;
   });
 
   /** Sequelize model module export is a function, not an object with functions - rely on Sequelize tests - no funcs */
