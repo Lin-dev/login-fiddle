@@ -83,6 +83,12 @@ describe('requires', function() {
   describe('util', function() {
     var tests_executed = 0;
 
+    it('app/util/auth', function() {
+      tests_executed++;
+      var result = require('app/util/auth');
+      result.should.not.be.undefined;
+    });
+
     it('app/util/logger', function() {
       tests_executed++;
       var result = require('app/util/logger');

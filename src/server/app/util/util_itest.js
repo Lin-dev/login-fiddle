@@ -14,6 +14,11 @@ describe('app/util - exported methods', function() {
    */
   var num_funcs = {};
 
+  it('app/util/auth/index - expected methods found', function() {
+    var name = 'app/util/auth/index';
+    num_funcs[name] = 0;
+  });
+
   it('app/util/logger/index - expected methods found', function() {
     var name = 'app/util/logger/index';
     var module = require(name);
@@ -56,6 +61,13 @@ describe('app/util - exported properties', function() {
    * @type {Object}
    */
   var num_nonfuncs = {};
+
+  it('app/util/auth/index - expected properties found', function() {
+    var name = 'app/util/auth/index';
+    var module = require(name);
+    module.passport.should.be.an.Object;
+    num_nonfuncs[name]++;
+  });
 
   it('app/util/logger/index - expected properties found', function() {
     var name = 'app/util/logger/index';
