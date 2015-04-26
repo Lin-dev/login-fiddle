@@ -1,5 +1,9 @@
 'use strict';
 
+var bcrypt = require('bcrypt');
+
+var server_config = require('app/config/server');
+
 module.exports = function(sequelize, DataTypes) {
   var models = {
     user: sequelize.define('user', {
@@ -14,6 +18,7 @@ module.exports = function(sequelize, DataTypes) {
       email: {
         type: DataTypes.STRING(30),
         allowNull: false,
+        unique: true,
         validate: {
           isAlphanumeric: true,
           len: [2, 30]
@@ -25,6 +30,17 @@ module.exports = function(sequelize, DataTypes) {
         validate: {
           is: /^[A-Za-z0-9.\/$]+$/,
           len: [60, 60]
+        }
+      }
+    }, {
+      classMethods: {
+        /**
+         * Generates a password hash to write to the DB so that the unhashed password is never stored
+         * @param  {String} unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
+         * @return {String}                   The hashed password
+         */
+        hash_password: function(unhashed_password) {
+          return bcrypt.hashSync(unhashed_password, bcrypt.genSaltSync(server_config.salt_rounds));
         }
       }
     })

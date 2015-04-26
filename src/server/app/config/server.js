@@ -25,5 +25,6 @@ module.exports = {
       port: 6379,
       db: 3
     }
-  }
+  },
+  salt_rounds: 10
 };
