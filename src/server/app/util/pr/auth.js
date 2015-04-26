@@ -3,6 +3,14 @@
 module.exports = function(sequelize, DataTypes) {
   var models = {
     user: sequelize.define('user', {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        validate: {
+          isUUID: 4
+        },
+        primaryKey: true
+      },
       email: {
         type: DataTypes.STRING(30),
         allowNull: false,
@@ -11,7 +19,7 @@ module.exports = function(sequelize, DataTypes) {
           len: [2, 30]
         }
       },
-      password_hash: {
+      password: {
         type: DataTypes.STRING(60),
         allowNull: false,
         validate: {
