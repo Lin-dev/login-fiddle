@@ -62,6 +62,33 @@ passport.use('local-signup', new LocalStrategy({
   });
 }));
 
+passport.use('local-login', new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'passport',
+  passReqToCallback: true
+}, function(req, email, password, done) {
+  q(pr.pr.auth.user.find({
+    where: { email: email }
+  }))
+  .then(function(user) {
+    if(user !== null) {
+      if(user.check_password(password)) {
+        return done(null, user);
+      }
+      else {
+        return done(null, false, req.flash('login_message', 'Incorrect password'));
+      }
+    }
+    else {
+      return done(null, false, req.flash('login_message', 'No user with that email address found'));
+    }
+  })
+  .fail(function(error) {
+    logger.error('local-login callback for ' + email + ' failed while loading user: ' + error);
+    return done(error, undefined);
+  });
+}));
+
 module.exports = {
   passport: passport
 };
