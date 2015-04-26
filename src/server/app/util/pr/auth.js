@@ -42,6 +42,17 @@ module.exports = function(sequelize, DataTypes) {
         hash_password: function(unhashed_password) {
           return bcrypt.hashSync(unhashed_password, bcrypt.genSaltSync(server_config.salt_rounds));
         }
+      },
+
+      instanceMethods: {
+        /**
+         * Compares a submitted (unhashed) password with the expected password hash for this user by hashing it
+         * @param  {String}  unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
+         * @return {Boolean}                   True if the unhashed_password hash matches the stored hash
+         */
+        check_password: function(unhashed_password) {
+          return bcrypt.compareSync(unhashed_password, this.password);
+        }
       }
     })
   };
