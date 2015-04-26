@@ -2,6 +2,7 @@
 
 var body_parser = require('body-parser');
 var compression = require('compression');
+var connect_flash = require('connect-flash');
 var errorhandler = require('errorhandler');
 var express = require('express');
 var fs = require('fs');
@@ -17,6 +18,7 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 
 var server_config = require('app/config/server');
+var auth_module = require('app/util/auth');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/server');
 
@@ -68,6 +70,9 @@ function configure_app_middleware(app) {
       db: server_config.session.store.db
     })
   }));
+  app.use(auth_module.passport.initialize());
+  app.use(auth_module.passport.session());
+  app.use(connect_flash());
   app.use(body_parser.json());
   app.use(body_parser.urlencoded({ extended: false }));
   app.use(method_override('X-HTTP-Method'));          // Microsoft
