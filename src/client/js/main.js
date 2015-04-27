@@ -28,7 +28,7 @@ require.config({
     q: '/bower_components/q/q',
     text: '/bower_components/requirejs-text/text',
     underscore: '/bower_components/underscore/underscore',
-    validator: '/bower_components/validator-js/validator.min.js'
+    validator: '/bower_components/validator-js/validator.min'
   },
   urlArgs: 'bust=' + (new Date()).getTime() // development only
 });
