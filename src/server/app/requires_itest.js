@@ -17,6 +17,12 @@ describe('requires', function() {
   describe('api', function() {
     var tests_executed = 0;
 
+    it('app/api/helpers', function() {
+      tests_executed++;
+      var result = require('app/api/helpers');
+      result.should.not.be.undefined;
+    });
+
     it('app/api/router', function() {
       tests_executed++;
       var result = require('app/api/router');
