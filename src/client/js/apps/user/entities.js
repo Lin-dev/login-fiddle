@@ -16,14 +16,14 @@ define(function(require) {
       validate: function(attrs, options) {
         var errors = {};
         if(!validator.isEmail(attrs.email)) {
-          attrs['email'] = '"' + attrs.email + '" - invalid email address format';
+          errors['email'] = '"' + attrs.email + '" - invalid email address format';
         }
 
         if(attrs.password && !validator.isAlphanumeric(attrs.password)) {
-          attrs['password'] = 'Passwords must be letters and numbers only (and at least 8 characters long)';
+          errors['password'] = 'Passwords must be letters and numbers only (and at least 8 characters long)';
         }
         else if(attrs.password && !validator.isLength(attrs.password, 8)) {
-          attrs['password'] = 'Passwords must be at least 8 characters long (letters and numbers only)';
+          errors['password'] = 'Passwords must be at least 8 characters long (letters and numbers only)';
         }
 
         return errors;
