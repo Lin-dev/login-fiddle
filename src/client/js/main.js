@@ -27,7 +27,8 @@ require.config({
     moment: '/bower_components/moment/min/moment-with-locales.min',
     q: '/bower_components/q/q',
     text: '/bower_components/requirejs-text/text',
-    underscore: '/bower_components/underscore/underscore'
+    underscore: '/bower_components/underscore/underscore',
+    validator: '/bower_components/validator-js/validator.min.js'
   },
   urlArgs: 'bust=' + (new Date()).getTime() // development only
 });
