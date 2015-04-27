@@ -85,7 +85,9 @@ module.exports = function(grunt) {
                 jquery: 'bower_components/jquery/dist/jquery',
                 marionette: 'bower_components/marionette/lib/backbone.marionette',
                 moment: 'bower_components/moment/min/moment-with-locales.min',
-                underscore: 'bower_components/underscore/underscore'
+                q: 'bower_components/q/q',
+                underscore: 'bower_components/underscore/underscore',
+                validator: 'bower_components/validator-js/validator.min'
               },
               urlArgs: 'bust=' + (new Date()).getTime() // no cache for testing / development only
             }
