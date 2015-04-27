@@ -16,19 +16,18 @@ module.exports = function(sequelize, DataTypes) {
         primaryKey: true
       },
       email: {
-        type: DataTypes.STRING(30),
+        type: DataTypes.STRING(60),
         allowNull: false,
         unique: true,
         validate: {
-          isAlphanumeric: true,
-          len: [2, 30]
+          isEmail: true
         }
       },
       password: {
         type: DataTypes.STRING(60),
         allowNull: false,
         validate: {
-          is: /^[A-Za-z0-9.\/$]+$/,
+          is: /^[A-Za-z0-9.\/$]+$/, // regex matches a bcrypt hash, which is how password is stored
           len: [60, 60]
         }
       }
