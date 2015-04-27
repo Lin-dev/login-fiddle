@@ -12,6 +12,7 @@
       "backbone.picky": "0.2.x",
       "marionette": "2.3.x",
       "underscore": "1.8.x",
+      "validator-js": "3.39.x",
       "q": "1.1.x"
   }
 }
