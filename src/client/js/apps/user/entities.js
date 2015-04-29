@@ -10,8 +10,8 @@ define(function(require) {
   PF.module('UserApp.Entities', function(Entities, PF, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
-    Entities.User = PF.Entities.PFDatabaseModel.extend({
-      __name: 'User',
+    Entities.UserLocalSignup = PF.Entities.PFDatabaseModel.extend({
+      __name: 'UserLocalSignup',
       urlRoot: '/api/user/user',
       validate: function(attrs, options) {
         var errors = {};
