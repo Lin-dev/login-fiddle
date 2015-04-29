@@ -15,4 +15,5 @@ define(function(require) {
     logger.trace('PF.module -- exit');
   });
   logger.trace('require:lambda -- exit');
+  return PF.Common.Views;
 });

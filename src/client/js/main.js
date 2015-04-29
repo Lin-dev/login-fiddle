@@ -10,6 +10,7 @@ require.config({
       exports: 'Backbone'
     },
     backbone_picky: ['backbone'],
+    backbone_syphon: ['backbone'],
     marionette: {
       deps: ['jquery', 'underscore', 'backbone'],
       exports: 'Marionette'
@@ -21,6 +22,7 @@ require.config({
   paths: {
     backbone: '/bower_components/backbone/backbone',
     backbone_picky: '/bower_components/backbone.picky/lib/amd/backbone.picky.min',
+    backbone_syphon: '/bower_components/backbone.syphon/lib/backbone.syphon.min',
     bootstrap: '/bower_components/bootstrap/dist/js/bootstrap',
     jquery: '/bower_components/jquery/dist/jquery',
     marionette: '/bower_components/marionette/lib/backbone.marionette',
@@ -40,7 +42,8 @@ require([
   'js/apps/home/home_app',
   'js/apps/about/about_app',
   'js/apps/entry/entry_app',
-  'js/apps/session/session_app'
+  'js/apps/session/session_app',
+  'js/apps/user/user_app'
 ], function(PF){
   'use strict';
 
