@@ -10,6 +10,7 @@
       "moment": "2.9.x",
       "backbone": "1.1.x",
       "backbone.picky": "0.2.x",
+      "backbone.syphon": "0.6.x",
       "marionette": "2.3.x",
       "underscore": "1.8.x",
       "validator-js": "3.39.x",
