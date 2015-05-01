@@ -227,12 +227,12 @@ def install_app(install_dir_path, app_symlink_path):
   '''
   # (0)
   if not os.path.exists(install_dir_path):
-    raise Error(
+    raise Exception(
       'Error:\n' +
       'Install directory path does not exist: "' + install_dir_path + '"'
     )
   if os.path.lexists(app_symlink_path):
-    raise Error(
+    raise Exception(
       'Error:\n' +
       'App symlink already exists: "' + app_symlink_path + '"'
     )

@@ -22,14 +22,14 @@ def update_symlink(symlink_path, target_path):
   Raises errors if either the symlink_path or target_path do not exist
   '''
   if not os.path.exists(target_path):
-    raise Error(
+    raise Exception(
       'Error:\n' +
       'Could not update symlink - target path "' + target_path + '" does not exist'
     )
   if os.path.lexists(symlink_path) and os.path.islink(symlink_path):
     os.unlink(symlink_path)
   else:
-    raise Error(
+    raise Exception(
       'Error:\n' +
       'Could not update symlink - symlink path "' + symlink + '" does not exist or is not a symlink'
     )
