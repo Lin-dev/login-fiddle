@@ -6,7 +6,8 @@ module.exports = {
    */
   success: function(req, res, next) {
     var result = {
-      status: 'success'
+      status: 'success',
+      message: req.flash('message')[0]
     };
     res.status(200).send(result);
   },
@@ -16,7 +17,8 @@ module.exports = {
    */
   failure: function(req, res, next) {
     var result = {
-      status: 'failure'
+      status: 'failure',
+      message: req.flash('message')[0]
     };
     res.status(200).send(result);
   }
