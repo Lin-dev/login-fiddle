@@ -31,11 +31,9 @@ module.exports = {
     res.redirect('/');
   },
 
-  signup: function(req, res, next) {
-    return auth.passport.authenticate('local-signup', {
-      successRedirect: '/user',
-      failureRedirect: '/signup',
+  signup: auth.passport.authenticate('local-signup', {
+      successRedirect: '/api/user/user',
+      failureRedirect: '/api/usr/signup',
       failureFlash: true
-    });
-  }
+    })
 };
