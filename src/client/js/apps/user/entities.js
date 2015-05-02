@@ -13,18 +13,8 @@ define(function(require) {
     /**
      * Represents a local signup form submission (email and password), post/create is the only verb allowed
      */
-    Entities.UserLocalSignup = PF.Entities.PFDatabaseModel.extend({
+    Entities.UserLocalSignup = PF.Entities.PFClientOnlyModel.extend({
       __name: 'UserLocalSignup',
-      urlRoot: '/api/user/signup',
-
-      sync: function(method, model, options) {
-        if(method === "create") {
-          return Backbone.Model.prototype.sync.call(this, method, model, options);
-        }
-        else {
-          logger.error('Entitites.UserLocalSignup.sync - invalid method, sync not executed: ' + method);
-        }
-      },
 
       validate: function(attrs, options) {
         var errors = {};
