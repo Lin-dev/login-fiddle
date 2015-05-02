@@ -24,7 +24,8 @@ define(function(require) {
         require('backbone_syphon');
         event.preventDefault();
         var data = Backbone.Syphon.serialize(this);
-        logger.debug('Local signup form submitted with: ' + JSON.stringify(data));
+        this.model.set(data, { silent: true });
+        logger.debug('local-signup submitted with: ' + JSON.stringify(data));
         this.trigger('local-signup-submitted', data);
       }
     });
