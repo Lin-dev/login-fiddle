@@ -19,21 +19,21 @@ module.exports = {
 
   login: function(req, res, next) {
     return auth.passport.authenticate('local-login', {
-      successRedirect: '/user',
-      failureRedirect: '/login',
+      successRedirect: '/api/util/success',
+      failureRedirect: '/api/util/failure',
       failureFlash: true
     });
   },
 
   logout: function(req, res, next) {
     req.logout();
-    req.flash('logout_message', 'Logged out');
-    res.redirect('/');
+    req.flash('message', 'Logged out');
+    res.redirect('/api/util/success');
   },
 
   signup: auth.passport.authenticate('local-signup', {
-      successRedirect: '/api/user/user',
-      failureRedirect: '/api/usr/signup',
+      successRedirect: '/api/util/success',
+      failureRedirect: '/api/util/failure',
       failureFlash: true
     })
 };
