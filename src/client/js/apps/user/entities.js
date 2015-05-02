@@ -10,9 +10,22 @@ define(function(require) {
   PF.module('UserApp.Entities', function(Entities, PF, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
+    /**
+     * Represents a local signup form submission (email and password), post/create is the only verb allowed
+     */
     Entities.UserLocalSignup = PF.Entities.PFDatabaseModel.extend({
       __name: 'UserLocalSignup',
-      urlRoot: '/api/user/user',
+      urlRoot: '/api/user/signup',
+
+      sync: function(method, model, options) {
+        if(method === "create") {
+          return Backbone.Model.prototype.sync.call(this, method, model, options);
+        }
+        else {
+          logger.error('Entitites.UserLocalSignup.sync - invalid method, sync not executed: ' + method);
+        }
+      },
+
       validate: function(attrs, options) {
         var errors = {};
         if(!validator.isEmail(attrs.email)) {
