@@ -10,7 +10,6 @@ var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/util/auth/index');
 
 
-// Configure user serialisation
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
@@ -32,7 +31,7 @@ passport.use('local-signup', new LocalStrategy({
   passwordField: 'password',
   passReqToCallback: true
 }, function(req, email, password, done) {
-  // TODO is process.nextTick nec? - copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local
+  // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
   process.nextTick(function() {
     q(pr.pr.auth.user.find({
       where: { email: email }
@@ -44,15 +43,18 @@ passport.use('local-signup', new LocalStrategy({
           password: pr.pr.auth.user.hash_password(password)
         }))
         .then(function(user) {
+          logger.info('local-signup user created: ' + email);
           return done(null, user);
         })
         .fail(function(error) {
-          logger.error('local-signup callback for email ' + email + ' failed user creation: ' + error);
+          // DB or validation error - do not distinguish validation or set flash because that is also done client side
+          logger.warn('local-signup callback for email ' + email + ' failed user creation: ' + error);
           return done(error, undefined);
         });
       }
       else {
-        return done(null, false, req.flash('signup_message', 'An account with that email address already exists'));
+        logger.warn('local-signup account creation requested for existing account: ' + email);
+        return done(null, false, req.flash('message', 'An account with that email address already exists'));
       }
     })
     .fail(function(error) {
@@ -76,11 +78,11 @@ passport.use('local-login', new LocalStrategy({
         return done(null, user);
       }
       else {
-        return done(null, false, req.flash('login_message', 'Incorrect password'));
+        return done(null, false, req.flash('message', 'Incorrect password'));
       }
     }
     else {
-      return done(null, false, req.flash('login_message', 'No user with that email address found'));
+      return done(null, false, req.flash('message', 'No user with that email address found'));
     }
   })
   .fail(function(error) {
@@ -90,5 +92,25 @@ passport.use('local-login', new LocalStrategy({
 }));
 
 module.exports = {
-  passport: passport
+  passport: passport,
+
+  ensure_authenticated: function ensure_authenticated(req, res, next) {
+    logger.debug('exports.ensure_authenticated - isAuthenticated: ' + req.isAuthenticated());
+    if (req.isAuthenticated()) {
+      return next();
+    }
+    else {
+      res.status(401).redirect('/login');
+    }
+  },
+
+  ensure_unauthenticated: function ensure_authenticated(req, res, next) {
+    logger.debug('exports.ensure_unauthenticated - isUnauthenticated: ' + req.isUnauthenticated());
+    if (req.isUnauthenticated()) {
+      return next();
+    }
+    else {
+      res.status(403).end();
+    }
+  }
 };
