@@ -9,7 +9,7 @@ define(function(require) {
       show_signup_form: function() {
         logger.trace('show_signup_form -- enter');
         var Views = require('js/apps/user/signup/views');
-        // Model is needed in view so that view can be updated following
+        // Model is needed in view so that view can be updated following if the post response is a failure
         var view = new Views.SignupForm({ model: new PF.Entities.PFClientOnlyModel() });
         view.on('login-clicked', function() { PF.trigger('user:login'); });
         view.on('home-clicked', function() { PF.trigger('home:show'); });
