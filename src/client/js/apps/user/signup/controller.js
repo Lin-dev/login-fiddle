@@ -28,7 +28,6 @@ define(function(require) {
               else if(resp_data.status === 'failure') { // duplicate email, server side validation error or ?
                 logger.debug('UserApp.Signup - process_signup_response -- signup failure: ' + resp_data.message);
                 view.model.set({ message: resp_data.message });
-                view.render(); // TODO This should not be needed because set call above triggers change
               }
               else {
                 logger.error('UserApp.Signup - process_signup_response -- unknown status: ' + resp_data.status);

@@ -20,6 +20,10 @@ define(function(require) {
         'click button.js-submit': 'submit_clicked'
       },
 
+      modelEvents: {
+        'change': 'render'
+      },
+
       submit_clicked: function(event) {
         require('backbone_syphon');
         event.preventDefault();
