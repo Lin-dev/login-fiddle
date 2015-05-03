@@ -27,6 +27,28 @@ define(function(require) {
         this.model.set(data, { silent: true });
         logger.debug('local-signup submitted with: ' + JSON.stringify(data));
         this.trigger('local-signup-submitted', data);
+      },
+
+      show_validation_errors: function(validation_errors) {
+        var $view = this.$el;
+        /** Remove all error messages added to form */
+        var clear_form_errors = function(){
+          var $form = $view.find('form');
+          $form.find('.js-validation-message').each(function(){
+            $(this).remove();
+          });
+          $form.find('.form-group.has-error').each(function(){
+            $(this).removeClass('has-error');
+          });
+        };
+        /** Add error message `value` to form for field `key` */
+        var mark_error = function(value, key){
+          var $form_group = $view.find('#user-signup-' + key).parent();
+          var $errorEl = $('<span>', {class: 'js-validation-message', text: value});
+          $form_group.append($errorEl).addClass('has-error');
+        };
+        clear_form_errors();
+        _.each(validation_errors, mark_error);
       }
     });
   });

@@ -37,6 +37,7 @@ define(function(require) {
           }
           else {
             logger.debug('User validation failed: ' + JSON.stringify(validation_errors));
+            view.show_validation_errors(validation_errors);
           }
         });
         PF.region_main.show(view);
