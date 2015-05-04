@@ -11,7 +11,9 @@ define(function(require) {
     require('js/common/base_entities');
 
     /**
-     * Represents a local signup form submission (email and password), post/create is the only verb allowed
+     * Represents a local signup form submission (email and password), post/create is the only verb allowed. There is
+     * no reqres handler for entities of this type because they're so simple and transitory - just reference them via
+     * the PF object and create them directly in the controller's
      */
     Entities.UserLocalSignup = PF.Entities.PFClientOnlyModel.extend({
       __name: 'UserLocalSignup',
@@ -33,21 +35,38 @@ define(function(require) {
       }
     });
 
+    /**
+     * Represents the information on a user profile - used for reading, updating and deleting the user profile but
+     * not for creation
+     */
+    Entities.UserProfile = PF.Entities.PFDatabaseModel.extend({
+      __name: 'UserProfile',
+      urlRoot: '/api/user/user',
+      sync: function(method, model, options) {
+        if(method === 'read' || method === 'update' || method === 'delete') {
+          return Backbone.Model.prototype.sync.call(this, method, model, options);
+        }
+        else {
+          logger.error('Entities.UserProfile.sync - invalid method, sync not executed: ' + method);
+        }
+      }
+    });
+
     var API = {
-      get_promise: function(user_id) {
+      get_user_profile_promise: function(user_id) {
         logger.trace('API.get_promise -- enter');
         var deferred = q.defer();
-        var user = new Entities.User({ id: user_id });
-        user.fetch({
-          success: function(user_model) { deferred.resolve(user_model); },
+        var user_profile = new Entities.UserProfile();
+        user_profile.fetch({
+          success: function(user_profile_model) { deferred.resolve(user_profile_model); },
           error: function() { deferred.resolve(undefined); }
         });
         return deferred.promise;
       }
     };
 
-    PF.reqres.setHandler('userapp:entities:user', function() {
-      return API.get_promise();
+    PF.reqres.setHandler('userapp:entities:userprofile', function() {
+      return API.get_user_profile_promise();
     });
   });
 

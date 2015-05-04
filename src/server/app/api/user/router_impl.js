@@ -5,16 +5,15 @@ var auth = require('app/util/auth');
 //var logger = logger_module.get('app/api/session/router_impl');
 
 module.exports = {
+  /**
+   * Returns user description - assumes that the requester must be logged in to access this API endpoint
+   */
   get_user: function(pr, req, res, next) {
-    // TODO
-  },
-
-  put_user: function(pr, req, res, next) {
-    // TODO
-  },
-
-  delete_user: function(pr, req, res, next) {
-    // TODO
+    var result = {
+      email: req.user.email,
+      signup_date: req.user.sq_created_at
+    };
+    res.status(200).send(result);
   },
 
   login: function(req, res, next) {
