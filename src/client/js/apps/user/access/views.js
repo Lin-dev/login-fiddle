@@ -2,14 +2,14 @@ define(function(require) {
   'use strict';
 
   var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/user/signup/views');
+  var logger = PF.logger.get('root/js/apps/user/access/views');
 
   PF.module('UserApp.Signup.Views', function(Views, PF, Backbone, Marionette, $, _) {
     require('js/common/views');
 
     Views.SignupForm = PF.Common.Views.PFItemView.extend({
       __name: 'SignupForm',
-      template: _.template(require('text!js/apps/user/signup/templates/signup.html'), { variable: 'data' }),
+      template: _.template(require('text!js/apps/user/access/templates/access.html'), { variable: 'data' }),
 
       triggers: {
         'click a.js-login': 'login-clicked',
@@ -29,8 +29,8 @@ define(function(require) {
         event.preventDefault();
         var data = Backbone.Syphon.serialize(this);
         this.model.set(data, { silent: true });
-        logger.debug('local-signup submitted with: ' + JSON.stringify(data));
-        this.trigger('local-signup-submitted', data);
+        logger.debug('local-access submitted with: ' + JSON.stringify(data));
+        this.trigger('local-access-submitted', data);
       },
 
       show_validation_errors: function(validation_errors) {
@@ -47,7 +47,7 @@ define(function(require) {
         };
         /** Add error message `value` to form for field `key` */
         var mark_error = function(value, key){
-          var $form_group = $view.find('#user-signup-' + key).parent();
+          var $form_group = $view.find('#user-access-' + key).parent();
           var $errorEl = $('<span>', {class: 'js-validation-message', text: value});
           $form_group.append($errorEl).addClass('has-error');
         };

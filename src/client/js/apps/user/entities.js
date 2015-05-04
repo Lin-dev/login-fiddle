@@ -11,7 +11,7 @@ define(function(require) {
     require('js/common/base_entities');
 
     /**
-     * Represents a local signup form submission (email and password), post/create is the only verb allowed. There is
+     * Represents a local access form submission (email and password), post/create is the only verb allowed. There is
      * no reqres handler for entities of this type because they're so simple and transitory - just reference them via
      * the PF object and create them directly in the controller's
      */

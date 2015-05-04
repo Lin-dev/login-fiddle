@@ -7,17 +7,17 @@ define(function(require) {
   PF.module('UserApp', function(UserApp, PF, Backbone, Marionette, $, _) {
     UserApp.Router = Marionette.AppRouter.extend({
       appRoutes: {
-        'login': 'show_login_form',
-        'profile': 'show_user_profile',
-        'signup': 'show_signup_form'
+        'access': 'show_access_form',
+        'profile': 'show_user_profile'
       }
     });
 
-    var API = {
-      show_login_form: function() {
-        /*var controller = require('js/apps/user/login/controller');
-        controller.show_login_form();
-        PF.execute('headerapp:set_active_navitem', 'user');*/
+    var API = {,
+      show_access_form: function() {
+        logger.trace('API.show_access_form -- enter');
+        var controller = require('js/apps/user/access/controller');
+        controller.show_access_form();
+        PF.execute('headerapp:set_active_navitem', 'user');
       },
 
       show_user_profile: function() {
@@ -25,29 +25,17 @@ define(function(require) {
         var controller = require('js/apps/user/profile/controller');
         controller.show_user_profile();
         PF.execute('headerapp:set_active_navitem', 'user');
-      },
-
-      show_signup_form: function() {
-        logger.trace('API.show_signup_form -- enter');
-        var controller = require('js/apps/user/signup/controller');
-        controller.show_signup_form();
-        PF.execute('headerapp:set_active_navitem', 'user');
       }
     };
 
-    PF.on('user:login', function() {
-      PF.navigage('login');
-      API.show_login_form();
+    PF.on('user:access', function() {
+      PF.navigate('access');
+      API.show_access_form();
     });
 
     PF.on('user:profile', function() {
       PF.navigate('user');
       API.show_user_profile();
-    });
-
-    PF.on('user:signup', function() {
-      PF.navigate('signup');
-      API.show_signup_form();
     });
 
     PF.addInitializer(function(){
