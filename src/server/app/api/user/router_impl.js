@@ -24,8 +24,13 @@ module.exports = {
     });
   },
 
+  /**
+   * Logs user out and destroys session (the logic for this: if they're logging out then in user's mind this session
+   * is over)
+   */
   logout: function(req, res, next) {
     req.logout();
+    req.session.destroy();
     req.flash('message', 'Logged out');
     res.redirect('/api/util/success');
   },
