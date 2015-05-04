@@ -45,10 +45,6 @@ describe('app/api - exported methods', function() {
     num_funcs[name] = 0;
     module.get_user.should.be.a.function;
     num_funcs[name]++;
-    module.put_user.should.be.a.function;
-    num_funcs[name]++;
-    module.delete_user.should.be.a.function;
-    num_funcs[name]++;
     module.login.should.be.a.function;
     num_funcs[name]++;
     module.logout.should.be.a.function;
