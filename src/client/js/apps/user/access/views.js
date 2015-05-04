@@ -48,7 +48,7 @@ define(function(require) {
         /** Add error message `value` to form for field `key` */
         var mark_error = function(value, key){
           var $form_group = $view.find('#user-access-' + key).parent();
-          var $errorEl = $('<span>', {class: 'js-validation-message', text: value});
+          var $errorEl = $('<span>', {class: 'js-validation-message help-block', text: value});
           $form_group.append($errorEl).addClass('has-error');
         };
         clear_form_errors();
