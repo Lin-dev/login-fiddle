@@ -20,7 +20,7 @@ define(function(require) {
           var validation_errors = new_user.validate(new_user.attributes);
           if(_.isEmpty(validation_errors)) {
             logger.debug('User validation passed - no errors');
-            $.post('/api/user/local_access', submitted_data, function(resp_data, textStatus, jqXhr) {
+            $.post('/api/user/access/local', submitted_data, function(resp_data, textStatus, jqXhr) {
               if(resp_data.status === 'success') {
                 logger.debug('UserApp.Signup - local_access post response -- access succeess, redirecting to profile');
                 PF.trigger('user:profile');

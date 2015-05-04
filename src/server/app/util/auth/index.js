@@ -26,7 +26,7 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-passport.use('local-signup', new LocalStrategy({
+passport.use('access-local', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
   passReqToCallback: true
@@ -64,7 +64,7 @@ passport.use('local-signup', new LocalStrategy({
   });
 }));
 
-passport.use('local-login', new LocalStrategy({
+passport.use('local-login-DEFUNCT-AND-DEPRECATED--to-be-folded-into-access-local-strategy', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'passport',
   passReqToCallback: true

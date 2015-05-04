@@ -16,14 +16,6 @@ module.exports = {
     res.status(200).send(result);
   },
 
-  login: function(req, res, next) {
-    return auth.passport.authenticate('local-login', {
-      successRedirect: '/api/util/success',
-      failureRedirect: '/api/util/failure',
-      failureFlash: true
-    });
-  },
-
   /**
    * Logs user out and destroys session (the logic for this: if they're logging out then in user's mind this session
    * is over)
@@ -35,7 +27,11 @@ module.exports = {
     res.redirect('/api/util/success');
   },
 
-  signup: auth.passport.authenticate('local-signup', {
+  /**
+   * Handles requests for lcoal access (either account creation or login)
+   * @type {Function}
+   */
+  access_local: auth.passport.authenticate('access-local', {
       successRedirect: '/api/util/success',
       failureRedirect: '/api/util/failure',
       failureFlash: true
