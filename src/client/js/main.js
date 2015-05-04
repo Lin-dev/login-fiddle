@@ -49,6 +49,11 @@ require([
 
   var logger = PF.logger.get('root/js/main');
   logger.trace('require:lambda -- enter');
+  /**
+   * Escapes a string for use in a regular expression
+   * @param  {String} s The string to be escaped
+   * @return {String}   A string which can be used in a JS regex, it will match occurrences of `s`
+   */
   RegExp.escape_text= function(s) {
       return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
