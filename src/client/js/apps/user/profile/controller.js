@@ -9,12 +9,15 @@ define(function(require) {
       show_user_profile: function() {
         var up_promise = PF.request('userapp:entities:userprofile');
         up_promise.then(function(up) {
-          logger.debug('PF.UserApp.Profile.contoller.show_user_profile -- profile view for: ' + JSON.stringify(up));
+          logger.debug('PF.UserApp.Profile.contoller.show_user_profile -- showing: ' + JSON.stringify(up));
           var Views = require('js/apps/user/profile/views');
-          logger.debug('PF.UserApp.Profile.contoller.show_user_profile -- 2');
           var view = new Views.UserProfile({ model: up });
-          logger.debug('PF.UserApp.Profile.contoller.show_user_profile -- 3');
-          // TODO: view.on('logout-clicked', function() { ... });
+          view.on('logout-clicked', function() {
+            logger.debug('Logging out');
+            $.get('/api/user/logout', function(resp_data, textStatus, jqXhr) {
+              PF.trigger('home:show');
+            });
+          });
           PF.region_main.show(view);
         });
       }
