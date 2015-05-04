@@ -12,7 +12,7 @@ define(function(require) {
       }
     });
 
-    var API = {,
+    var API = {
       show_access_form: function() {
         logger.trace('API.show_access_form -- enter');
         var controller = require('js/apps/user/access/controller');
