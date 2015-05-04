@@ -15,8 +15,8 @@ define(function(require) {
      * no reqres handler for entities of this type because they're so simple and transitory - just reference them via
      * the PF object and create them directly in the controller's
      */
-    Entities.UserLocalSignup = PF.Entities.PFClientOnlyModel.extend({
-      __name: 'UserLocalSignup',
+    Entities.UserLocalAccess = PF.Entities.PFClientOnlyModel.extend({
+      __name: 'UserLocalAccess',
 
       validate: function(attrs, options) {
         var errors = {};

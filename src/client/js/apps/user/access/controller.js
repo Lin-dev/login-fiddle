@@ -15,8 +15,8 @@ define(function(require) {
         view.on('home-clicked', function() { PF.trigger('home:show'); });
         view.on('local-access-submitted', function(submitted_data) {
           require('js/apps/user/entities');
-          // UserLocalSignup just for validation (passport redirect mucks up Backbone model sync)
-          var new_user = new PF.UserApp.Entities.UserLocalSignup(submitted_data);
+          // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
+          var new_user = new PF.UserApp.Entities.UserLocalAccess(submitted_data);
           var validation_errors = new_user.validate(new_user.attributes);
           if(_.isEmpty(validation_errors)) {
             logger.debug('User validation passed - no errors');
