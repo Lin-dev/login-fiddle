@@ -4,11 +4,11 @@ define(function(require) {
   var PF = require('js/app/obj');
   var logger = PF.logger.get('root/js/apps/user/access/views');
 
-  PF.module('UserApp.Signup.Views', function(Views, PF, Backbone, Marionette, $, _) {
+  PF.module('UserApp.Access.Views', function(Views, PF, Backbone, Marionette, $, _) {
     require('js/common/views');
 
-    Views.SignupForm = PF.Common.Views.PFItemView.extend({
-      __name: 'SignupForm',
+    Views.AccessForm = PF.Common.Views.PFItemView.extend({
+      __name: 'AccessForm',
       template: _.template(require('text!js/apps/user/access/templates/access.html'), { variable: 'data' }),
 
       triggers: {
@@ -94,5 +94,5 @@ define(function(require) {
     });
   });
 
-  return PF.UserApp.Signup.Views;
+  return PF.UserApp.Access.Views;
 });
