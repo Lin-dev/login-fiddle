@@ -7,12 +7,12 @@ define(function(require) {
   PF.module('UserApp.Access.Views', function(Views, PF, Backbone, Marionette, $, _) {
     require('js/common/views');
 
+    /** @type {Object} View for a single form supporting account login or creation (user selected) */
     Views.AccessForm = PF.Common.Views.PFItemView.extend({
       __name: 'AccessForm',
       template: _.template(require('text!js/apps/user/access/templates/access.html'), { variable: 'data' }),
 
       triggers: {
-        'click a.js-login': 'login-clicked',
         'click a.js-home': 'home-clicked',
         'click .js-has-password': {
           // caught as a trigger so that the event which catches it can access `this` (view). The intent is that this

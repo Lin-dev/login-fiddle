@@ -11,9 +11,10 @@ define(function(require) {
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
         var view = new Views.AccessForm({ model: new PF.Entities.PFClientOnlyModel() });
-        view.on('login-clicked', function() { PF.trigger('user:login'); });
         view.on('home-clicked', function() { PF.trigger('home:show'); });
         view.on('local-access-submitted', function(submitted_data) {
+
+
           require('js/apps/user/entities');
           // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
           var new_user = new PF.UserApp.Entities.UserLocalAccess(submitted_data);
