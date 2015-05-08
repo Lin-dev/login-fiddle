@@ -26,7 +26,7 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-passport.use('access-local', new LocalStrategy({
+passport.use('local-signup', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
   passReqToCallback: true
@@ -64,11 +64,12 @@ passport.use('access-local', new LocalStrategy({
   });
 }));
 
-passport.use('local-login-DEFUNCT-AND-DEPRECATED--to-be-folded-into-access-local-strategy', new LocalStrategy({
+passport.use('local-login', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'passport',
   passReqToCallback: true
 }, function(req, email, password, done) {
+  console.error('at top of callback');
   q(pr.pr.auth.user.find({
     where: { email: email }
   }))
@@ -78,16 +79,19 @@ passport.use('local-login-DEFUNCT-AND-DEPRECATED--to-be-folded-into-access-local
         return done(null, user);
       }
       else {
+        console.log('incorret password');
         return done(null, false, req.flash('message', 'Incorrect password'));
       }
     }
     else {
+      console.warn('no user with email');
       return done(null, false, req.flash('message', 'No user with that email address found'));
     }
   })
   .fail(function(error) {
+    console.warn('call back failed : ' + error);
     logger.error('local-login callback for ' + email + ' failed while loading user: ' + error);
-    return done(error, undefined);
+    return done(error, undefined, req.flash('message', JSON.stringify(error)));
   });
 }));
 
