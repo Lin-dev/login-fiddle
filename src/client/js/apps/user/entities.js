@@ -7,31 +7,43 @@ define(function(require) {
   var PF = require('js/app/obj');
   var logger = PF.logger.get('root/js/apps/user/entities');
 
+  /**
+   * Member methods provide common validation functionality, each member method takes the value to be tested and
+   * returns either a validation error string or undefined
+   * @type {Object}
+   */
+  var val_checks = {
+    email: function(email_string) {
+      return validator.isEmail(email_string) ? undefined : 'Invalid email address format';
+    },
+    password: function(password_string) {
+      if(password_string === undefined) { return undefined; }
+      else if(!validator.isAlphanumeric(password_string)) {
+        return 'Passwords must be letters and numbers only (and at least 8 characters long)';
+      }
+      else if(!validator.isLength(password_string, 8)) {
+        return 'Passwords must be at least 8 characters long (letters and numbers only)';
+      }
+      else { return undefined; }
+    }
+  };
+
   PF.module('UserApp.Entities', function(Entities, PF, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
     /**
-     * Represents a local access form submission (email and password), post/create is the only verb allowed. There is
-     * no reqres handler for entities of this type because they're so simple and transitory - just reference them via
-     * the PF object and create them directly in the controller's
+     * Represents a local access form submission (email and possibly a password), They are client side only and used
+     * because they are used for client-side validation only. There is no reqres handler because they're so simple
+     * and should be referenced directly via the PF object.
      */
     Entities.UserLocalAccess = PF.Entities.PFClientOnlyModel.extend({
       __name: 'UserLocalAccess',
 
       validate: function(attrs, options) {
         var errors = {};
-        if(!validator.isEmail(attrs.email)) {
-          errors['email'] = '"' + attrs.email + '" - invalid email address format';
-        }
-
-        if(attrs.password && !validator.isAlphanumeric(attrs.password)) {
-          errors['password'] = 'Passwords must be letters and numbers only (and at least 8 characters long)';
-        }
-        else if(attrs.password && !validator.isLength(attrs.password, 8)) {
-          errors['password'] = 'Passwords must be at least 8 characters long (letters and numbers only)';
-        }
-
-        return errors;
+        errors['email'] = val_checks.email(attrs.email);
+        errors['password'] = val_checks.password(attrs.password);
+        return _.pick(errors, _.identity); // remove undefined keys
       }
     });
 

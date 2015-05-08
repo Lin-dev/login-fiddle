@@ -49,6 +49,6 @@ describe('user/entities', function() {
   it('validates with valid password and valid email', function() {
     var user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, password: this.data.valid_password });
     var validationErrors = user.validate(user.attributes);
-    expect(validationErrors).toEqual({});
+    expect(validationErrors).toEqual({ email: undefined, password: undefined });
   });
 });
