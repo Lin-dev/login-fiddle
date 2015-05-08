@@ -28,10 +28,20 @@ module.exports = {
   },
 
   /**
-   * Handles requests for lcoal access (either account creation or login)
+   * Handles requests for local access account login
    * @type {Function}
    */
-  access_local: auth.passport.authenticate('access-local', {
+  access_local_login: auth.passport.authenticate('local-login', {
+      successRedirect: '/api/util/success',
+      failureRedirect: '/api/util/failure',
+      failureFlash: true
+    }),
+
+  /**
+   * Handles requests for local access account signup
+   * @type {Function}
+   */
+  access_local_signup: auth.passport.authenticate('local-signup', {
       successRedirect: '/api/util/success',
       failureRedirect: '/api/util/failure',
       failureFlash: true
