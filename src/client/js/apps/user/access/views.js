@@ -92,6 +92,35 @@ define(function(require) {
         }
       }
     });
+
+    /** @type {Object} View for inputting info needed for local account creation */
+    Views.SignupForm = PF.Common.Views.PFItemView.extend({
+      __name: 'SignupForm',
+      template: _.template(require('text!js/apps/user/access/templates/signup.html'), { variable: 'data' }),
+
+      triggers: {
+        'click a.js-home': 'home-clicked',
+        'click a.js-login': 'login-clicked', // LISTEN TO THIS IN CONTROLLER, trigger user:login
+      },
+
+      events: {
+        'click button.js-submit': 'submit_clicked',
+      },
+
+      modelEvents: {
+        'change': 'render'
+      },
+
+      // Event handlers
+      submit_clicked: function(event) {
+        require('backbone_syphon');
+        event.preventDefault();
+        var data = Backbone.Syphon.serialize(this);
+        this.model.set(data, { silent: true });
+        logger.debug('Local signup submitted with: ' + JSON.stringify(data));
+        this.trigger('local-signup-submitted', data);
+      },
+    });
   });
 
   return PF.UserApp.Access.Views;
