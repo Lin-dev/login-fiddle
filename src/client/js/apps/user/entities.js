@@ -48,6 +48,27 @@ define(function(require) {
     });
 
     /**
+     * Represents a local signup form submission (email, email_check, password, password_check). They are client side
+     * only because they are used for client-side validation only. There is no reqres handler because they're so simple
+     * and should be referenced directly via the PF object.
+     */
+    Entities.UserLocalSignup = PF.Entities.PFClientOnlyModel.extend({
+      __name: 'UserLocalSignup',
+
+      validate: function(attrs, options) {
+        var errors = {};
+        errors['email'] = val_checks.email(attrs.email);
+        errors['password'] = val_checks.email(attrs.password);
+        if(errors['email'] === undefined && attrs.email !== attrs.email_check) {
+          errors['email_check'] = 'Email addresses must match';
+        }
+        if(errors['password'] === undefined && attrs.password !== attrs.password_check) {
+          errors['password_check'] = 'Passwords must match';
+        }
+      }
+    });
+
+    /**
      * Represents the information on a user profile - used for reading, updating and deleting the user profile but
      * not for creation
      */
