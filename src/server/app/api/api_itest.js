@@ -47,7 +47,9 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.logout.should.be.a.function;
     num_funcs[name]++;
-    module.access_local.should.be.a.function;
+    module.access_local_login.should.be.a.function;
+    num_funcs[name]++;
+    module.access_local_signup.should.be.a.function;
     num_funcs[name]++;
   });
 
