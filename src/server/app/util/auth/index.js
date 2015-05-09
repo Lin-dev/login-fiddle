@@ -69,27 +69,26 @@ passport.use('local-login', new LocalStrategy({
   passwordField: 'password',
   passReqToCallback: true
 }, function(req, email, password, done) {
-  console.error('at top of callback');
   q(pr.pr.auth.user.find({
     where: { email: email }
   }))
   .then(function(user) {
     if(user !== null) {
       if(user.check_password(password)) {
+        logger.debug('local-signup logged in: ' + email);
         return done(null, user);
       }
       else {
-        console.log('incorret password');
+        logger.debug('local-signup incorrect password: ' + email);
         return done(null, false, req.flash('message', 'Incorrect password'));
       }
     }
     else {
-      console.warn('no user with email');
+      logger.debug('local-signup unknown email: ' + email);
       return done(null, false, req.flash('message', 'No user with that email address found'));
     }
   })
   .fail(function(error) {
-    console.warn('call back failed : ' + error);
     logger.error('local-login callback for ' + email + ' failed while loading user: ' + error);
     return done(error, undefined, req.flash('message', JSON.stringify(error)));
   });
