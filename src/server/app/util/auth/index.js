@@ -66,7 +66,7 @@ passport.use('local-signup', new LocalStrategy({
 
 passport.use('local-login', new LocalStrategy({
   usernameField: 'email',
-  passwordField: 'passport',
+  passwordField: 'password',
   passReqToCallback: true
 }, function(req, email, password, done) {
   console.error('at top of callback');
