@@ -49,7 +49,7 @@ passport.use('local-signup', new LocalStrategy({
         .fail(function(error) {
           // DB or validation error - do not distinguish validation or set flash because that is also done client side
           logger.warn('local-signup callback for email ' + email + ' failed user creation: ' + error);
-          return done(error, undefined);
+          return done(error, undefined, req.flash('message', 'Account creation failed'));
         });
       }
       else {
@@ -59,7 +59,7 @@ passport.use('local-signup', new LocalStrategy({
     })
     .fail(function(error) {
       logger.error('local-signup callback for ' + email + ' failed while checking if email already used: ' + error);
-      return done(error, undefined);
+      return done(error, undefined, req.flash('message', 'System error'));
     });
   });
 }));
@@ -90,7 +90,7 @@ passport.use('local-login', new LocalStrategy({
   })
   .fail(function(error) {
     logger.error('local-login callback for ' + email + ' failed while loading user: ' + error);
-    return done(error, undefined, req.flash('message', JSON.stringify(error)));
+    return done(error, undefined, req.flash('message', 'System error'));
   });
 }));
 
