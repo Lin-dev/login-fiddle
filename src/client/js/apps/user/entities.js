@@ -13,18 +13,19 @@ define(function(require) {
    * @type {Object}
    */
   var val_checks = {
+    /** Checks an email is correctly formatted */
     email: function(email_string) {
       return validator.isEmail(email_string) ? undefined : 'Invalid email address format';
     },
+
+    /** Checks a password field that is required / not optional */
     password: function(password_string) {
-      if(password_string === undefined) { return undefined; }
-      else if(!validator.isAlphanumeric(password_string)) {
+      if(!validator.isAlphanumeric(password_string)) {
         return 'Passwords must be letters and numbers only (and at least 8 characters long)';
       }
       else if(!validator.isLength(password_string, 8)) {
         return 'Passwords must be at least 8 characters long (letters and numbers only)';
       }
-      else { return undefined; }
     }
   };
 
@@ -42,7 +43,9 @@ define(function(require) {
       validate: function(attrs, options) {
         var errors = {};
         errors['email'] = val_checks.email(attrs.email);
-        errors['password'] = val_checks.password(attrs.password);
+        if(attrs.has_pw_flag === 'true') {
+          errors['password'] = val_checks.password(attrs.password);
+        }
         return _.pick(errors, _.identity); // remove undefined keys
       }
     });
@@ -58,13 +61,14 @@ define(function(require) {
       validate: function(attrs, options) {
         var errors = {};
         errors['email'] = val_checks.email(attrs.email);
-        errors['password'] = val_checks.email(attrs.password);
+        errors['password'] = val_checks.password(attrs.password);
         if(errors['email'] === undefined && attrs.email !== attrs.email_check) {
-          errors['email_check'] = 'Email addresses must match';
+          errors['email-check'] = 'Email addresses must match';
         }
         if(errors['password'] === undefined && attrs.password !== attrs.password_check) {
-          errors['password_check'] = 'Passwords must match';
+          errors['password-check'] = 'Passwords must match';
         }
+        return _.pick(errors, _.identity); // remove undefined keys
       }
     });
 
