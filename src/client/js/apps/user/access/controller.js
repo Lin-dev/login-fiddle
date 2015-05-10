@@ -49,12 +49,23 @@ define(function(require) {
       var validation_errors = uls.validate(uls.attributes);
       if(_.isEmpty(validation_errors)) {
         logger.debug('private.proc_local_signup -- user form validation passed: ' + JSON.stringify(form_data));
-        //
-        //
-        // TODO
-        //
-        //
-        //
+        $.post('/api/user/access/local/signup', form_data, function(resp_data, textStatus, jqXhr) {
+          if(resp_data.status === 'success') {
+            logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
+              'succeess, redirecting to profile');
+            PF.trigger('user:profile');
+          }
+          else if(resp_data.status === 'failure') {
+            logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
+              'login failure: ' + resp_data.message);
+            signup_view.model.set({ message: resp_data.message });
+          }
+          else {
+            logger.error('private.proc_local_signup - /api/user/access/local/signup response -- ' +
+              'unknown status: ' + resp_data.status + ' (message: ' + resp_data.message + ')');
+            signup_view.model.set({ message: resp_data.message });
+          }
+        });
       }
       else {
         logger.debug('private.proc_local_signup -- user form validation failed: ' + JSON.stringify(validation_errors));
