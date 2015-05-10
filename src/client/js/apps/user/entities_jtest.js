@@ -22,15 +22,19 @@ describe('user/entities', function() {
     expect(validationErrors['email']).toBeDefined();
   });
 
-  it('does not require password to be defined', function() {
-    var user = new this.Entities.UserLocalAccess({ email: this.data.valid_email });
+  it('does not require password to be defined if has_pw_flag is false', function() {
+    var user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, has_pw_flag: 'false' });
     var validationErrors = user.validate(user.attributes);
     expect(validationErrors['password']).toBeUndefined();
+    var user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, has_pw_flag: 'true' });
+    var validationErrors = user.validate(user.attributes);
+    expect(validationErrors['password']).toBeDefined();
   });
 
   it('requires password to be alphanumeric if defined', function() {
     var user = new this.Entities.UserLocalAccess({
       email: this.data.valid_email,
+      has_pw_flag: 'true',
       password: this.data.invalid_char_password
     });
     var validationErrors = user.validate(user.attributes);
@@ -40,6 +44,7 @@ describe('user/entities', function() {
   it('requires password to be at least 8 characters long', function() {
     var user = new this.Entities.UserLocalAccess({
       email: this.data.valid_email,
+      has_pw_flag: 'true',
       password: this.data.invalid_short_password
     });
     var validationErrors = user.validate(user.attributes);
@@ -47,8 +52,12 @@ describe('user/entities', function() {
   });
 
   it('validates with valid password and valid email', function() {
-    var user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, password: this.data.valid_password });
+    var user = new this.Entities.UserLocalAccess({
+      email: this.data.valid_email,
+      has_pw_flag: 'true',
+      password: this.data.valid_password
+    });
     var validationErrors = user.validate(user.attributes);
-    expect(validationErrors).toEqual({ email: undefined, password: undefined });
+    expect(validationErrors).toEqual({});
   });
 });
