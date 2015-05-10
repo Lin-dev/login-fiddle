@@ -7,23 +7,27 @@ define(function(require) {
   PF.module('UserApp.Access', function(Access, PF, Backbone, Marionette, $, _) {
     function proc_local_login(form_data, access_view) {
       // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
-      var ula = new PF.UserApp.Entities.UserLocalAccess(form_data);
+      var ula = new PF.UserApp.Entities.UserLocalAccess({
+        email: form_data.email,
+        has_pw_flag: form_data.has_pw_flag,
+        password: form_data.password
+      });
       var validation_errors = ula.validate(ula.attributes);
       if(_.isEmpty(validation_errors)) {
         logger.debug('private.proc_local_login -- access form validation passed: ' + JSON.stringify(form_data));
         $.post('/api/user/access/local/login', form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
-            logger.debug('private.proc_local_login - /access/local/login response -- ' +
+            logger.debug('private.proc_local_login - /api/user/access/local/login response -- ' +
               'succeess, redirecting to profile');
             PF.trigger('user:profile');
           }
           else if(resp_data.status === 'failure') {
-            logger.debug('private.proc_local_login - /access/local/login response -- ' +
+            logger.debug('private.proc_local_login - /api/user/access/local/login response -- ' +
               'login failure: ' + resp_data.message);
             access_view.model.set({ message: resp_data.message });
           }
           else {
-            logger.error('private.proc_local_login - /access/local/login response -- ' +
+            logger.error('private.proc_local_login - /api/user/access/local/login response -- ' +
               'unknown status: ' + resp_data.status + ' (message: ' + resp_data.message + ')');
             access_view.model.set({ message: resp_data.message });
           }
