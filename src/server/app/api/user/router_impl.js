@@ -23,7 +23,7 @@ module.exports = {
   logout: function(req, res, next) {
     req.logout();
     req.session.destroy();
-    req.flash('message', 'Logged out');
+    // No req.flash message because we just destroyed the session: req.flash('message', 'Logged out');
     res.redirect('/api/util/success');
   },
 
