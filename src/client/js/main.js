@@ -11,6 +11,10 @@ require.config({
     },
     backbone_picky: ['backbone'],
     backbone_syphon: ['backbone'],
+    jquery_cookie: {
+      deps: ['jquery'],
+      exports: '$.cookie'
+    },
     marionette: {
       deps: ['jquery', 'underscore', 'backbone'],
       exports: 'Marionette'
@@ -25,6 +29,7 @@ require.config({
     backbone_syphon: '/bower_components/backbone.syphon/lib/backbone.syphon.min',
     bootstrap: '/bower_components/bootstrap/dist/js/bootstrap',
     jquery: '/bower_components/jquery/dist/jquery',
+    jquery_cookie: '/bower_components/js-cookie/src/js.cookie',
     marionette: '/bower_components/marionette/lib/backbone.marionette',
     moment: '/bower_components/moment/min/moment-with-locales.min',
     q: '/bower_components/q/q',
