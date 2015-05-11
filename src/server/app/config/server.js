@@ -19,6 +19,7 @@ module.exports = {
       secure: true
     },
     resave: false, // to avoid race conditions, no need to be true so long as storage method supports save
+    rolling: true, // force cookie to be set on every response, resetting the expiration date
     secret: 'default', // can not be randomly generated else sessions can't be shared across nodes in cluster
     store: {
       host: 'localhost',

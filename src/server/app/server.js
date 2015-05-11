@@ -62,6 +62,7 @@ function configure_app_middleware(app) {
       secure: server_config.session.cookie.secure
     },
     resave: server_config.session.resave,
+    rolling: server_config.session.rolling,
     saveUninitialized: false,
     secret: server_config.session.secret,
     store: new RedisStore({
