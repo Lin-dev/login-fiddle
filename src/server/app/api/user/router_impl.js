@@ -21,10 +21,13 @@ module.exports = {
    * is over)
    */
   logout: function(req, res, next) {
+    var server_config = require('app/config/server')
     req.logout();
-    req.session.destroy();
-    // No req.flash message because we just destroyed the session: req.flash('message', 'Logged out');
-    res.redirect('/api/util/success');
+    res.clearCookie(server_config.logged_in_cookie_name);
+    req.session.destroy(function() {
+      // No req.flash message because we just destroyed the session: req.flash('message', 'Logged out');
+      res.redirect('/api/util/success');
+    });
   },
 
   /**

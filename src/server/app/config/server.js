@@ -11,6 +11,7 @@ module.exports = {
   server_root: __dirname,
   client_root: path.join(__dirname, '..', '..', '..', 'client'), // .. x3 to cancel out server/app/config
   security_dir: path.join(__dirname, '..', '..', '..', 'security'), // .. x3 to cancel out server/app/config
+  logged_in_cookie_name: 'logged_in',
   q_longStackSupport: false,
   static_max_age: 1000,
   session: {

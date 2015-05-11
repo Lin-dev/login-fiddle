@@ -28,6 +28,17 @@ define(function(require) {
     return Backbone.history.fragment;
   };
 
+  /**
+   * Checks if a user is logged in (according to the cookies sent by the server)
+   * @return {Boolean} True if the user is logged in and the Server server_config.logged_in_cookie_name === 'true',
+   *                   false otherwise
+   */
+  PF.is_logged_in = function() {
+    require('jquery_cookie');
+    return $.cookie.get('logged_in') === 'true';
+
+  }
+
   // Log all events at trace
   PF.on('all', function(event_string) {
     var events_logger = PF.logger.get('root/events_logger');
