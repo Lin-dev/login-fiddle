@@ -17,13 +17,17 @@ define(function(require) {
     if(!window.console) {
       window.console = {};
     }
-    this.log = console.log ? console.log.bind(console) : function() {};
-    this.trace = console.debug ? console.debug.bind(console) : this.log;
-    this.debug = console.debug ? console.debug.bind(console) : this.log;
+    this.log = console.info ? console.info.bind(console) : console.log ? console.log.bind(console) : function() {};
     this.info = this.log;
-    this.warn = this.log;
+
+    this.debug = console.debug ? console.debug.bind(console) : this.info;
+    this.trace = this.debug; // not console.trace ? console.trace.bind(console) : this.debug; because auto stack trace
+
+    this.warn = console.warn ? console.warn.bind(console) : this.log;
     this.error = console.error ? console.error.bind(console) : this.warn;
-    this.fatal = console.fatal ? console.fatal.bind(console) : this.error;
+    this.fatal = console.fatal ? console.bind.fatal(console) : this.error;
+
+    this.temp_only = this.error; // use for temporary logging statements - easily grep to remove
   };
 
   /**
@@ -157,6 +161,13 @@ define(function(require) {
         });
       }
     };
+
+    this.temp_only = function(message) {
+      var log_entry = assemble_log_entry(message, 'temp-only');
+      _.each(this.appenders, function(appender) {
+        appender.temp_only(log_entry);
+      });
+    }
     // END PUBLIC FUNCTIONS
 
     // CONFIGURE OBJECT
