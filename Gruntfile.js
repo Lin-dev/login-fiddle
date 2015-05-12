@@ -83,6 +83,7 @@ module.exports = function(grunt) {
               paths: {
                 backbone: 'bower_components/backbone/backbone',
                 jquery: 'bower_components/jquery/dist/jquery',
+                jquery_cookie: 'bower_components/js-cookie/src/js.cookie',
                 marionette: 'bower_components/marionette/lib/backbone.marionette',
                 moment: 'bower_components/moment/min/moment-with-locales.min',
                 q: 'bower_components/q/q',

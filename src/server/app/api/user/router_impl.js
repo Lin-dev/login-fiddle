@@ -21,7 +21,7 @@ module.exports = {
    * is over)
    */
   logout: function(req, res, next) {
-    var server_config = require('app/config/server')
+    var server_config = require('app/config/server');
     req.logout();
     res.clearCookie(server_config.logged_in_cookie_name);
     req.session.destroy(function() {

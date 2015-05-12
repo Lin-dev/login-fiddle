@@ -35,9 +35,10 @@ define(function(require) {
    */
   PF.is_logged_in = function() {
     require('jquery_cookie');
+    /* global $: false */
+    // $ is defined by requiring jquery_cookie so ignore following line in jshint:
     return $.cookie.get('logged_in') === 'true';
-
-  }
+  };
 
   // Log all events at trace
   PF.on('all', function(event_string) {

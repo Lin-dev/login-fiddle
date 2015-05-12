@@ -26,8 +26,9 @@ describe('user/entities', function() {
     var user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, has_pw_flag: 'false' });
     var validationErrors = user.validate(user.attributes);
     expect(validationErrors['password']).toBeUndefined();
-    var user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, has_pw_flag: 'true' });
-    var validationErrors = user.validate(user.attributes);
+
+    user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, has_pw_flag: 'true' });
+    validationErrors = user.validate(user.attributes);
     expect(validationErrors['password']).toBeDefined();
   });
 
