@@ -5,4 +5,3 @@ describe('Jasmine', function() {
     expect(true).toEqual(true);
   });
 });
-
