@@ -2,13 +2,13 @@ define(function(require) {
   'use strict';
 
   var q = require('q');
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/header/entities');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/header/entities');
 
-  PF.module('HeaderApp.Entities', function(Entities, PF, Backbone, Marionette, $, _) {
+  AppObj.module('HeaderApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
-    Entities.NavItem = PF.Entities.PFClientOnlyModel.extend({
+    Entities.NavItem = AppObj.Entities.AppObjClientOnlyModel.extend({
       __name: 'NavItem',
       initialize: function() {
         logger.trace('NavItem.initialize -- enter w/ url: ' + this.get('url'));
@@ -17,7 +17,7 @@ define(function(require) {
       }
     });
 
-    Entities.NavItemCollection = PF.Entities.PFClientOnlyCollection.extend({
+    Entities.NavItemCollection = AppObj.Entities.AppObjClientOnlyCollection.extend({
       __name: 'NavItemCollection',
       model: Entities.NavItem,
 
@@ -54,10 +54,10 @@ define(function(require) {
       }
     };
 
-    PF.reqres.setHandler('headerapp:entities:navitems', function() {
-      logger.trace('PF.reqres - headerapp:entities:navitems -- enter');
+    AppObj.reqres.setHandler('headerapp:entities:navitems', function() {
+      logger.trace('AppObj.reqres - headerapp:entities:navitems -- enter');
       var result = API.get_navitem_promise();
-      logger.trace('PF.reqres - headerapp:entities:navitems -- exit');
+      logger.trace('AppObj.reqres - headerapp:entities:navitems -- exit');
       return result;
     });
   });

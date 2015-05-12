@@ -12,8 +12,8 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  PF.module('Entities', function(Entities, PF, Backbone, Marionette, $, _) {
+  var AppObj = require('js/app/obj');
+  AppObj.module('Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     (function () {
       function createNamedConstructor(name, constructor) {
         // Explicitly allow use of Function constructor here

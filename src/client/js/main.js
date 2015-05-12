@@ -49,10 +49,10 @@ require([
   'js/apps/entry/entry_app',
   'js/apps/session/session_app',
   'js/apps/user/user_app'
-], function(PF){
+], function(AppObj){
   'use strict';
 
-  var logger = PF.logger.get('root/js/main');
+  var logger = AppObj.logger.get('root/js/main');
   logger.trace('require:lambda -- enter');
   /**
    * Escapes a string for use in a regular expression
@@ -62,6 +62,6 @@ require([
   RegExp.escape_text= function(s) {
       return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
-  PF.start();
+  AppObj.start();
   logger.trace('require:lambda -- exit');
 });

@@ -1,13 +1,13 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  //var logger = PF.logger.get('root/js/apps/user/profile/views');
+  var AppObj = require('js/app/obj');
+  //var logger = AppObj.logger.get('root/js/apps/user/profile/views');
 
-  PF.module('UserApp.Profile.Views', function(Views, PF, Backbone, Marionette, $, _) {
+  AppObj.module('UserApp.Profile.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     require('js/common/views');
 
-    Views.UserProfile = PF.Common.Views.PFItemView.extend({
+    Views.UserProfile = AppObj.Common.Views.AppObjItemView.extend({
       __name: 'UserProfile',
       template: _.template(require('text!js/apps/user/profile/templates/profile.html'), { variable: 'data' }),
 
@@ -17,5 +17,5 @@ define(function(require) {
     });
   });
 
-  return PF.UserApp.Profile.Views;
+  return AppObj.UserApp.Profile.Views;
 });

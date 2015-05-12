@@ -1,10 +1,10 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/common/filtering_wrapper_collection');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/common/filtering_wrapper_collection');
 
-  PF.module('Entities', function(Entities, PF, Backbone, Marionette, $, _) {
+  AppObj.module('Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     /**
      * Returns a collection decorated with filtering functionality, does not need to be called with 'new'
      *
@@ -141,5 +141,5 @@ define(function(require) {
     };
   });
 
-  return PF.Entities;
+  return AppObj.Entities;
 });

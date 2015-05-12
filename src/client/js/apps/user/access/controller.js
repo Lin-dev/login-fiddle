@@ -1,13 +1,13 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/user/access/controller');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/user/access/controller');
 
-  PF.module('UserApp.Access', function(Access, PF, Backbone, Marionette, $, _) {
+  AppObj.module('UserApp.Access', function(Access, AppObj, Backbone, Marionette, $, _) {
     function proc_local_login(form_data, access_view, trigger_after_login) {
       // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
-      var ula = new PF.UserApp.Entities.UserLocalAccess({
+      var ula = new AppObj.UserApp.Entities.UserLocalAccess({
         email: form_data.email,
         has_pw_flag: form_data.has_pw_flag,
         password: form_data.password
@@ -19,7 +19,7 @@ define(function(require) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_local_login - /api/user/access/local/login response -- ' +
               'succeess, redirecting to profile');
-            PF.trigger(trigger_after_login);
+            AppObj.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
             logger.debug('private.proc_local_login - /api/user/access/local/login response -- ' +
@@ -40,7 +40,7 @@ define(function(require) {
     }
 
     function proc_local_signup(form_data, signup_view, trigger_after_login) {
-      var uls = new PF.UserApp.Entities.UserLocalSignup({
+      var uls = new AppObj.UserApp.Entities.UserLocalSignup({
         email: form_data.email,
         email_check: form_data.email_check,
         password: form_data.password,
@@ -53,7 +53,7 @@ define(function(require) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
               'succeess, redirecting to profile');
-            PF.trigger(trigger_after_login);
+            AppObj.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
             logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
@@ -78,8 +78,8 @@ define(function(require) {
         logger.trace('UserApp.Access.controller.show_access_form -- enter');
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
-        var access_view = new Views.AccessForm({ model: new PF.Entities.PFClientOnlyModel() });
-        access_view.on('home-clicked', function() { PF.trigger('home:show'); });
+        var access_view = new Views.AccessForm({ model: new AppObj.Entities.AppObjClientOnlyModel() });
+        access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
         access_view.on('local-access-submitted', function local_access_submitted(form_data) {
           require('js/apps/user/entities');
 
@@ -87,24 +87,24 @@ define(function(require) {
             proc_local_login(form_data, access_view, trigger_after_login);
           }
           else if(form_data.has_pw_flag === 'false') { // show the signup form
-            var uls = new PF.UserApp.Entities.UserLocalSignup({ email: form_data.email });
+            var uls = new AppObj.UserApp.Entities.UserLocalSignup({ email: form_data.email });
             var signup_view = new Views.SignupForm({ model: uls });
-            signup_view.on('home-clicked', function() { PF.trigger('home:show'); });
-            signup_view.on('login-clicked', function() { PF.trigger('user:login'); });
+            signup_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
+            signup_view.on('login-clicked', function() { AppObj.trigger('user:login'); });
             signup_view.on('local-signup-submitted', function(form_data) {
               proc_local_signup(form_data, signup_view, trigger_after_login);
             });
-            PF.region_main.show(signup_view);
+            AppObj.region_main.show(signup_view);
           }
           else {
             logger.error('UserApp.Access.controller.show_access_form - local-access-submitted callback -- ' +
               'unknown has_pw_flag: ' + form_data.has_pw_flag);
           }
         });
-        PF.region_main.show(access_view);
+        AppObj.region_main.show(access_view);
       }
     };
   });
 
-  return PF.UserApp.Access.controller;
+  return AppObj.UserApp.Access.controller;
 });

@@ -1,14 +1,14 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/user/access/views');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/user/access/views');
 
-  PF.module('UserApp.Access.Views', function(Views, PF, Backbone, Marionette, $, _) {
+  AppObj.module('UserApp.Access.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     require('js/common/views');
 
     /** @type {Object} View for a single form supporting account login or creation (user selected) */
-    Views.AccessForm = PF.Common.Views.PFItemView.extend({
+    Views.AccessForm = AppObj.Common.Views.AppObjItemView.extend({
       __name: 'AccessForm',
       template: _.template(require('text!js/apps/user/access/templates/access.html'), { variable: 'data' }),
 
@@ -94,7 +94,7 @@ define(function(require) {
     });
 
     /** @type {Object} View for inputting info needed for local account creation */
-    Views.SignupForm = PF.Common.Views.PFItemView.extend({
+    Views.SignupForm = AppObj.Common.Views.AppObjItemView.extend({
       __name: 'SignupForm',
       template: _.template(require('text!js/apps/user/access/templates/signup.html'), { variable: 'data' }),
 
@@ -145,5 +145,5 @@ define(function(require) {
     });
   });
 
-  return PF.UserApp.Access.Views;
+  return AppObj.UserApp.Access.Views;
 });

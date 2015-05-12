@@ -1,33 +1,33 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/user/profile/controller');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/user/profile/controller');
 
-  PF.module('UserApp.Profile', function(Profile, PF, Backbone, Marionette, $, _) {
+  AppObj.module('UserApp.Profile', function(Profile, AppObj, Backbone, Marionette, $, _) {
     Profile.controller = {
       show_user_profile: function() {
-        if(PF.is_logged_in()) {
-          var up_promise = PF.request('userapp:entities:userprofile');
+        if(AppObj.is_logged_in()) {
+          var up_promise = AppObj.request('userapp:entities:userprofile');
           up_promise.then(function(up) {
-            logger.debug('PF.UserApp.Profile.contoller.show_user_profile -- showing: ' + JSON.stringify(up));
+            logger.debug('AppObj.UserApp.Profile.contoller.show_user_profile -- showing: ' + JSON.stringify(up));
             var Views = require('js/apps/user/profile/views');
             var view = new Views.UserProfile({ model: up });
             view.on('logout-clicked', function() {
               logger.debug('Logging out');
               $.get('/api/user/logout', function(resp_data, textStatus, jqXhr) {
-                PF.trigger('home:show');
+                AppObj.trigger('home:show');
               });
             });
-            PF.region_main.show(view);
+            AppObj.region_main.show(view);
           });
         }
         else {
-          PF.trigger('user:access', 'user:profile');
+          AppObj.trigger('user:access', 'user:profile');
         }
       }
     };
   });
 
-  return PF.UserApp.Profile.controller;
+  return AppObj.UserApp.Profile.controller;
 });

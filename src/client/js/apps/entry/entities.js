@@ -2,24 +2,24 @@ define(function(require) {
   'use strict';
 
   var q = require('q');
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/entry/entities');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/entry/entities');
 
-  PF.module('EntryApp.Entities', function(Entities, PF, Backbone, Marionette, $, _) {
+  AppObj.module('EntryApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
-    Entities.Entry = PF.Entities.PFDatabaseModel.extend({
+    Entities.Entry = AppObj.Entities.AppObjDatabaseModel.extend({
       __name: 'Entry',
       urlRoot: '/api/entry/entry'
     });
 
-    Entities.EntryCollection = PF.Entities.PFDatabaseCollection.extend({
+    Entities.EntryCollection = AppObj.Entities.AppObjDatabaseCollection.extend({
       __name: 'EntryCollection',
       url: '/api/entry/entry',
       model: Entities.Entry
     });
 
-    Entities.Tag = PF.Entities.PFDatabaseModel.extend({
+    Entities.Tag = AppObj.Entities.AppObjDatabaseModel.extend({
       __name: 'Tag',
       urlRoot: '/api/entry/tag',
       initialize: function() {
@@ -27,7 +27,7 @@ define(function(require) {
       }
     });
 
-    Entities.TagCollection = PF.Entities.PFDatabaseCollection.extend({
+    Entities.TagCollection = AppObj.Entities.AppObjDatabaseCollection.extend({
       __name: 'TagCollection',
       url: '/api/entry/tag',
       model: Entities.Tag,
@@ -62,11 +62,11 @@ define(function(require) {
       }
     };
 
-    PF.reqres.setHandler('entryapp:entities:entries', function(tag_string) {
+    AppObj.reqres.setHandler('entryapp:entities:entries', function(tag_string) {
       return API.get_entries_promise(tag_string);
     });
 
-    PF.reqres.setHandler('entryapp:entities:tags', function() {
+    AppObj.reqres.setHandler('entryapp:entities:tags', function() {
       return API.get_tags_promise();
     });
   });

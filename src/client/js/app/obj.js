@@ -5,26 +5,26 @@ define(function(require) {
   var Marionette = require('marionette');
 
   // Set up app object
-  var PF = new Marionette.Application();
-  PF.config = require('js/app/config');
-  PF.logger = require('js/app/logger_builder')(PF.config.logger);
-  var logger = PF.logger.get('root/js/app/obj');
-  logger.debug('require:lambda -- entered, PF built, config loaded, logger initialised');
+  var AppObj = new Marionette.Application();
+  AppObj.config = require('js/app/config');
+  AppObj.logger = require('js/app/logger_builder')(AppObj.config.logger);
+  var logger = AppObj.logger.get('root/js/app/obj');
+  logger.debug('require:lambda -- entered, AppObj built, config loaded, logger initialised');
 
   // Set up regions
-  PF.addRegions({
+  AppObj.addRegions({
     'region_navbar': 'div#region_navbar',
     'region_main': 'div#region_main',
     'region_footer': 'div#region_footer'
   });
 
   // Routing helpers
-  PF.navigate = function(route, options) {
+  AppObj.navigate = function(route, options) {
     options = options || {};
     Backbone.history.navigate(route, options);
   };
 
-  PF.get_current_route = function() {
+  AppObj.get_current_route = function() {
     return Backbone.history.fragment;
   };
 
@@ -33,7 +33,7 @@ define(function(require) {
    * @return {Boolean} True if the user is logged in and the Server server_config.logged_in_cookie_name === 'true',
    *                   false otherwise
    */
-  PF.is_logged_in = function() {
+  AppObj.is_logged_in = function() {
     require('jquery_cookie');
     /* global $: false */
     // $ is defined by requiring jquery_cookie so ignore following line in jshint:
@@ -41,29 +41,29 @@ define(function(require) {
   };
 
   // Log all events at trace
-  PF.on('all', function(event_string) {
-    var events_logger = PF.logger.get('root/events_logger');
-    events_logger.trace('PF.event -- events logger: ' + event_string);
+  AppObj.on('all', function(event_string) {
+    var events_logger = AppObj.logger.get('root/events_logger');
+    events_logger.trace('AppObj.event -- events logger: ' + event_string);
   });
 
   // Set application to start after initialisation
-  PF.on('start', function(options) {
-    logger.trace('PF.event - start -- enter');
+  AppObj.on('start', function(options) {
+    logger.trace('AppObj.event - start -- enter');
     if(Backbone.history) {
       Backbone.history.start({ // assume router already required elsewhere, e.g. in main.js
         pushState: true
       });
 
       if(Backbone.history.fragment === '') {
-        PF.trigger('home:show');
+        AppObj.trigger('home:show');
       }
     }
     else {
       logger.error('Backbone.history is falsey: ' + Backbone.history);
     }
-    logger.trace('PF.event - start -- exit');
+    logger.trace('AppObj.event - start -- exit');
   });
 
-  logger.debug('require:lambda -- exited, PF regions and on-start listener initialised');
-  return PF;
+  logger.debug('require:lambda -- exited, AppObj regions and on-start listener initialised');
+  return AppObj;
 });

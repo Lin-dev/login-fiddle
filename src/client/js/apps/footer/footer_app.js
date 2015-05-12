@@ -1,12 +1,12 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/footer/footer_app');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/footer/footer_app');
   logger.trace('require:lambda -- enter');
 
-  PF.module('FooterApp', function(FooterApp, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
+  AppObj.module('FooterApp', function(FooterApp, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
     var API = {
       show_footer: function() {
         logger.trace('FooterApp - API.show_footer -- enter');
@@ -21,9 +21,9 @@ define(function(require) {
       API.show_footer();
       logger.trace('FooterApp.event - start -- exit');
     });
-    logger.trace('PF.module -- exit');
+    logger.trace('AppObj.module -- exit');
   });
 
   logger.trace('require:lambda -- exit');
-  return PF.FooterApp;
+  return AppObj.FooterApp;
 });

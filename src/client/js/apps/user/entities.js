@@ -4,8 +4,8 @@ define(function(require) {
   var q = require('q');
   var validator = require('validator');
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/user/entities');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/user/entities');
 
   /**
    * Member methods provide common validation functionality, each member method takes the value to be tested and
@@ -25,15 +25,15 @@ define(function(require) {
     }
   };
 
-  PF.module('UserApp.Entities', function(Entities, PF, Backbone, Marionette, $, _) {
+  AppObj.module('UserApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
     /**
      * Represents a local access form submission (email and possibly a password), They are client side only and used
      * because they are used for client-side validation only. There is no reqres handler because they're so simple
-     * and should be referenced directly via the PF object.
+     * and should be referenced directly via the AppObj object.
      */
-    Entities.UserLocalAccess = PF.Entities.PFClientOnlyModel.extend({
+    Entities.UserLocalAccess = AppObj.Entities.AppObjClientOnlyModel.extend({
       __name: 'UserLocalAccess',
 
       validate: function(attrs, options) {
@@ -49,9 +49,9 @@ define(function(require) {
     /**
      * Represents a local signup form submission (email, email_check, password, password_check). They are client side
      * only because they are used for client-side validation only. There is no reqres handler because they're so simple
-     * and should be referenced directly via the PF object.
+     * and should be referenced directly via the AppObj object.
      */
-    Entities.UserLocalSignup = PF.Entities.PFClientOnlyModel.extend({
+    Entities.UserLocalSignup = AppObj.Entities.AppObjClientOnlyModel.extend({
       __name: 'UserLocalSignup',
 
       validate: function(attrs, options) {
@@ -72,7 +72,7 @@ define(function(require) {
      * Represents the information on a user profile - used for reading, updating and deleting the user profile but
      * not for creation
      */
-    Entities.UserProfile = PF.Entities.PFDatabaseModel.extend({
+    Entities.UserProfile = AppObj.Entities.AppObjDatabaseModel.extend({
       __name: 'UserProfile',
       urlRoot: '/api/user/user',
       sync: function(method, model, options) {
@@ -98,10 +98,10 @@ define(function(require) {
       }
     };
 
-    PF.reqres.setHandler('userapp:entities:userprofile', function() {
+    AppObj.reqres.setHandler('userapp:entities:userprofile', function() {
       return API.get_user_profile_promise();
     });
   });
 
-  return PF.UserApp.Entities;
+  return AppObj.UserApp.Entities;
 });

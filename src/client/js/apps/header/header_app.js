@@ -1,12 +1,12 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/header/header_app');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/header/header_app');
   logger.trace('require:lambda -- enter');
 
-  PF.module('HeaderApp', function(HeaderApp, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
+  AppObj.module('HeaderApp', function(HeaderApp, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
     var API = {
       show_header: function() {
         logger.trace('API.show_header -- enter');
@@ -16,7 +16,7 @@ define(function(require) {
       },
     };
 
-    PF.commands.setHandler('headerapp:set_active_navitem', function(url) {
+    AppObj.commands.setHandler('headerapp:set_active_navitem', function(url) {
       HeaderApp.Show.controller.set_active_navitem(url);
     });
 
@@ -25,9 +25,9 @@ define(function(require) {
       API.show_header();
       logger.trace('HeaderApp.event - start -- exit');
     });
-    logger.trace('PF.module -- exit');
+    logger.trace('AppObj.module -- exit');
   });
 
   logger.trace('require:lambda -- exit');
-  return PF.HeaderApp;
+  return AppObj.HeaderApp;
 });

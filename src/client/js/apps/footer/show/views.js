@@ -1,20 +1,20 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/footer/show/view');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/footer/show/view');
   logger.trace('require:lambda -- enter');
 
-  PF.module('FooterApp.Show.Views', function(Views, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
+  AppObj.module('FooterApp.Show.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
     require('js/common/views');
 
-    Views.Footer = PF.Common.Views.PFItemView.extend({
+    Views.Footer = AppObj.Common.Views.AppObjItemView.extend({
       template: _.template(require('text!js/apps/footer/show/templates/footer.html')),
     });
-    logger.trace('PF.module -- exit');
+    logger.trace('AppObj.module -- exit');
   });
 
   logger.trace('require:lambda -- exit');
-  return PF.FooterApp.Show.Views;
+  return AppObj.FooterApp.Show.Views;
 });

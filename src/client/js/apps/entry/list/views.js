@@ -1,15 +1,15 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/entry/list/view');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/entry/list/view');
   logger.trace('require:lambda -- enter');
 
-  PF.module('EntryApp.List.Views', function(Views, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
+  AppObj.module('EntryApp.List.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
     require('js/common/views');
 
-    Views.Tag = PF.Common.Views.PFItemView.extend({
+    Views.Tag = AppObj.Common.Views.AppObjItemView.extend({
       __name: 'Tag',
       template: _.template(require('text!js/apps/entry/list/templates/tag.html')),
       tagName: 'li',
@@ -19,14 +19,14 @@ define(function(require) {
       }
     });
 
-    Views.Tags = PF.Common.Views.PFCompositeView.extend({
+    Views.Tags = AppObj.Common.Views.AppObjCompositeView.extend({
       __name: 'Tags',
       template: _.template(require('text!js/apps/entry/list/templates/tags.html')),
       childView: Views.Tag,
       childViewContainer: 'ul.js-tag-items'
     });
 
-    Views.Entry = PF.Common.Views.PFItemView.extend({
+    Views.Entry = AppObj.Common.Views.AppObjItemView.extend({
       __name: 'Entry',
       template: _.template(require('text!js/apps/entry/list/templates/entry.html')),
       tagName: 'li',
@@ -36,14 +36,14 @@ define(function(require) {
       }
     });
 
-    Views.Entries = PF.Common.Views.PFCompositeView.extend({
+    Views.Entries = AppObj.Common.Views.AppObjCompositeView.extend({
       __name: 'Entries',
       template: _.template(require('text!js/apps/entry/list/templates/entries.html')),
       childView: Views.Entry,
       childViewContainer: 'ul.js-entry-items'
     });
 
-    Views.ListLayout = PF.Common.Views.PFLayout.extend({
+    Views.ListLayout = AppObj.Common.Views.AppObjLayout.extend({
       __name: 'ListLayout',
       template: _.template(require('text!js/apps/entry/list/templates/list_layout.html')),
       regions: {
@@ -52,9 +52,9 @@ define(function(require) {
       }
     });
 
-    logger.trace('PF.module -- exit');
+    logger.trace('AppObj.module -- exit');
   });
 
   logger.trace('require:lambda -- exit');
-  return PF.EntryApp.List.Views;
+  return AppObj.EntryApp.List.Views;
 });

@@ -1,10 +1,10 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/session/session_app');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/session/session_app');
 
-  PF.module('SessionApp', function(SessionApp, PF, Backbone, Marionette, $, _) {
+  AppObj.module('SessionApp', function(SessionApp, AppObj, Backbone, Marionette, $, _) {
     SessionApp.Router = Marionette.AppRouter.extend({
       appRoutes: {
         'session': 'show_session_info'
@@ -15,18 +15,18 @@ define(function(require) {
       show_session_info: function() {
         var controller = require('js/apps/session/show/controller');
         controller.show_session_info();
-        PF.execute('headerapp:set_active_navitem', 'session');
+        AppObj.execute('headerapp:set_active_navitem', 'session');
       },
     };
 
-    PF.on('session:show', function() {
-      logger.trace('PF.event - session:show -- enter');
-      PF.navigate('session');
+    AppObj.on('session:show', function() {
+      logger.trace('AppObj.event - session:show -- enter');
+      AppObj.navigate('session');
       API.show_session_info();
-      logger.trace('PF.event - session:show -- exit');
+      logger.trace('AppObj.event - session:show -- exit');
     });
 
-    PF.addInitializer(function(){
+    AppObj.addInitializer(function(){
       (function() {
         return new SessionApp.Router({
           controller: API
@@ -35,5 +35,5 @@ define(function(require) {
     });
   });
 
-  return PF.SessionApp;
+  return AppObj.SessionApp;
 });

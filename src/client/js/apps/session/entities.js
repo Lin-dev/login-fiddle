@@ -2,13 +2,13 @@ define(function(require) {
   'use strict';
 
   var q = require('q');
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/session/entities');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/session/entities');
 
-  PF.module('SessionApp.Entities', function(Entities, PF, Backbone, Marionette, $, _) {
+  AppObj.module('SessionApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
-    Entities.SessionInfo = PF.Entities.PFDatabaseModel.extend({
+    Entities.SessionInfo = AppObj.Entities.AppObjDatabaseModel.extend({
       __name: 'SessionInfo',
       urlRoot: '/api/session/session'
     });
@@ -26,7 +26,7 @@ define(function(require) {
       }
     };
 
-    PF.reqres.setHandler('sessionapp:entities:info', function() {
+    AppObj.reqres.setHandler('sessionapp:entities:info', function() {
       return API.get_session_info_promise();
     });
   });

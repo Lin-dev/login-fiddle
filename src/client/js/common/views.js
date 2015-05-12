@@ -1,19 +1,19 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/common/views');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/common/views');
   logger.trace('require:lambda -- enter');
 
-  PF.module('Common.Views', function(Views, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
-    Views.PFItemView = Marionette.ItemView.extend({ __name: 'PFItemView' });
-    Views.PFCollectionView = Marionette.CollectionView.extend({ __name: 'PFCollectionView' });
-    Views.PFCompositeView = Marionette.CompositeView.extend({ __name: 'PFCompositeView' });
-    Views.PFLayout = Marionette.LayoutView.extend({ __name: 'PFLayout' });
-    Views.PFRegion = Marionette.Region.extend({ __name: 'PFRegion' });
-    logger.trace('PF.module -- exit');
+  AppObj.module('Common.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
+    Views.AppObjItemView = Marionette.ItemView.extend({ __name: 'AppObjItemView' });
+    Views.AppObjCollectionView = Marionette.CollectionView.extend({ __name: 'AppObjCollectionView' });
+    Views.AppObjCompositeView = Marionette.CompositeView.extend({ __name: 'AppObjCompositeView' });
+    Views.AppObjLayout = Marionette.LayoutView.extend({ __name: 'AppObjLayout' });
+    Views.AppObjRegion = Marionette.Region.extend({ __name: 'AppObjRegion' });
+    logger.trace('AppObj.module -- exit');
   });
   logger.trace('require:lambda -- exit');
-  return PF.Common.Views;
+  return AppObj.Common.Views;
 });
