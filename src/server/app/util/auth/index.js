@@ -103,7 +103,8 @@ module.exports = {
       return next();
     }
     else {
-      res.status(401).redirect('/login');
+      // Don't redirect - this is just an API call so redirects if unauthenticated should be checked/happen client side
+      res.status(403).end(); // slightly weird use of 403 but sending something back makes debugging easier
     }
   },
 
@@ -113,6 +114,7 @@ module.exports = {
       return next();
     }
     else {
+      // Don't redirect - this is just an API call so redirects if authenticated should be checked/happen client side
       res.status(403).end();
     }
   }
