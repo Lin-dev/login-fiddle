@@ -167,7 +167,7 @@ define(function(require) {
       _.each(this.appenders, function(appender) {
         appender.temp_only(log_entry);
       });
-    }
+    };
     // END PUBLIC FUNCTIONS
 
     // CONFIGURE OBJECT
