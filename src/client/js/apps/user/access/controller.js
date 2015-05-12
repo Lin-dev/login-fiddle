@@ -5,7 +5,7 @@ define(function(require) {
   var logger = PF.logger.get('root/js/apps/user/access/controller');
 
   PF.module('UserApp.Access', function(Access, PF, Backbone, Marionette, $, _) {
-    function proc_local_login(form_data, access_view) {
+    function proc_local_login(form_data, access_view, trigger_after_login) {
       // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
       var ula = new PF.UserApp.Entities.UserLocalAccess({
         email: form_data.email,
@@ -19,7 +19,7 @@ define(function(require) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_local_login - /api/user/access/local/login response -- ' +
               'succeess, redirecting to profile');
-            PF.trigger('user:profile');
+            PF.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
             logger.debug('private.proc_local_login - /api/user/access/local/login response -- ' +
@@ -39,7 +39,7 @@ define(function(require) {
       }
     }
 
-    function proc_local_signup(form_data, signup_view) {
+    function proc_local_signup(form_data, signup_view, trigger_after_login) {
       var uls = new PF.UserApp.Entities.UserLocalSignup({
         email: form_data.email,
         email_check: form_data.email_check,
@@ -53,7 +53,7 @@ define(function(require) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
               'succeess, redirecting to profile');
-            PF.trigger('user:profile');
+            PF.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
             logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
@@ -74,7 +74,7 @@ define(function(require) {
     }
 
     Access.controller = {
-      show_access_form: function() {
+      show_access_form: function(trigger_after_login) {
         logger.trace('UserApp.Access.controller.show_access_form -- enter');
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
@@ -84,14 +84,16 @@ define(function(require) {
           require('js/apps/user/entities');
 
           if(form_data.has_pw_flag === 'true') { // attempt a login using email / password
-            proc_local_login(form_data, access_view);
+            proc_local_login(form_data, access_view, trigger_after_login);
           }
           else if(form_data.has_pw_flag === 'false') { // show the signup form
             var uls = new PF.UserApp.Entities.UserLocalSignup({ email: form_data.email });
             var signup_view = new Views.SignupForm({ model: uls });
             signup_view.on('home-clicked', function() { PF.trigger('home:show'); });
             signup_view.on('login-clicked', function() { PF.trigger('user:login'); });
-            signup_view.on('local-signup-submitted', function(form_data) { proc_local_signup(form_data, signup_view); });
+            signup_view.on('local-signup-submitted', function(form_data) {
+              proc_local_signup(form_data, signup_view, trigger_after_login);
+            });
             PF.region_main.show(signup_view);
           }
           else {

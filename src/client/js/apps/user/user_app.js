@@ -13,10 +13,10 @@ define(function(require) {
     });
 
     var API = {
-      show_access_form: function() {
+      show_access_form: function(trigger_after_login) {
         logger.trace('API.show_access_form -- enter');
         var controller = require('js/apps/user/access/controller');
-        controller.show_access_form();
+        controller.show_access_form(trigger_after_login);
         PF.execute('headerapp:set_active_navitem', 'user');
       },
 
@@ -28,9 +28,9 @@ define(function(require) {
       }
     };
 
-    PF.on('user:access', function() {
+    PF.on('user:access', function(trigger_after_login) {
       PF.navigate('access');
-      API.show_access_form();
+      API.show_access_form(trigger_after_login);
     });
 
     PF.on('user:profile', function() {
