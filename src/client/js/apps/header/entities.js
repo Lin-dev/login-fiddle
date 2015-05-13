@@ -8,7 +8,7 @@ define(function(require) {
   AppObj.module('HeaderApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
-    Entities.NavItem = AppObj.Entities.AppObjClientOnlyModel.extend({
+    Entities.NavItem = AppObj.Entities.ClientModel.extend({
       __name: 'NavItem',
       initialize: function() {
         logger.trace('NavItem.initialize -- enter w/ url: ' + this.get('url'));

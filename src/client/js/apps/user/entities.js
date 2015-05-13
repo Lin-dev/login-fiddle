@@ -33,7 +33,7 @@ define(function(require) {
      * because they are used for client-side validation only. There is no reqres handler because they're so simple
      * and should be referenced directly via the AppObj object.
      */
-    Entities.UserLocalAccess = AppObj.Entities.AppObjClientOnlyModel.extend({
+    Entities.UserLocalAccess = AppObj.Entities.ClientModel.extend({
       __name: 'UserLocalAccess',
 
       validate: function(attrs, options) {
@@ -51,7 +51,7 @@ define(function(require) {
      * only because they are used for client-side validation only. There is no reqres handler because they're so simple
      * and should be referenced directly via the AppObj object.
      */
-    Entities.UserLocalSignup = AppObj.Entities.AppObjClientOnlyModel.extend({
+    Entities.UserLocalSignup = AppObj.Entities.ClientModel.extend({
       __name: 'UserLocalSignup',
 
       validate: function(attrs, options) {
@@ -72,7 +72,7 @@ define(function(require) {
      * Represents the information on a user profile - used for reading, updating and deleting the user profile but
      * not for creation
      */
-    Entities.UserProfile = AppObj.Entities.AppObjDatabaseModel.extend({
+    Entities.UserProfile = AppObj.Entities.ServerModel.extend({
       __name: 'UserProfile',
       urlRoot: '/api/user/user',
       sync: function(method, model, options) {

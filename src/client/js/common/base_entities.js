@@ -9,21 +9,21 @@ define(function(require) {
     logger.trace('AppObj.module -- enter');
     require('js/common/backbone_extensions');
 
-    Entities.AppObjDatabaseModel = Backbone.Model.extend({ __name: 'AppObjDatabaseModel' });
+    Entities.ServerModel = Backbone.Model.extend({ __name: 'ServerModel' });
     Entities.AppObjDatabaseCollection = Backbone.Collection.extend({ __name: 'AppObjDatabaseCollection' });
 
     // Base class for model which represent client-only data, i.e. not directly fetched or saved to server
-    Entities.AppObjClientOnlyModel = Backbone.Model.extend({ __name: 'AppObjClientOnlyModel' });
-    Entities.AppObjClientOnlyModel.prototype.sync = function() {
-      logger.warn('Entities.AppObjClientOnlyModel.sync called, method does nothing and returns null');
+    Entities.ClientModel = Backbone.Model.extend({ __name: 'ClientModel' });
+    Entities.ClientModel.prototype.sync = function() {
+      logger.warn('Entities.ClientModel.sync called, method does nothing and returns null');
       return null;
     };
-    Entities.AppObjClientOnlyModel.prototype.fetch = function() {
-      logger.warn('Entities.AppObjClientOnlyModel.fetch called, method does nothing and returns null');
+    Entities.ClientModel.prototype.fetch = function() {
+      logger.warn('Entities.ClientModel.fetch called, method does nothing and returns null');
       return null;
     };
-    Entities.AppObjClientOnlyModel.prototype.save = function() {
-      logger.warn('Entities.AppObjClientOnlyModel.save called, method does nothing and returns null');
+    Entities.ClientModel.prototype.save = function() {
+      logger.warn('Entities.ClientModel.save called, method does nothing and returns null');
       return null;
     };
 

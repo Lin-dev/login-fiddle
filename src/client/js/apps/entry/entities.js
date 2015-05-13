@@ -8,7 +8,7 @@ define(function(require) {
   AppObj.module('EntryApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
-    Entities.Entry = AppObj.Entities.AppObjDatabaseModel.extend({
+    Entities.Entry = AppObj.Entities.ServerModel.extend({
       __name: 'Entry',
       urlRoot: '/api/entry/entry'
     });
@@ -19,7 +19,7 @@ define(function(require) {
       model: Entities.Entry
     });
 
-    Entities.Tag = AppObj.Entities.AppObjDatabaseModel.extend({
+    Entities.Tag = AppObj.Entities.ServerModel.extend({
       __name: 'Tag',
       urlRoot: '/api/entry/tag',
       initialize: function() {

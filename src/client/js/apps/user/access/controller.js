@@ -78,7 +78,7 @@ define(function(require) {
         logger.trace('UserApp.Access.controller.show_access_form -- enter');
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
-        var access_view = new Views.AccessForm({ model: new AppObj.Entities.AppObjClientOnlyModel() });
+        var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel() });
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
         access_view.on('local-access-submitted', function local_access_submitted(form_data) {
           require('js/apps/user/entities');
