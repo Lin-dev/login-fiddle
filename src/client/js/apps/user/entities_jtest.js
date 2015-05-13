@@ -9,7 +9,6 @@ describe('user/entities', function() {
         valid_email: 'valid@valid.com',
         invalid_email: 'invalid @valid.com',
         valid_password: '12341234a',
-        invalid_char_password: '_123asdfas4',
         invalid_short_password: '123abc'
       };
       done();
@@ -29,16 +28,6 @@ describe('user/entities', function() {
 
     user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, has_pw_flag: 'true' });
     validationErrors = user.validate(user.attributes);
-    expect(validationErrors['password']).toBeDefined();
-  });
-
-  it('requires password to be alphanumeric if defined', function() {
-    var user = new this.Entities.UserLocalAccess({
-      email: this.data.valid_email,
-      has_pw_flag: 'true',
-      password: this.data.invalid_char_password
-    });
-    var validationErrors = user.validate(user.attributes);
     expect(validationErrors['password']).toBeDefined();
   });
 
