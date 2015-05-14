@@ -62,5 +62,5 @@ define(function(require) {
     });
   });
 
-  return undefined;
+  return AppObj.HeaderApp.Entities;
 });

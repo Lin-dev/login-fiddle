@@ -45,5 +45,5 @@ define(function(require) {
   });
 
   logger.trace('require:lambda -- exit');
-  return undefined;
+  return AppObj.Entities;
 });

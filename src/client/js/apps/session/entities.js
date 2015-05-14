@@ -30,4 +30,6 @@ define(function(require) {
       return API.get_session_info_promise();
     });
   });
+
+  return AppObj.SessionApp.Entities;
 });

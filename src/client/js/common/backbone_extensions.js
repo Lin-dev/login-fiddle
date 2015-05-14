@@ -5,6 +5,8 @@
  * The .module() call references the Entities module but no new members are assigned. The changes to Backbone are
  * executed via an IIFE.
  *
+ * The define returns undefined because it alters the global Backbone object
+ *
  * Based on:
  * - http://stackoverflow.com/a/15034014/1149568
  * - http://stackoverflow.com/a/14869218/1149568
