@@ -35,27 +35,8 @@ define(function(require) {
    * @param {Object} options Required and possible properties are String:level Array[String]:appenders, String:group
    */
   var Logger = function(options) {
-    // PRIVATE FUNCTIONS
+    // PRIVATE FIELDS AND FUNCTIONS
     var that = this;
-
-    /**
-     * Converts level string from logger config into Log4js enum. Valid strings (case insensitive) are: all. trace,
-     * debug, info, warn, error, fatal
-     */
-    var parse_level = function(level_string) {
-      var levels = {
-        all:   0,
-        trace: 100,
-        debug: 200,
-        info:  300,
-        warn:  400,
-        error: 500,
-        fatal: 600,
-        off:   9999
-      };
-      if(levels[level_string.toLowerCase()] !== undefined) { return levels[level_string.toLowerCase()]; }
-      else { throw new Error('Unknown log level string: ' + level_string); }
-    };
 
     /**
      * Returns an appropriate appender object for an appender string from a logger config. Valid strings (case
@@ -75,107 +56,133 @@ define(function(require) {
       }
       return appender_objects;
     };
+    // END PRIVATE FUNCTIONS
 
-    var assemble_log_entry = function(message, level_string) {
+    // PUBLIC PRIVILEGED METHODS
+    /**
+     * Converts level string from logger config into Log4js enum. Valid strings (case insensitive) are: all. trace,
+     * debug, info, warn, error, fatal
+     */
+    this.parse_level = function(level_string) {
+      var levels = {
+        all:   0,
+        trace: 100,
+        debug: 200,
+        info:  300,
+        warn:  400,
+        error: 500,
+        fatal: 600,
+        off:   9999
+      };
+      if(levels[level_string.toLowerCase()] !== undefined) { return levels[level_string.toLowerCase()]; }
+      else { throw new Error('Unknown log level string: ' + level_string); }
+    };
+
+    /**
+     * Build log message string based on message and log-level
+     * @param  {String} message      The message to be logged
+     * @param  {String} level_string A log level string, e.g. trace, info, fatal
+     * @return {String}              The assembled log message string
+     */
+    this.assemble_log_entry = function(message, level_string) {
       var timestamp = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
       return timestamp + ' ' + level_string.toUpperCase() + ' [' + that.group + '] ' + message;
     };
-    // END PRIVATE FUNCTIONS
+    // END PUBLIC PRIVILEGED METHODS
 
-    // PUBLIC PRIVILEGED FUNCTIONS
-    // TODO: Refactor so that these methos are on the prototype, not the instance
-    this.is_trace_enabled = function() {
-      return this.log_level <= parse_level('trace');
-    };
-
-    this.trace = function(message) {
-      if(this.is_trace_enabled()) {
-        var log_entry = assemble_log_entry(message, 'trace');
-        _.each(this.appenders, function(appender) {
-          appender.trace(log_entry);
-        });
-      }
-    };
-
-    this.is_debug_enabled = function() {
-      return this.log_level <= parse_level('debug');
-    };
-
-    this.debug = function(message) {
-      if(this.is_debug_enabled()) {
-        var log_entry = assemble_log_entry(message, 'debug');
-        _.each(this.appenders, function(appender) {
-          appender.debug(log_entry);
-        });
-      }
-    };
-
-    this.is_info_enabled = function() {
-      return this.log_level <= parse_level('info');
-    };
-
-    this.info = function(message) {
-      if(this.is_info_enabled()) {
-        var log_entry = assemble_log_entry(message, 'info');
-        _.each(this.appenders, function(appender) {
-          appender.info(log_entry);
-        });
-      }
-    };
-
-    this.is_warn_enabled = function() {
-      return this.log_level <= parse_level('warn');
-    };
-
-    this.warn = function(message) {
-      if(this.is_warn_enabled()) {
-        var log_entry = assemble_log_entry(message, 'warn');
-        _.each(this.appenders, function(appender) {
-          appender.warn(log_entry);
-        });
-      }
-    };
-
-    this.is_error_enabled = function() {
-      return this.log_level <= parse_level('error');
-    };
-
-    this.error = function(message) {
-      if(this.is_error_enabled()) {
-        var log_entry = assemble_log_entry(message, 'error');
-        _.each(this.appenders, function(appender) {
-          appender.error(log_entry);
-        });
-      }
-    };
-
-    this.is_fatal_enabled = function() {
-      return this.log_level <= parse_level('fatal');
-    };
-
-    this.fatal = function(message) {
-      if(this.is_fatal_enabled()) {
-        var log_entry = assemble_log_entry(message, 'fatal');
-        _.each(this.appenders, function(appender) {
-          appender.fatal(log_entry);
-        });
-      }
-    };
-
-    this.temp_only = function(message) {
-      var log_entry = assemble_log_entry(message, 'temp-only');
-      _.each(this.appenders, function(appender) {
-        appender.temp_only(log_entry);
-      });
-    };
-    // END PUBLIC FUNCTIONS
-
-    // CONFIGURE OBJECT
+    // CONFIGURE OBJECT, PUBLIC FIELDS
     this.group = options.group;
-    this.log_level = parse_level(options.level);
     this.appenders = parse_appenders(options.appenders);
+    this.log_level = this.parse_level(options.level);
     // END CONFIGURE OBJECT
   };
+
+  // PUBLIC-ACCESSIBLE, UNPRIVILEGED METHODS ON THE PROTOTYPE
+  Logger.prototype.is_trace_enabled = function() {
+    return this.log_level <= this.parse_level('trace');
+  };
+
+  Logger.prototype.trace = function(message) {
+    if(this.is_trace_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'trace');
+      _.each(this.appenders, function(appender) {
+        appender.trace(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_debug_enabled = function() {
+    return this.log_level <= this.parse_level('debug');
+  };
+
+  Logger.prototype.debug = function(message) {
+    if(this.is_debug_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'debug');
+      _.each(this.appenders, function(appender) {
+        appender.debug(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_info_enabled = function() {
+    return this.log_level <= this.parse_level('info');
+  };
+
+  Logger.prototype.info = function(message) {
+    if(this.is_info_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'info');
+      _.each(this.appenders, function(appender) {
+        appender.info(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_warn_enabled = function() {
+    return this.log_level <= this.parse_level('warn');
+  };
+
+  Logger.prototype.warn = function(message) {
+    if(this.is_warn_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'warn');
+      _.each(this.appenders, function(appender) {
+        appender.warn(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_error_enabled = function() {
+    return this.log_level <= this.parse_level('error');
+  };
+
+  Logger.prototype.error = function(message) {
+    if(this.is_error_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'error');
+      _.each(this.appenders, function(appender) {
+        appender.error(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_fatal_enabled = function() {
+    return this.log_level <= this.parse_level('fatal');
+  };
+
+  Logger.prototype.fatal = function(message) {
+    if(this.is_fatal_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'fatal');
+      _.each(this.appenders, function(appender) {
+        appender.fatal(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.temp_only = function(message) {
+    var log_entry = this.assemble_log_entry(message, 'temp-only');
+    _.each(this.appenders, function(appender) {
+      appender.temp_only(log_entry);
+    });
+  };
+  // END PUBLIC-ACCESSIBLE, UNPRIVILEGED METHODS ON THE PROTOYPE
 
 
 
