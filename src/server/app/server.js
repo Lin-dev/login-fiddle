@@ -90,9 +90,9 @@ function configure_app_middleware(app) {
   }));
   app.use(auth_module.passport.initialize());
   app.use(auth_module.passport.session());
-  app.use(auth_module.middleware.set_client_auth_status_cookie);
+  app.use(auth_module.mw.set_client_auth_status_cookie);
   app.use(connect_flash());
-  app.use(auth_module.middleware.set_session_start_date);
+  app.use(auth_module.mw.set_session_start_date);
 
   // (5) Server dynamic routes
   app.use('/api', require('app/api/router'));
