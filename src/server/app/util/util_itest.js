@@ -16,12 +16,8 @@ describe('app/util - exported methods', function() {
 
   it('app/util/auth/index - expected methods found', function() {
     var name = 'app/util/auth/index';
-    var module = require(name);
+    //var module = require(name);
     num_funcs[name] = 0;
-    module.ensure_authenticated.should.be.a.function;
-    num_funcs[name]++;
-    module.ensure_unauthenticated.should.be.a.function;
-    num_funcs[name]++;
   });
 
   it('app/util/logger/index - expected methods found', function() {
@@ -73,9 +69,11 @@ describe('app/util - exported properties', function() {
     num_nonfuncs[name] = 0;
     module.passport.should.be.an.Object;
     num_nonfuncs[name]++;
-    module.middleware.should.be.an.Object;
-    module.middleware.set_client_auth_status_cookie.should.be.a.function;
-    module.middleware.set_session_start_date.should.be.a.function;
+    module.mw.should.be.an.Object;
+    module.mw.ensure_auth.should.be.a.function;
+    module.mw.ensure_unauth.should.be.a.function;
+    module.mw.set_client_auth_status_cookie.should.be.a.function;
+    module.mw.set_session_start_date.should.be.a.function;
     num_nonfuncs[name]++;
   });
 

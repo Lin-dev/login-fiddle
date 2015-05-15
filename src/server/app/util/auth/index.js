@@ -98,7 +98,38 @@ passport.use('local-login', new LocalStrategy({
 module.exports = {
   passport: passport,
 
-  middleware: {
+  /**
+   * Middleware relating to authentication
+   */
+  mw: {
+    /**
+     * Call next if the requester is authenticated otherwise send 403
+     */
+    ensure_auth: function ensure_auth(req, res, next) {
+      logger.debug('exports.mw.ensure_auth - isAuthenticated: ' + req.isAuthenticated());
+      if (req.isAuthenticated()) {
+        return next();
+      }
+      else {
+        // Don't redirect - this is just an API call so redirects if unauthenticated should be checked/happen client side
+        res.status(403).end(); // slightly weird use of 403 but sending something back makes debugging easier
+      }
+    },
+
+    /**
+     * Call next if the requester is unauthenticated otherwise send 403
+     */
+    ensure_unauth: function ensure_unauth(req, res, next) {
+      logger.debug('exports.mw.ensure_unauth - isUnauthenticated: ' + req.isUnauthenticated());
+      if (req.isUnauthenticated()) {
+        return next();
+      }
+      else {
+        // Don't redirect - this is just an API call so redirects if authenticated should be checked/happen client side
+        res.status(403).end();
+      }
+    },
+
     /**
      * Middleware that sets a client-visible cookie if a user is logged in, this allows the client-side app to respond
       * intelligently to requests for views that require the user to be logged in (or not).
@@ -118,28 +149,6 @@ module.exports = {
         req.session.start = new Date();
       }
       next();
-    }
-  },
-
-  ensure_authenticated: function ensure_authenticated(req, res, next) {
-    logger.debug('exports.ensure_authenticated - isAuthenticated: ' + req.isAuthenticated());
-    if (req.isAuthenticated()) {
-      return next();
-    }
-    else {
-      // Don't redirect - this is just an API call so redirects if unauthenticated should be checked/happen client side
-      res.status(403).end(); // slightly weird use of 403 but sending something back makes debugging easier
-    }
-  },
-
-  ensure_unauthenticated: function ensure_authenticated(req, res, next) {
-    logger.debug('exports.ensure_unauthenticated - isUnauthenticated: ' + req.isUnauthenticated());
-    if (req.isUnauthenticated()) {
-      return next();
-    }
-    else {
-      // Don't redirect - this is just an API call so redirects if authenticated should be checked/happen client side
-      res.status(403).end();
     }
   }
 };
