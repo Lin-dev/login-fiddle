@@ -19,11 +19,17 @@ define(function(require) {
   });
 
   // Routing helpers
+  /**
+   * Updates the URL in the address bar - wraps Backbone.history.navigate
+   */
   AppObj.navigate = function(route, options) {
     options = options || {};
     Backbone.history.navigate(route, options);
   };
 
+  /**
+   * Returns current routing fragment - wraps Backbone.history.fragment
+   */
   AppObj.get_current_route = function() {
     return Backbone.history.fragment;
   };
