@@ -20,8 +20,15 @@ define(function(require) {
 
     /** Checks a password field that is required / not optional */
     password: function(password_string) {
-      return validator.isLength(password_string, 8) ? undefined :
-        'Passwords must be at least 8 characters long (letters and numbers only)';
+      if(!validator.isLength(password_string, 8)) {
+        return 'Passwords must be at least 8 characters long';
+      }
+      else if(!validator.isLength(password_string, 8, 256)) {
+        return 'Passwords maximum length is 256 characters';
+      }
+      else {
+        return undefined;
+      }
     }
   };
 
