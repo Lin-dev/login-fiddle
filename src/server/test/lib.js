@@ -28,7 +28,7 @@ module.exports = {
    * @return {Array}      Array of String with the relative paths to the files in dir
    */
   js_app_files_not_router_in_dir: function(dir) {
-    return glob.sync(dir + '/**/*.js').filter(is_application_file).filter(function(filename) {
+    return this.js_app_files_in_dir(dir).filter(function(filename) {
       return !/.*\/router.js/.test(filename);
     });
   },
