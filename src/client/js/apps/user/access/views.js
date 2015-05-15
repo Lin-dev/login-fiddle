@@ -8,8 +8,9 @@ define(function(require) {
     require('js/common/views');
 
     /** @type {Object} View for a single form supporting account login or creation (user selected) */
-    Views.AccessForm = AppObj.Common.Views.AppObjItemView.extend({
+    Views.AccessForm = AppObj.Common.Views.AppObjFormItemView.extend({
       __name: 'AccessForm',
+      __form_element_id_prefix: 'user-access-',
       template: _.template(require('text!js/apps/user/access/templates/access.html'), { variable: 'data' }),
 
       triggers: {
@@ -39,28 +40,7 @@ define(function(require) {
       // Class methods
       initialize: function() {
         this.current_has_pw_flag = true; // label text clicks gen 2 events so if-gate DOM changes based on them
-      },
-
-      show_validation_errors: function(validation_errors) {
-        var $view = this.$el;
-        /** Remove all error messages added to form */
-        var clear_form_errors = function(){
-          var $form = $view.find('form');
-          $form.find('.js-validation-message').each(function(){
-            $(this).remove();
-          });
-          $form.find('.form-group.has-error').each(function(){
-            $(this).removeClass('has-error');
-          });
-        };
-        /** Add error message `value` to form for field `key` */
-        var mark_error = function(value, key){
-          var $form_group = $view.find('#user-access-' + key).parent();
-          var $errorEl = $('<span>', {class: 'js-validation-message help-block', text: value});
-          $form_group.append($errorEl).addClass('has-error');
-        };
-        clear_form_errors();
-        _.each(validation_errors, mark_error);
+        AppObj.Common.Views.AppObjFormItemView.prototype.initialize.call(this);
       },
 
       // Event handlers
@@ -94,8 +74,9 @@ define(function(require) {
     });
 
     /** @type {Object} View for inputting info needed for local account creation */
-    Views.SignupForm = AppObj.Common.Views.AppObjItemView.extend({
+    Views.SignupForm = AppObj.Common.Views.AppObjFormItemView.extend({
       __name: 'SignupForm',
+      __form_element_id_prefix: 'user-signup-',
       template: _.template(require('text!js/apps/user/access/templates/signup.html'), { variable: 'data' }),
 
       triggers: {
@@ -109,28 +90,6 @@ define(function(require) {
 
       modelEvents: {
         'change': 'render'
-      },
-
-      show_validation_errors: function(validation_errors) {
-        var $view = this.$el;
-        /** Remove all error messages added to form */
-        var clear_form_errors = function(){
-          var $form = $view.find('form');
-          $form.find('.js-validation-message').each(function(){
-            $(this).remove();
-          });
-          $form.find('.form-group.has-error').each(function(){
-            $(this).removeClass('has-error');
-          });
-        };
-        /** Add error message `value` to form for field `key` */
-        var mark_error = function(value, key){
-          var $form_group = $view.find('#user-signup-' + key).parent();
-          var $errorEl = $('<span>', {class: 'js-validation-message help-block', text: value});
-          $form_group.append($errorEl).addClass('has-error');
-        };
-        clear_form_errors();
-        _.each(validation_errors, mark_error);
       },
 
       // Event handlers
