@@ -19,6 +19,7 @@ describe('app/api - exported methods', function() {
     var module = require(name);
     num_funcs[name] = 0;
     module.inject_pr_into_router_impl.should.be.a.function;
+    num_funcs[name]++;
   });
 
   it('app/api/entry/router_impl - expected methods found', function() {

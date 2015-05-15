@@ -87,7 +87,7 @@ module.exports = {
       js_files.forEach(function(js_file) {
         var req_path = js_file.replace(/\.\/src\/server\//, '').replace(/\.js$/, '');
         should(comp_map[req_path]).not.be.type('undefined', req_path + ' ' + export_type_string + ' not checked');
-        if(comp_map[req_path]) {
+        if(comp_map[req_path] !== undefined) {
           var nf_tested = comp_map[req_path];
           var nf_in_module = comp_func(req_path);
           nf_tested.should.equal(nf_in_module,
