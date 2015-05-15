@@ -90,22 +90,9 @@ function configure_app_middleware(app) {
   }));
   app.use(auth_module.passport.initialize());
   app.use(auth_module.passport.session());
-  app.use(function(req, res, next) {
-    // TODO - temp refresh of logged in status, factor this out somewhere
-    // Middleware that sets a client-visible cookie if a user is logged in, this allows the client-side app to respond
-    // intelligently to requests for views that require the user to be logged in (or not).
-    if(req.isAuthenticated()) {
-      res.cookie(server_config.logged_in_cookie_name, 'true', { maxAge:  server_config.session.cookie.maxAge });
-    }
-    next();
-  });
+  app.use(auth_module.middleware.set_client_auth_status_cookie);
   app.use(connect_flash());
-  app.use(function(req, res, next) { // TODO - temp init of session, factor this out somewhere
-    if(!req.session.start) {
-      req.session.start = new Date();
-    }
-    next();
-  });
+  app.use(auth_module.middleware.set_session_start_date);
 
   // (5) Server dynamic routes
   app.use('/api', require('app/api/router'));

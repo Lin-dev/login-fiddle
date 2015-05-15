@@ -73,6 +73,10 @@ describe('app/util - exported properties', function() {
     num_nonfuncs[name] = 0;
     module.passport.should.be.an.Object;
     num_nonfuncs[name]++;
+    module.middleware.should.be.an.Object;
+    module.middleware.set_client_auth_status_cookie.should.be.a.function;
+    module.middleware.set_session_start_date.should.be.a.function;
+    num_nonfuncs[name]++;
   });
 
   it('app/util/logger/index - expected properties found', function() {

@@ -6,6 +6,7 @@ var q = require('q');
 var LocalStrategy = require('passport-local').Strategy;
 
 var pr = require('app/util/pr');
+var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/util/auth/index');
 
@@ -96,6 +97,29 @@ passport.use('local-login', new LocalStrategy({
 
 module.exports = {
   passport: passport,
+
+  middleware: {
+    /**
+     * Middleware that sets a client-visible cookie if a user is logged in, this allows the client-side app to respond
+      * intelligently to requests for views that require the user to be logged in (or not).
+    */
+    set_client_auth_status_cookie: function set_logged_in_cookie_if_authenticated(req, res, next) {
+      if(req.isAuthenticated()) {
+        res.cookie(server_config.logged_in_cookie_name, 'true', { maxAge:  server_config.session.cookie.maxAge });
+      }
+      next();
+    },
+
+    /**
+     * Initialise session with start date
+     */
+    set_session_start_date: function set_session_start_date(req, res, next) {
+      if(!req.session.start) {
+        req.session.start = new Date();
+      }
+      next();
+    }
+  },
 
   ensure_authenticated: function ensure_authenticated(req, res, next) {
     logger.debug('exports.ensure_authenticated - isAuthenticated: ' + req.isAuthenticated());
