@@ -35,8 +35,8 @@ passport.deserializeUser(function(id, done) {
  * passport.js local-signup strategy
  */
 passport.use('local-signup', new LocalStrategy({
-  usernameField: 'email',
-  passwordField: 'password',
+  usernameField: user_config.local_auth.username_field,
+  passwordField: user_config.local_auth.password_field,
   passReqToCallback: true
 }, function(req, email, password, done) {
   // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
@@ -76,8 +76,8 @@ passport.use('local-signup', new LocalStrategy({
  * passport.js local-login strategy
  */
 passport.use('local-login', new LocalStrategy({
-  usernameField: 'email',
-  passwordField: 'password',
+  usernameField: user_config.local_auth.username_field,
+  passwordField: user_config.local_auth.password_field,
   passReqToCallback: true
 }, function(req, email, password, done) {
   q(pr.pr.auth.user.find({

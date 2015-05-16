@@ -4,6 +4,10 @@
  * User and user-session specific configuration
  */
 module.exports = {
+  local_auth: {
+    username_field: 'email',
+    password_field: 'password'
+  },
   logged_in_cookie_name: 'logged_in',
   session: {
     cookie: {
