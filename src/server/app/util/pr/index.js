@@ -46,7 +46,7 @@ pr_module_files.forEach(function(pr_module_file) {
 
 // Define relationships across modules
 (function(pr) {
-  // When needed - define cross module model relationships here
+  // TODO When needed - define cross module model relationships here
 })(pr);
 
 // Export connection: { sq, pr(.modules.models) }

@@ -1,6 +1,7 @@
 'use strict';
 
 var auth = require('app/util/auth');
+var server_config = require('app/config/server');
 //var logger_module = require('app/util/logger');
 //var logger = logger_module.get('app/api/session/router_impl');
 
@@ -21,7 +22,6 @@ module.exports = {
    * is over)
    */
   logout: function(req, res, next) {
-    var server_config = require('app/config/server');
     req.logout();
     res.clearCookie(server_config.logged_in_cookie_name);
     req.session.destroy(function() {

@@ -43,7 +43,16 @@ https_server.listen(server_config.https_port, function() {
 });
 
 
-
+/**
+ * Sets up Express application middleware:
+ * - Logging
+ * - Request parsing
+ * - Static route serving
+ * - Cookies and sessions
+ * - Dynamic routes
+ * - Fall back to sending index.html if nothing else matches
+ * - Error handling (not appropriate for production)
+ */
 function configure_app_middleware(app) {
   var logger_config = require('app/config/logger');
 
@@ -94,7 +103,7 @@ function configure_app_middleware(app) {
   app.use(connect_flash());
   app.use(auth_module.mw.set_session_start_date);
 
-  // (5) Server dynamic routes
+  // (5) Serve dynamic routes
   app.use('/api', require('app/api/router'));
 
   // (6) Fall back

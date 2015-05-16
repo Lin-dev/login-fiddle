@@ -10,13 +10,17 @@ var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/util/auth/index');
 
-
+/**
+ * Serialise user id only to session
+ */
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
 
+/**
+ * Read all user information from the main database to populate the session info
+ */
 passport.deserializeUser(function(id, done) {
-  // TODO - check if it is in redis, if it is read fro there, otherwise store there
   q(pr.pr.auth.user.find(id))
   .then(function(user) {
     done(undefined, user);
@@ -27,6 +31,9 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+/**
+ * passport.js local-signup strategy
+ */
 passport.use('local-signup', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
@@ -65,6 +72,9 @@ passport.use('local-signup', new LocalStrategy({
   });
 }));
 
+/**
+ * passport.js local-login strategy
+ */
 passport.use('local-login', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
@@ -143,6 +153,7 @@ module.exports = {
 
     /**
      * Initialise session with start date
+     * TODO This is not required - just used in session api example/fiddle
      */
     set_session_start_date: function set_session_start_date(req, res, next) {
       if(!req.session.start) {
