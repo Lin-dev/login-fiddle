@@ -35,18 +35,18 @@ module.exports = {
    * @type {Function}
    */
   access_local_login: auth.passport.authenticate('local-login', {
-      successRedirect: '/api/util/success',
-      failureRedirect: '/api/util/failure',
-      failureFlash: true
-    }),
+    successRedirect: '/api/util/success',
+    failureRedirect: '/api/util/failure',
+    failureFlash: true
+  }),
 
   /**
    * Handles requests for local access account signup
    * @type {Function}
    */
   access_local_signup: auth.passport.authenticate('local-signup', {
-      successRedirect: '/api/util/success',
-      failureRedirect: '/api/util/failure',
-      failureFlash: true
-    })
+    successRedirect: '/api/util/success',
+    failureRedirect: '/api/util/failure',
+    failureFlash: true
+  })
 };
