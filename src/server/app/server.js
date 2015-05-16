@@ -18,6 +18,7 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 
 var server_config = require('app/config/server');
+var user_config = require('app/config/user');
 var auth_module = require('app/util/auth');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/server');
@@ -84,17 +85,17 @@ function configure_app_middleware(app) {
   // (4) Cookies and sessions
   app.use(session({
     cookie: {
-      maxAge: server_config.session.cookie.maxAge,
-      secure: server_config.session.cookie.secure
+      maxAge: user_config.session.cookie.maxAge,
+      secure: user_config.session.cookie.secure
     },
-    resave: server_config.session.resave,
-    rolling: server_config.session.rolling,
+    resave: user_config.session.resave,
+    rolling: user_config.session.rolling,
     saveUninitialized: false,
-    secret: server_config.session.secret,
+    secret: user_config.session.secret,
     store: new RedisStore({
-      host: server_config.session.store.host,
-      port: server_config.session.store.port,
-      db: server_config.session.store.db
+      host: user_config.session.store.host,
+      port: user_config.session.store.port,
+      db: user_config.session.store.db
     })
   }));
   app.use(auth_module.passport.initialize());

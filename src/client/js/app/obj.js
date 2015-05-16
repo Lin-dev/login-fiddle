@@ -36,7 +36,7 @@ define(function(require) {
 
   /**
    * Checks if a user is logged in (according to the cookies sent by the server)
-   * @return {Boolean} True if the user is logged in and the Server server_config.logged_in_cookie_name === 'true',
+   * @return {Boolean} True if the user is logged in and the Server user_config.logged_in_cookie_name === 'true',
    *                   false otherwise
    */
   AppObj.is_logged_in = function() {

@@ -6,7 +6,7 @@ var q = require('q');
 var LocalStrategy = require('passport-local').Strategy;
 
 var pr = require('app/util/pr');
-var server_config = require('app/config/server');
+var user_config = require('app/config/user');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/util/auth/index');
 
@@ -146,7 +146,7 @@ module.exports = {
     */
     set_client_auth_status_cookie: function set_logged_in_cookie_if_authenticated(req, res, next) {
       if(req.isAuthenticated()) {
-        res.cookie(server_config.logged_in_cookie_name, 'true', { maxAge:  server_config.session.cookie.maxAge });
+        res.cookie(user_config.logged_in_cookie_name, 'true', { maxAge: user_config.session.cookie.maxAge });
       }
       next();
     },

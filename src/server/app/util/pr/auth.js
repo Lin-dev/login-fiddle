@@ -2,7 +2,7 @@
 
 var bcrypt = require('bcrypt');
 
-var server_config = require('app/config/server');
+var user_config = require('app/config/user');
 
 module.exports = function(sequelize, DataTypes) {
   var models = {
@@ -39,7 +39,7 @@ module.exports = function(sequelize, DataTypes) {
          * @return {String}                   The hashed password
          */
         hash_password: function(unhashed_password) {
-          return bcrypt.hashSync(unhashed_password, bcrypt.genSaltSync(server_config.salt_rounds));
+          return bcrypt.hashSync(unhashed_password, bcrypt.genSaltSync(user_config.salt_rounds));
         }
       },
 

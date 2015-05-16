@@ -1,7 +1,7 @@
 'use strict';
 
 var auth = require('app/util/auth');
-var server_config = require('app/config/server');
+var user_config = require('app/config/user');
 //var logger_module = require('app/util/logger');
 //var logger = logger_module.get('app/api/session/router_impl');
 
@@ -23,7 +23,7 @@ module.exports = {
    */
   logout: function(req, res, next) {
     req.logout();
-    res.clearCookie(server_config.logged_in_cookie_name);
+    res.clearCookie(user_config.logged_in_cookie_name);
     req.session.destroy(function() {
       // No req.flash message because we just destroyed the session: req.flash('message', 'Logged out');
       res.redirect('/api/util/success');
