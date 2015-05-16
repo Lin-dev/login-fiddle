@@ -127,8 +127,8 @@ function configure_app_middleware(app) {
  */
 function create_https_server() {
   var https_creds = {
-    key: fs.readFileSync(path.join(server_config.security_dir, 'lv-key.pem')),
-    cert: fs.readFileSync(path.join(server_config.security_dir, 'lv-cert.pem'))
+    key: fs.readFileSync(path.join(server_config.security_dir, 'key.pem')),
+    cert: fs.readFileSync(path.join(server_config.security_dir, 'cert.pem'))
   };
   var app = express();
   configure_app_middleware(app);
