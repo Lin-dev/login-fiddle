@@ -75,7 +75,7 @@ define(function(require) {
 
     Access.controller = {
       show_access_form: function(trigger_after_login) {
-        logger.trace('UserApp.Access.controller.show_access_form -- enter');
+        logger.trace('show_access_form -- enter');
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
         var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel() });
@@ -86,19 +86,28 @@ define(function(require) {
           if(form_data.has_pw_flag === 'true') { // attempt a login using email / password
             proc_local_login(form_data, access_view, trigger_after_login);
           }
-          else if(form_data.has_pw_flag === 'false') { // show the signup form
-            var uls = new AppObj.UserApp.Entities.UserLocalSignup({ email: form_data.email });
-            var signup_view = new Views.SignupForm({ model: uls });
-            signup_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
-            signup_view.on('login-clicked', function() { AppObj.trigger('user:login'); });
-            signup_view.on('local-signup-submitted', function(form_data) {
-              proc_local_signup(form_data, signup_view, trigger_after_login);
-            });
-            AppObj.region_main.show(signup_view);
+          else if(form_data.has_pw_flag === 'false') { // show the signup form if email address valid
+            var email_validation = new AppObj.UserApp.Entities.UserLocalAccess();
+            var validation_errors = email_validation.validate(form_data);
+            if(_.isEmpty(validation_errors)) {
+              var uls = new AppObj.UserApp.Entities.UserLocalSignup({ email: form_data.email });
+              var signup_view = new Views.SignupForm({ model: uls });
+              signup_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
+              signup_view.on('login-clicked', function() { AppObj.trigger('user:login'); });
+              signup_view.on('local-signup-submitted', function(form_data) {
+                proc_local_signup(form_data, signup_view, trigger_after_login);
+              });
+              AppObj.region_main.show(signup_view);
+            }
+            else {
+              logger.debug('show_access_form -- user form validation failed: invalid email address for signup' +
+                JSON.stringify(validation_errors));
+              access_view.show_validation_errors(validation_errors);
+            }
           }
           else {
-            logger.error('UserApp.Access.controller.show_access_form - local-access-submitted callback -- ' +
-              'unknown has_pw_flag: ' + form_data.has_pw_flag);
+            logger.error('show_access_form - local-access-submitted callback -- ' + 'unknown has_pw_flag: ' +
+              form_data.has_pw_flag);
           }
         });
         AppObj.region_main.show(access_view);
