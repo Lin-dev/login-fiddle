@@ -3,10 +3,13 @@
 var bcrypt = require('bcrypt');
 
 var user_config = require('app/config/user');
+var logger_module = require('app/util/logger');
+var logger = logger_module.get('app/util/pr/auth');
 
 module.exports = function(sequelize, DataTypes) {
   var models = {
     user: sequelize.define('user', {
+      // Common
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -53,7 +56,8 @@ module.exports = function(sequelize, DataTypes) {
          * @return {Boolean}                   True if the unhashed_password hash matches the stored hash
          */
         check_password: function(unhashed_password) {
-          return bcrypt.compareSync(unhashed_password, this.password);
+          logger.trace('Checking ' + unhashed_password + ' against DB hash');
+          return bcrypt.compareSync(unhashed_password, this.local_password);
         }
       }
     })

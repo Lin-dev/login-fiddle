@@ -58,7 +58,7 @@ passport.use('local-signup', new LocalStrategy({
         })
         .fail(function(error) {
           // DB or validation error - do not distinguish validation or set flash because that is also done client side
-          logger.warn('local-signup callback for email ' + email + ' failed user creation: ' + error);
+          logger.warn('local-signup callback for ' + email + ' failed user creation: ' + error);
           return done(error, undefined, req.flash('message', 'Account creation failed'));
         });
       }
