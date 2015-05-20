@@ -15,7 +15,15 @@ define(function(require) {
   var val_checks = {
     /** Checks an email is correctly formatted */
     email: function(email_string) {
-      return validator.isEmail(email_string) ? undefined : 'Invalid email address format';
+      if(!validator.isEmail(email_string)) {
+        return 'Invalid email address format';
+      }
+      else if(!validator.isLength(email_string, 3, 254)) { // ensure agrees with value in server/app/config/user.js
+        return 'Maximum email address length is 254 characters';
+      }
+      else {
+        return undefined;
+      }
     },
 
     /** Checks a password field that is required / not optional */
@@ -24,7 +32,7 @@ define(function(require) {
         return 'Passwords must be at least 8 characters long';
       }
       else if(!validator.isLength(password_string, 8, 256)) {
-        return 'Passwords maximum length is 256 characters';
+        return 'Passwords maximum length is 256 characters'; // ensure agrees with value in server/app/config/user.js
       }
       else {
         return undefined;

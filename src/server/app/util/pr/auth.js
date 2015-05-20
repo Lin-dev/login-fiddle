@@ -17,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
       },
       // Local
       local_email: {
-        type: DataTypes.STRING(60),
+        type: DataTypes.STRING(user_config.local_auth.username_max_length),
         allowNull: false,
         unique: true,
         validate: {
@@ -25,13 +25,15 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
       local_password: {
-        type: DataTypes.STRING(60),
+        type: DataTypes.STRING(user_config.local_auth.password_max_length),
         allowNull: false,
         validate: {
           is: /^[A-Za-z0-9.\/$]+$/, // regex matches a bcrypt hash, which is how password is stored
           len: [60, 60]
         }
       }
+      // Facebook
+      // TODO
     }, {
       classMethods: {
         /**
