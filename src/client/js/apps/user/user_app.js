@@ -34,7 +34,7 @@ define(function(require) {
     });
 
     AppObj.on('user:profile', function() {
-      AppObj.navigate('user');
+      AppObj.navigate('profile');
       API.show_user_profile();
     });
 
