@@ -18,7 +18,7 @@ define(function(require) {
         $.post('/api/user/access/local/login', form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_local_login - /api/user/access/local/login response -- ' +
-              'succeess, redirecting to profile');
+              'succeess, redirecting to: ' + trigger_after_login);
             AppObj.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
@@ -52,7 +52,7 @@ define(function(require) {
         $.post('/api/user/access/local/signup', form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
-              'succeess, redirecting to profile');
+              'succeess, redirecting to: ' + trigger_after_login);
             AppObj.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
@@ -75,7 +75,10 @@ define(function(require) {
 
     Access.controller = {
       show_access_form: function(trigger_after_login) {
-        logger.trace('show_access_form -- enter');
+        logger.trace('show_access_form -- trigger_after_login: ' + trigger_after_login);
+        if(trigger_after_login === undefined) {
+          trigger_after_login = 'home:show';
+        }
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
         var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel() });
