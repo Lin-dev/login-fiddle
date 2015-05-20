@@ -34,7 +34,7 @@ define(function(require) {
       },
 
       ui: {
-        'password_input': 'input#user-access-password'
+        'password_input': 'input#user-access-local-password'
       },
 
       // Class methods

@@ -16,36 +16,36 @@ describe('user/entities', function() {
   });
 
   it('requires valid email addresses', function() {
-    var user = new this.Entities.UserLocalAccess({ email: this.data.invalid_email });
+    var user = new this.Entities.UserLocalAccess({ local_email: this.data.invalid_email });
     var validationErrors = user.validate(user.attributes); // manual validate call
-    expect(validationErrors['email']).toBeDefined();
+    expect(validationErrors['local-email']).toBeDefined();
   });
 
   it('does not require password to be defined if has_pw_flag is false', function() {
-    var user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, has_pw_flag: 'false' });
+    var user = new this.Entities.UserLocalAccess({ local_email: this.data.valid_email, has_pw_flag: 'false' });
     var validationErrors = user.validate(user.attributes);
-    expect(validationErrors['password']).toBeUndefined();
+    expect(validationErrors['local-password']).toBeUndefined();
 
-    user = new this.Entities.UserLocalAccess({ email: this.data.valid_email, has_pw_flag: 'true' });
+    user = new this.Entities.UserLocalAccess({ local_email: this.data.valid_email, has_pw_flag: 'true' });
     validationErrors = user.validate(user.attributes);
-    expect(validationErrors['password']).toBeDefined();
+    expect(validationErrors['local-password']).toBeDefined();
   });
 
   it('requires password to be at least 8 characters long', function() {
     var user = new this.Entities.UserLocalAccess({
-      email: this.data.valid_email,
+      local_email: this.data.valid_email,
       has_pw_flag: 'true',
-      password: this.data.invalid_short_password
+      local_password: this.data.invalid_short_password
     });
     var validationErrors = user.validate(user.attributes);
-    expect(validationErrors['password']).toBeDefined();
+    expect(validationErrors['local-password']).toBeDefined();
   });
 
   it('validates with valid password and valid email', function() {
     var user = new this.Entities.UserLocalAccess({
-      email: this.data.valid_email,
+      local_email: this.data.valid_email,
       has_pw_flag: 'true',
-      password: this.data.valid_password
+      local_password: this.data.valid_password
     });
     var validationErrors = user.validate(user.attributes);
     expect(validationErrors).toEqual({});

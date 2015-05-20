@@ -5,8 +5,8 @@
  */
 module.exports = {
   local_auth: {
-    username_field: 'email',
-    password_field: 'password'
+    username_field: 'local_email',
+    password_field: 'local_password',
   },
   logged_in_cookie_name: 'logged_in',
   session: {

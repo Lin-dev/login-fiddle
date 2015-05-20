@@ -15,7 +15,8 @@ module.exports = function(sequelize, DataTypes) {
         },
         primaryKey: true
       },
-      email: {
+      // Local
+      local_email: {
         type: DataTypes.STRING(60),
         allowNull: false,
         unique: true,
@@ -23,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
           isEmail: true
         }
       },
-      password: {
+      local_password: {
         type: DataTypes.STRING(60),
         allowNull: false,
         validate: {

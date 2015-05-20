@@ -8,9 +8,9 @@ define(function(require) {
     function proc_local_login(form_data, access_view, trigger_after_login) {
       // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
       var ula = new AppObj.UserApp.Entities.UserLocalAccess({
-        email: form_data.email,
+        local_email: form_data.local_email,
         has_pw_flag: form_data.has_pw_flag,
-        password: form_data.password
+        local_password: form_data.local_password
       });
       var validation_errors = ula.validate(ula.attributes);
       if(_.isEmpty(validation_errors)) {
@@ -41,10 +41,10 @@ define(function(require) {
 
     function proc_local_signup(form_data, signup_view, trigger_after_login) {
       var uls = new AppObj.UserApp.Entities.UserLocalSignup({
-        email: form_data.email,
-        email_check: form_data.email_check,
-        password: form_data.password,
-        password_check: form_data.password_check
+        local_email: form_data.local_email,
+        local_email_check: form_data.local_email_check,
+        local_password: form_data.local_password,
+        local_password_check: form_data.local_password_check
       });
       var validation_errors = uls.validate(uls.attributes);
       if(_.isEmpty(validation_errors)) {
@@ -93,7 +93,7 @@ define(function(require) {
             var email_validation = new AppObj.UserApp.Entities.UserLocalAccess();
             var validation_errors = email_validation.validate(form_data);
             if(_.isEmpty(validation_errors)) {
-              var uls = new AppObj.UserApp.Entities.UserLocalSignup({ email: form_data.email });
+              var uls = new AppObj.UserApp.Entities.UserLocalSignup({ local_email: form_data.local_email });
               var signup_view = new Views.SignupForm({ model: uls });
               signup_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
               signup_view.on('login-clicked', function() { AppObj.trigger('user:login'); });

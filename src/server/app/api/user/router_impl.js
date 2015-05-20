@@ -11,7 +11,7 @@ module.exports = {
    */
   get_user: function(pr, req, res, next) {
     var result = {
-      email: req.user.email,
+      local_email: req.user.local_email,
       signup_date: req.user.sq_created_at
     };
     res.status(200).send(result);

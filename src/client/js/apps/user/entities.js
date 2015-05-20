@@ -45,9 +45,9 @@ define(function(require) {
 
       validate: function(attrs, options) {
         var errors = {};
-        errors['email'] = val_checks.email(attrs.email);
+        errors['local-email'] = val_checks.email(attrs.local_email);
         if(attrs.has_pw_flag === 'true') {
-          errors['password'] = val_checks.password(attrs.password);
+          errors['local-password'] = val_checks.password(attrs.local_password);
         }
         return _.pick(errors, _.identity); // remove undefined keys
       }
@@ -63,12 +63,12 @@ define(function(require) {
 
       validate: function(attrs, options) {
         var errors = {};
-        errors['email'] = val_checks.email(attrs.email);
-        errors['password'] = val_checks.password(attrs.password);
-        if(errors['email'] === undefined && attrs.email !== attrs.email_check) {
+        errors['local-email'] = val_checks.email(attrs.local_email);
+        errors['local-password'] = val_checks.password(attrs.local_password);
+        if(errors['local-email'] === undefined && attrs.local_email !== attrs.local_email_check) {
           errors['email-check'] = 'Email addresses must match';
         }
-        if(errors['password'] === undefined && attrs.password !== attrs.password_check) {
+        if(errors['local-password'] === undefined && attrs.local_password !== attrs.local_password_check) {
           errors['password-check'] = 'Passwords must match';
         }
         return _.pick(errors, _.identity); // remove undefined keys

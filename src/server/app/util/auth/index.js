@@ -41,15 +41,17 @@ passport.use('local-signup', new LocalStrategy({
 }, function(req, email, password, done) {
   // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
   process.nextTick(function() {
+    var where_object = {};
+    where_object[user_config.local_auth.username_field] = email;
     q(pr.pr.auth.user.find({
-      where: { email: email }
+      where: where_object
     }))
     .then(function(user) {
       if(user === null) { // email not found, create the user
-        q(pr.pr.auth.user.create({
-          email: email,
-          password: pr.pr.auth.user.hash_password(password)
-        }))
+        var user_attrs = {};
+        user_attrs[user_config.local_auth.username_field] = email;
+        user_attrs[user_config.local_auth.password_field] = pr.pr.auth.user.hash_password(password);
+        q(pr.pr.auth.user.create(user_attrs))
         .then(function(user) {
           logger.info('local-signup user created: ' + email);
           return done(null, user);
@@ -80,8 +82,10 @@ passport.use('local-login', new LocalStrategy({
   passwordField: user_config.local_auth.password_field,
   passReqToCallback: true
 }, function(req, email, password, done) {
+  var where_object = {};
+  where_object[user_config.local_auth.username_field] = email;
   q(pr.pr.auth.user.find({
-    where: { email: email }
+    where: where_object
   }))
   .then(function(user) {
     if(user !== null) {
