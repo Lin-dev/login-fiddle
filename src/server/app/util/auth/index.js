@@ -2,6 +2,7 @@
 
 var passport = require('passport');
 var q = require('q');
+var _ = require('underscore');
 
 var LocalStrategy = require('passport-local').Strategy;
 
@@ -111,6 +112,28 @@ passport.use('local-login', new LocalStrategy({
 
 module.exports = {
   passport: passport,
+
+  /**
+   * Middleware generator functions relating to authentication
+   */
+  mw_gen: {
+    /**
+     * Generates a middleware function that checks req.body has keys for all strings in required_fields, an array
+     * TODO: Is this middleware general? Should it be moved into some sort of general middleware library?
+     * @param  {Array} required_fields An array of strings
+     * @return {Function}              A middleware function that can be passed to an Express router
+     */
+    check_post_has_req_fields: function check_post_has_req_fields(required_fields) {
+      return function(req, res, next) {
+        _.each(required_fields, function(req_field) {
+          if(req.body[req_field] === undefined) {
+            logger.warn('exports.mw_gen.check_post_has_req_fields -- Required post variable undefined: ' + req_field);
+          }
+        });
+        next();
+      };
+    }
+  },
 
   /**
    * Middleware relating to authentication

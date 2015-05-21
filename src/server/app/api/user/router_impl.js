@@ -1,9 +1,17 @@
 'use strict';
 
+var _ = require('underscore');
+
 var auth = require('app/util/auth');
 var user_config = require('app/config/user');
 //var logger_module = require('app/util/logger');
 //var logger = logger_module.get('app/api/session/router_impl');
+
+//var keys_required_for_login = [user_config.local_auth.username_field, user_config.local_auth.password_field];
+var keys_required_for_login = [user_config.local_auth.username_field, user_config.local_auth.password_field];
+var keys_required_for_signup = keys_required_for_login.concat(
+  _.map(keys_required_for_login, function(field) { return field + '_check'; })
+);
 
 module.exports = {
   /**
@@ -29,6 +37,18 @@ module.exports = {
       res.redirect('/api/util/success');
     });
   },
+
+  /**
+   * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
+   * fields expected by the authentication strategy for local login are present - log if not
+   */
+  access_local_check_login_post: auth.mw_gen.check_post_has_req_fields(keys_required_for_login),
+
+  /**
+   * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
+   * fields expected by the authentication strategy for local signup are present - log if not
+   */
+  access_local_check_login_signup: auth.mw_gen.check_post_has_req_fields(keys_required_for_signup),
 
   /**
    * Handles requests for local access account login
