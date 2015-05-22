@@ -4,6 +4,12 @@ define(function(require) {
   'use strict';
 
   var config = {
+    apps: {
+      user: {
+        password_min_length: 8,
+        password_max_length: 256
+      }
+    },
     logger: {
       root: {
         js: {
