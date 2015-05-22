@@ -44,9 +44,7 @@ passport.use('local-signup', new LocalStrategy({
   process.nextTick(function() {
     var where_object = {};
     where_object[user_config.local_auth.username_field] = email;
-    q(pr.pr.auth.user.find({
-      where: where_object
-    }))
+    q(pr.pr.auth.user.find({ where: where_object }))
     .then(function(user) {
       if(user === null) { // email not found, create the user
         var user_attrs = {};
@@ -85,9 +83,7 @@ passport.use('local-login', new LocalStrategy({
 }, function(req, email, password, done) {
   var where_object = {};
   where_object[user_config.local_auth.username_field] = email;
-  q(pr.pr.auth.user.find({
-    where: where_object
-  }))
+  q(pr.pr.auth.user.find({ where: where_object }))
   .then(function(user) {
     if(user !== null) {
       if(user.check_password(password)) {
