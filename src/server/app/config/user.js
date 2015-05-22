@@ -4,6 +4,11 @@
  * User and user-session specific configuration
  */
 module.exports = {
+  facebook_auth: {
+    client_id: 'facebook-application-id-goes-here',
+    client_secret: 'facebook-client-secret-goes-here',
+    callback_url: '/access/facebook/callback'
+  },
   local_auth: {
     username_field: 'local_email',
     username_max_length: 254, // ensure this agrees with value in client/js/apps/user/entities.js

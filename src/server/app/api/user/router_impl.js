@@ -39,6 +39,21 @@ module.exports = {
   },
 
   /**
+   * Initiates requests for Facebook authentication
+   * @type {Function}
+   */
+  access_facebook_auth: auth.passport.authenticate('facebook-auth', { scope: ['public_profile', 'email'] }),
+
+  /**
+   * Completes requests for Facebook authentication
+   * @type {[type]}
+   */
+  access_facebook_callback: auth.passport.authenticate('facebook-auth', {
+    successRedirect: '/app/util/success',
+    failureRedirect: '/app/util/failure'
+  }),
+
+  /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local login are present - log if not
    */

@@ -27,6 +27,7 @@ define(function(require) {
 
       events: {
         'click button.js-submit': 'submit_clicked',
+        'click button.js-facebook': 'facebook_clicked'
       },
 
       modelEvents: {
@@ -49,8 +50,14 @@ define(function(require) {
         event.preventDefault();
         var data = Backbone.Syphon.serialize(this);
         this.model.set(data, { silent: true });
-        logger.debug('local-access submitted with: ' + JSON.stringify(data));
+        logger.debug('submit_clicked with: ' + JSON.stringify(data));
         this.trigger('local-access-submitted', data);
+      },
+
+      facebook_clicked: function(event) {
+        event.preventDefault();
+        logger.debug('facebook_clicked');
+        this.trigger('facebook-access-clicked');
       },
 
       /**

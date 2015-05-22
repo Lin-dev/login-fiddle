@@ -4,6 +4,7 @@ var passport = require('passport');
 var q = require('q');
 var _ = require('underscore');
 
+var FacebookStrategy = require('passport-facebook').Strategy;
 var LocalStrategy = require('passport-local').Strategy;
 
 var pr = require('app/util/pr');
@@ -104,6 +105,47 @@ passport.use('local-login', new LocalStrategy({
     logger.error('local-login callback for ' + email + ' failed while loading user: ' + error);
     return done(error, undefined, req.flash('message', 'System error'));
   });
+}));
+
+passport.use('facebook-auth', new FacebookStrategy({
+  clientID: user_config.facebook_auth.client_id,
+  clientSecret: user_config.facebook_auth.client_secret,
+  callbackUrl: user_config.facebook_auth.callback_url
+}, function(token, refresh_token, profile, done) {
+  logger.error('FACEBOOK TOKEN:         ' + JSON.stringify(token) + ' -- type(' + typeof(token) +')');
+  logger.error('FACEBOOK REFRESH TOKEN: ' + JSON.stringify(refresh_token) + ' -- type(' + typeof(refresh_token) + ')');
+  logger.error('FACEBOOK PROFILE:       ' + JSON.stringify(profile) + ' -- type(' + typeof(profile) + ')');
+  /*
+  var where_object = {};
+  q(pr.pr.auth.user.find({ where: where_object }))
+  .then(function(user) {
+    if(user !== null) { // user found - log in
+      return done(null, user);
+    }
+    else { // user not found - create account
+      var user_attrs = {
+        facebook_id: profile.id,
+        facebook_token: token,
+        facebook_name: profile.name.givenName + ' ' + profile.name.familyName,
+        facebook_email: profile.emails[0].value
+      };
+      q(pr.pr.auth.user.create(user_attrs))
+      .then(function(user) {
+        logger.info('facebook-auth user created: ' + email);
+        return done(null, user);
+      })
+      .fail(function(error) {
+        // DB or validation error - do not distinguish validation or set flash because that is also done client side
+        logger.warn('facebook-auth callback for ' + email + ' failed user creation: ' + error);
+        return done(error, undefined, req.flash('message', 'Account creation failed'));
+      });
+    }
+  })
+  .fail(function(error) {
+    logger.error('facebook-auth callback for token ' + token + ' failed while loading user: ' + error);
+    returne done(error, undefined, req.flash('message', 'System error'));
+  });
+  */
 }));
 
 module.exports = {

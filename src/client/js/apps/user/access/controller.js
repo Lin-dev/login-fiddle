@@ -5,6 +5,14 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/apps/user/access/controller');
 
   AppObj.module('UserApp.Access', function(Access, AppObj, Backbone, Marionette, $, _) {
+    function proc_facebook_login() {
+      logger.trace('private.proc_facebook_login -- enter');
+      $.get('/api/user/access/facebook/auth', function(resp_data, textStatus, jqXhr) {
+        logger.debug('private.proc_facebook_login - /api/user/access/facebook/auth response -- ' +
+          'textStatus: ' + JSON.stringify(textStatus) + ' ' + JSON.stringify(resp_data));
+      });
+    }
+
     function proc_local_login(form_data, access_view, trigger_after_login) {
       // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
       var ula = new AppObj.UserApp.Entities.UserLocalAccess({
@@ -83,6 +91,7 @@ define(function(require) {
         // Model is needed in view so that view can be updated following if the post response is a failure
         var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel() });
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
+        access_view.on('facebook-access-clicked', function facebook_access_clicked() { proc_facebook_login(); });
         access_view.on('local-access-submitted', function local_access_submitted(form_data) {
           require('js/apps/user/entities');
 
