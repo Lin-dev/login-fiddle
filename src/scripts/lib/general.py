@@ -20,7 +20,7 @@ def prompt_for_confirm(prompt=None, resp=False):
   Create Directory? [n]|y: y
   True
 
-  Source: https://code.activestate.com/recipes/541096-prompt-the-user-for-confirmation/
+  Original source: https://code.activestate.com/recipes/541096-prompt-the-user-for-confirmation/
   '''
 
   if prompt is None:
@@ -32,15 +32,15 @@ def prompt_for_confirm(prompt=None, resp=False):
     prompt = '%s [%s]|%s: ' % (prompt, 'n', 'y')
 
   while True:
-    ans = raw_input(prompt)
+    ans = raw_input(prompt).lower()
     if not ans:
       return resp
-    if ans not in ['y', 'Y', 'n', 'N']:
-      print 'please enter y or n.'
+    if ans not in ['y', 'n', 'yes', 'no']:
+      print 'please enter yes or no.'
       continue
-    if ans == 'y' or ans == 'Y':
+    if ans == 'y' or ans == 'yes':
       return True
-    if ans == 'n' or ans == 'N':
+    if ans == 'n' or ans == 'no':
       return False
 
 
