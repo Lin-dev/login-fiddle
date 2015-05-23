@@ -2,6 +2,35 @@ import os as os
 import re as re
 import subprocess as subprocess
 
+def prompt_for_text(prompt='Data? ', default_string=None, validator_regexp_string='^.*$'):
+  '''
+  Prompts user for a response until they enter a valid value. Returns the users entered value except in the case of
+
+  Optionally, the caller can restrict the valid values which can be returned by specifying a regexp. In many cases
+  this regexp string should include the start of string and end of string anchors (^ and $, respectively).
+
+  prompt is assumed to include a trailing space or similar for user input UX
+
+  >>> prompt_for_text('What is your favorite colour?', 'red', '[a-zA-Z]+')
+    Prints: 'Do stuff? [red] '
+  >>> prompt_for_text('How old are you?', None, '\d+')
+    Prints: 'How old are you? '
+  '''
+  if default_string is not None:
+    prompt = prompt + '[' + default_string + '] '
+
+  if validator_regexp_string is None:
+    validator_regexp_string = '.*'
+
+  while True:
+    ans = raw_input(prompt).strip()
+    if not ans and default_string:
+      return default_string
+    if not re.match(validator_regexp_string, ans):
+      print '"' + ans + '" does not match allowed patterns'
+      continue
+    return ans
+
 def prompt_for_confirm(prompt=None, resp=False):
   '''
   prompts for yes or no response from the user. Returns True for yes and
