@@ -7,14 +7,13 @@ require('should');
 
 var user_config = require('app/config/user');
 
-// TODO - TEST IN HERE THAT user_config.facebook_auth.callback_url === '/access/facebook/callback'
-// this is to protect against changes to the callback URL but the hard coded URL in router.js not being updated
-
 describe('app/api/user/router', function() {
   describe('access', function() {
     it('has a faceback call URL of /access/facebook/callback', function() {
-      user_config.facebook_auth.callback_url.should.equal('/access/facebook/callback',
-        'The faceback_auth.callback_url is hard coded in app/api/user/router.js to /access/facebook/callback');
+      /\/api\/access\/facebook\/callback$/.test(user_config.facebook_auth.callback_url).should.equal(
+        true,
+        'The faceback_auth.callback_url in app/api/user/router.js expects /api/access/facebook/callback'
+      );
     });
   });
 });

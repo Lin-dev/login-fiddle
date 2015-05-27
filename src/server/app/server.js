@@ -107,8 +107,8 @@ function configure_app_middleware(app) {
   // (5) Serve dynamic routes
   app.use('/api', require('app/api/router'));
 
-  // (6) Fall back
-  app.use(function(req, res, next) { // Fall back to always sending index.html
+  // (6) Fall back to always sending index.html - it should handle 404's
+  app.use(function(req, res, next) {
     logger.debug('client request ' + req.originalUrl + ' (route: ' + JSON.stringify(req.route) +
       ') has fallen through to index.html catch');
     res.sendFile(path.join(server_config.client_root, 'index.html'));
@@ -116,7 +116,7 @@ function configure_app_middleware(app) {
 
   // (7) Error handling
   // TODO not appropriate for a prod site, see SES / http://calv.info/node-and-express-tips/ for another approach:
-  app.use(errorhandler());
+  app.use(errorhandler({ showStack: true, dumpExceptions: true }));
 }
 
 
