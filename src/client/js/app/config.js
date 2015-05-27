@@ -6,8 +6,8 @@ define(function(require) {
   var config = {
     apps: {
       user: {
-        password_min_length: 8,
-        password_max_length: 256
+        local_password_min_length: 8,
+        local_password_max_length: 256,
       }
     },
     logger: {

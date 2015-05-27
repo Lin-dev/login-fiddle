@@ -28,11 +28,11 @@ define(function(require) {
 
     /** Checks a password field that is required / not optional */
     password: function(password_string) {
-      if(!validator.isLength(password_string, AppObj.config.apps.user.password_min_length)) {
+      if(!validator.isLength(password_string, AppObj.config.apps.user.local_password_min_length)) {
         return 'Passwords must be at least 8 characters long';
       }
-      else if(!validator.isLength(password_string, AppObj.config.apps.user.password_min_length,
-        AppObj.config.apps.user.password_max_length)) {
+      else if(!validator.isLength(password_string, AppObj.config.apps.user.local_password_min_length,
+        AppObj.config.apps.user.local_password_max_length)) {
         return 'Passwords maximum length is 256 characters'; // ensure agrees with value in server/app/config/user.js
       }
       else {
