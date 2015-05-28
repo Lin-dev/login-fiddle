@@ -1,6 +1,6 @@
 'use strict';
 
-describe('user/entities', function() {
+describe('apps/user/entities', function() {
   beforeEach(function(done) {
     var that = this;
     require(['backbone', 'q', 'js/apps/user/entities'], function(Backbone, q, Entities) {
