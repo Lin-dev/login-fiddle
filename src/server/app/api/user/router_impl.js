@@ -20,7 +20,9 @@ module.exports = {
   get_user: function(pr, req, res, next) {
     var result = {
       local_email: req.user.local_email,
-      signup_date: req.user.sq_created_at
+      signup_date: req.user.sq_created_at,
+      facebook_email: req.user.facebook_email,
+      facebook_name: req.user.facebook_name
     };
     res.status(200).send(result);
   },
