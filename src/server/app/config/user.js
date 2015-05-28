@@ -13,7 +13,7 @@ module.exports = {
     username_field: 'local_email',
     username_max_length: 254, // ensure this agrees with value in client/js/apps/user/entities.js
     password_field: 'local_password',
-    password_max_length: 256 // ensure this agrees with value in client/js/apps/user/entities.js
+    password_max_length: 256
   },
   logged_in_cookie_name: 'logged_in',
   session: {
