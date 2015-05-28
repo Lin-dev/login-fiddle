@@ -1,3 +1,20 @@
 label.normal-weight {
   font-weight: normal !important;
 }
+
+/* CSS classes for testing window size in jquery: */
+@media only screen and (max-width: 767px) {
+  div.test_size#mobile { display: none; }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  div.test_size#tablet { display: none; }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  div.test_size#smalldesk { display: none; }
+}
+
+@media only screen and (min-width: 1200px) {
+  div.test_size#bigdesk { display: none; }
+}
