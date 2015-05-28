@@ -22,10 +22,13 @@ describe('js/app/config', function() {
     it('apps.user.facebook_response_type should be code', function() {
       expect(this.config.apps.user.facebook_response_type).toEqual('code');
     });
-    it('apps.user.facebok_redirect_uri should be https://localhost:27974/api/access/facebook/callback', function() {
-      expect(this.config.apps.user.facebook_redirect_uri)
-        .toEqual('https://localhost:27974/api/access/facebook/callback');
-    });
+    it(
+      'apps.user.facebook_redirect_uri should be https://localhost:27974/api/user/access/facebook/callback',
+      function() {
+        expect(this.config.apps.user.facebook_redirect_uri)
+          .toEqual('https://localhost:27974/api/user/access/facebook/callback');
+      }
+    );
     it('apps.user.facebook_scope should be [public_profile, email]', function() {
       expect(this.config.apps.user.facebook_scope.indexOf('public_profile')).not.toEqual(-1);
       expect(this.config.apps.user.facebook_scope.indexOf('email')).not.toEqual(-1);

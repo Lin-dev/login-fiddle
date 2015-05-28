@@ -13,8 +13,8 @@ var user_config = require('app/config/user');
 describe('app/config', function() {
   describe('app/config/user', function() {
     // NB: don't check facebook_auth.client_id or facebook_auth.client_secret as those are set at install, not build
-    it('facebook_auth.callback_url should be https://localhost:27974/api/access/facebook/callback', function() {
-      user_config.facebook_auth.callback_url.should.equal('https://localhost:27974/api/access/facebook/callback');
+    it('facebook_auth.callback_url should be https://localhost:27974/api/user/access/facebook/callback', function() {
+      user_config.facebook_auth.callback_url.should.equal('https://localhost:27974/api/user/access/facebook/callback');
     });
     it('local_auth.username_max_length should be 254', function() {
       user_config.local_auth.username_max_length.should.equal(254);

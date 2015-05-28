@@ -7,7 +7,7 @@ module.exports = {
   facebook_auth: {
     client_id: 'facebook-application-id-goes-here',
     client_secret: 'facebook-client-secret-goes-here',
-    callback_url: 'https://localhost:27974/api/access/facebook/callback'
+    callback_url: 'https://localhost:27974/api/user/access/facebook/callback'
   },
   local_auth: {
     username_field: 'local_email',

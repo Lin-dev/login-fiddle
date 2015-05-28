@@ -13,7 +13,7 @@ define(function(require) {
         local_password_min_length: 8,
         local_password_max_length: 256,
         facebook_response_type: 'code',
-        facebook_redirect_uri: 'https://localhost:27974/api/access/facebook/callback',
+        facebook_redirect_uri: 'https://localhost:27974/api/user/access/facebook/callback',
         facebook_scope: ['public_profile', 'email'],
         facebook_client_id: ''
       }
