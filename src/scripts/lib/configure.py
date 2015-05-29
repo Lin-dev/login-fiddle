@@ -26,6 +26,13 @@ class Option:
     self.name = name
     self.description = description
 
+  def __get_value_input(current_value):
+    input_value = raw_input('Enter desired value [%s]: ' % current_value)
+    if input_value == '':
+      return current_value
+    else:
+      return input_value
+
   def configure_option(self, current_value_install_dir, dest_value_install_dir):
     print('')
     #### Load current file as string
@@ -42,15 +49,11 @@ class Option:
 
     #### Explain to user and get updated value
     print(self.name + ': ' + self.description)
-    print('Current value: ' + current_value)
-    input_value = raw_input('Enter desired value, or leave blank to make no change: ')
+    output_value = __get_value_input(current_value)
+    while not general.prompt_for_confirm('Is this correct?', True):
+      output_value = __get_value_input(current_value)
 
-    if input_value == '':
-      output_value = current_value
-    else:
-      output_value = input_value
-
-    if general.prompt_for_confirm('Value will be set to "' + output_value + '", is that correct? ', True):
+    if output_value != current_value:
       replacement_string = re.sub(r'\([^\)]*\)', output_value, self.regex_match_string)
       updated_file_as_str_count_tuple = re.subn(self.regex_match_string, replacement_string, current_file_as_string)
 
