@@ -63,13 +63,13 @@ def upgrade_app(install_dir_path, app_symlink_path):
 if __name__ == '__main__':
   print('NB: Usually the upgraded application install directory is the parent of directory of this script')
   (install_dir_path, app_symlink_path) = prompt_for_install_directories()
-  while not general.prompt_for_confirm('Is this correct?'):
+  while not general.prompt_for_confirm('Is this correct?', False):
     (install_dir_path, app_symlink_path) = prompt_for_install_directories()
 
   print('\nYou have entered:')
   print('- upgraded application install directory path: ' + install_dir_path)
   print('- application symlink path:                    ' + app_symlink_path)
-  if general.prompt_for_confirm('Is this correct?'):
+  if general.prompt_for_confirm('Is this correct?', None):
     print('')
     upgrade_app(
       install_dir_path=install_dir_path,

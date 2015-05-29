@@ -140,13 +140,13 @@ def configure_app(current_value_install_dir, output_value_install_dir):
 
 if __name__ == '__main__':
   (current_value_install_dir, output_value_install_dir) = prompt_for_configure_directories()
-  while not general.prompt_for_confirm('Is this correct?'):
+  while not general.prompt_for_confirm('Is this correct?', False):
     (current_value_install_dir, output_value_install_dir) = prompt_for_configure_directories()
 
   print('\nYou have elected:')
   print('- to read default values from:           ' + current_value_install_dir)
   print('- to write the updated configuration to: ' + output_value_install_dir)
-  if general.prompt_for_confirm('Is this correct?'):
+  if general.prompt_for_confirm('Is this correct?', None):
     print('')
     configure_app(
       current_value_install_dir=current_value_install_dir,

@@ -27,11 +27,11 @@ def prompt_for_text(prompt='Data? ', default_string=None, validator_regexp_strin
     if not ans and default_string:
       return default_string
     if not re.match(validator_regexp_string, ans):
-      print '"' + ans + '" does not match allowed patterns'
+      print '"' + ans + '" does not match allowed pattern: ' + validator_regexp_string
       continue
     return ans
 
-def prompt_for_confirm(prompt=None, resp=False):
+def prompt_for_confirm(prompt=None, resp=None):
   '''
   prompts for yes or no response from the user. Returns True for yes and
   False for no.
@@ -39,30 +39,35 @@ def prompt_for_confirm(prompt=None, resp=False):
  'resp' should be set to the default value assumed by the caller when
   user simply types ENTER.
 
-  >>> prompt_for_confirm(prompt='Create Directory?', resp=True)
+  >>> prompt_for_confirm(prompt='Create directory?', resp=True)
   Create Directory? [y]|n:
   True
-  >>> prompt_for_confirm(prompt='Create Directory?', resp=False)
-  Create Directory? [n]|y:
+  >>> prompt_for_confirm(prompt='Create directory?', resp=False)
+  Create Directory? y|[n]:
   False
-  >>> prompt_for_confirm(prompt='Create Directory?', resp=False)
-  Create Directory? [n]|y: y
+  >>> prompt_for_confirm(prompt='Create directory?', resp=False)
+  Create Directory? y|[n]: y
   True
+  >>> prompt_for_confirm(prmopt='Should there be a default option?')
+  Should there be a default option? y|n: n
+  False
 
-  Original source: https://code.activestate.com/recipes/541096-prompt-the-user-for-confirmation/
+  Based on: https://code.activestate.com/recipes/541096-prompt-the-user-for-confirmation/
   '''
 
   if prompt is None:
     prompt = 'Confirm'
 
-  if resp:
-    prompt = '%s [%s]|%s: ' % (prompt, 'y', 'n')
+  if resp is None:
+    prompt = '%s %s|%s: ' % prompt
+  elif resp:
+    prompt = '%s [y]|n: ' % prompt
   else:
-    prompt = '%s [%s]|%s: ' % (prompt, 'n', 'y')
+    prompt = '%s y|[n]: ' % prompt
 
   while True:
     ans = raw_input(prompt).lower()
-    if not ans:
+    if not ans and resp is not None:
       return resp
     if ans not in ['y', 'n', 'yes', 'no']:
       print 'please enter yes or no.'

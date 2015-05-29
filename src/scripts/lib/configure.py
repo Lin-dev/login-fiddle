@@ -50,7 +50,7 @@ class Option:
     else:
       output_value = input_value
 
-    if general.prompt_for_confirm('Value will be set to "' + output_value + '", is that correct? '):
+    if general.prompt_for_confirm('Value will be set to "' + output_value + '", is that correct? ', True):
       replacement_string = re.sub(r'\([^\)]*\)', output_value, self.regex_match_string)
       updated_file_as_str_count_tuple = re.subn(self.regex_match_string, replacement_string, current_file_as_string)
 
