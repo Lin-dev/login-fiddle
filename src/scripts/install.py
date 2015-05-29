@@ -22,6 +22,13 @@ import configure as configure
 
 
 
+CONST_DB_CLEAR_COMMANDS = """
+sudo -u postgres dropdb {db.name}
+sudo -u postgres dropuser {db.user}
+"""
+
+
+
 CONST_DB_SETUP_COMMANDS_TEMPLATE = """
 sudo -u postgres psql -c "CREATE USER {db.user} WITH PASSWORD '{db.pw}';"
 sudo -u postgres psql -c "CREATE DATABASE {db.name} OWNER {db.user};"
@@ -124,6 +131,15 @@ def setup_database(install_dir_path):
   print('NB: Commands may create spurious stderr output if postgres user cannot read install dir')
   # Read DB configuration from server/app/config/database.js
   (user, pw, name, schema) = read_db_configuration(install_dir_path)
+
+  if prompt_for_confirm('Drop existing DB schema and user?'):
+    db_clear_commands = CONST_DB_CLEAR_COMMANDS \
+      .replace('{db.user}', user) \
+      .replace('{db.name}', name) \
+      .strip() \
+      .split('\n')
+
+    execute_shell_commands(db_clear_commands)
 
   # Generate and write DB creation shell script
   db_setup_commands = CONST_DB_SETUP_COMMANDS_TEMPLATE \
