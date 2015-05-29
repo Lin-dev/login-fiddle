@@ -11,6 +11,15 @@ import os.path as path
 import lib.general as general
 import lib.configure as configure
 
+def prompt_for_configure_directories():
+  current_value_install_dir = \
+    general.prompt_for_text('Please enter the directory location of the currently installed app to read from: ').strip()
+  output_value_install_dir = \
+    general.prompt_for_text('Please enter the directory location of the currently installed app to write to:  ').strip()
+  return (current_value_install_dir, output_value_install_dir)
+
+
+
 def configure_app(current_value_install_dir, output_value_install_dir):
   '''
   Specifies the configuration option groups for the application and calls configure_options on each
@@ -128,13 +137,12 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   [group.configure_options() for group in groups]
 
 
+
 if __name__ == '__main__':
-  current_value_install_dir = \
-    raw_input('Please enter the directory location of the currently installed app to read from: ')
-  output_value_install_dir = \
-    raw_input('Please enter the directory location of the currently installed app to write to:  ')
-  current_value_install_dir = current_value_install_dir.strip()
-  output_value_install_dir = output_value_install_dir.strip()
+  (current_value_install_dir, output_value_install_dir) = prompt_for_configure_directories()
+  while not general.prompt_for_confirm('Is this correct?'):
+    (current_value_install_dir, output_value_install_dir) = prompt_for_configure_directories()
+
   print('\nYou have elected:')
   print('- to read default values from:           ' + current_value_install_dir)
   print('- to write the updated configuration to: ' + output_value_install_dir)
