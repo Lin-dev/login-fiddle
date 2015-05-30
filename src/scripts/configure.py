@@ -38,6 +38,11 @@ def configure_app(current_value_install_dir, output_value_install_dir):
     re_string='http_port: (\d+)'
   )
   groups[-1].add_option(
+    name='HTTPS port',
+    desc='The HTTPS port that the server listens on [number]',
+    re_string='https_port: (\d+)'
+  )
+  groups[-1].add_option(
     name='q long stack traces',
     desc='Enable long stack traces from Q [true or false]',
     re_string='q_longStackSupport: (true|false|undefined)'
@@ -99,7 +104,7 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   groups[-1].add_option(
     name='DB schema',
     desc='The database schema to use [a valid string]',
-    re_string='schema: \'([a-zA-Z_]*)\''
+    re_string='schema: \'([a-zA-Z_]+)\''
   )
   groups[-1].add_option(
     name='Maximum DB connections',
@@ -126,12 +131,12 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   groups[-1].add_option(
     name='Client js logger',
     desc='The log level for all root/js loggers',
-    re_string='level: \'([^\']*)\', // configure.py: js'
+    re_string='level: \'([^\']*)\',? // configure.py: js'
   )
   groups[-1].add_option(
     name='Client events_logger',
     desc='The log level for events_logger (Marionette evets)',
-    re_string='level: \'([^\']*)\', // configure.py: events_logger'
+    re_string='level: \'([^\']*)\',? // configure.py: events_logger'
   )
 
   [group.configure_options() for group in groups]
