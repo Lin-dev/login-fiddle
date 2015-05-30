@@ -22,15 +22,18 @@ define(function(require) {
       }
     }
 
-    function proc_facebook_login() {
-      logger.trace('private.proc_facebook_login -- redirecting to facebook');
-      var facebook_url = 'https://www.facebook.com/v2.2/dialog/oauth?' +
+    function get_facebook_auth_url() {
+      return 'https://www.facebook.com/v2.2/dialog/oauth?' +
         'response_type=' + AppObj.config.apps.user.facebook_response_type + '&' +
         'redirect_uri=' + encodeURIComponent(AppObj.config.apps.user.facebook_redirect_uri) + '&' +
         'display=' + get_facebook_display_mode_from_ui_scale(Marionette.get_ui_scale()) + '&' +
         'scope=' + escape(AppObj.config.apps.user.facebook_scope.join(',')) + '&' +
         'client_id=' + AppObj.config.apps.user.facebook_client_id;
-      window.location.href = facebook_url;
+    }
+
+    function proc_facebook_login() {
+      logger.trace('private.proc_facebook_login -- redirecting to facebook');
+      window.location.href = get_facebook_auth_url();
     }
 
     function proc_local_login(form_data, access_view, trigger_after_login) {
@@ -109,7 +112,9 @@ define(function(require) {
         }
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
-        var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel() });
+        var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel({
+          facebook_url: get_facebook_auth_url()
+        })});
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
         access_view.on('facebook-access-clicked', function facebook_access_clicked() { proc_facebook_login(); });
         access_view.on('local-access-submitted', function local_access_submitted(form_data) {
