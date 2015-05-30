@@ -110,7 +110,7 @@ passport.use('local-login', new LocalStrategy({
 passport.use('facebook-auth', new FacebookStrategy({
   clientID: user_config.facebook_auth.client_id,
   clientSecret: user_config.facebook_auth.client_secret,
-  callbackUrl: user_config.facebook_auth.callback_url
+  callbackURL: user_config.facebook_auth.callback_url,
   passReqToCallback: true
 }, function(req, token, refresh_token, profile, done) {
   logger.error('FACEBOOK TOKEN:         ' + JSON.stringify(token) + ' -- type(' + typeof(token) +')');
