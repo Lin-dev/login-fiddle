@@ -111,11 +111,11 @@ passport.use('facebook-auth', new FacebookStrategy({
   clientID: user_config.facebook_auth.client_id,
   clientSecret: user_config.facebook_auth.client_secret,
   callbackUrl: user_config.facebook_auth.callback_url
-}, function(token, refresh_token, profile, done) {
+  passReqToCallback: true
+}, function(req, token, refresh_token, profile, done) {
   logger.error('FACEBOOK TOKEN:         ' + JSON.stringify(token) + ' -- type(' + typeof(token) +')');
   logger.error('FACEBOOK REFRESH TOKEN: ' + JSON.stringify(refresh_token) + ' -- type(' + typeof(refresh_token) + ')');
   logger.error('FACEBOOK PROFILE:       ' + JSON.stringify(profile) + ' -- type(' + typeof(profile) + ')');
-  /*
   var where_object = {};
   q(pr.pr.auth.user.find({ where: where_object }))
   .then(function(user) {
@@ -143,9 +143,8 @@ passport.use('facebook-auth', new FacebookStrategy({
   })
   .fail(function(error) {
     logger.error('facebook-auth callback for token ' + token + ' failed while loading user: ' + error);
-    returne done(error, undefined, req.flash('message', 'System error'));
+    return done(error, undefined, req.flash('message', 'System error'));
   });
-  */
 }));
 
 module.exports = {

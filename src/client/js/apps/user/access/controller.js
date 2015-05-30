@@ -5,12 +5,32 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/apps/user/access/controller');
 
   AppObj.module('UserApp.Access', function(Access, AppObj, Backbone, Marionette, $, _) {
+    /**
+     * Gets the facebook display mode string to use based on the client window size
+     * @param  {String} ui_scale The UI scale as returned by `Marionette.get_ui_scale()`
+     * @return {String}          The facebook display mode to render the auth request in
+     */
+    function get_facebook_display_mode_from_ui_scale(ui_scale) {
+      switch(ui_scale) {
+        case 'mobile': return 'touch';
+        case 'tablet': return 'touch';
+        case 'smalldesk': return 'page';
+        case 'bigdesk': return 'page';
+        default:
+          logger.error('private.get_facebook_display_mode_from_scale -- unknown UI scale: ' + ui_scale);
+          return 'touch';
+      }
+    }
+
     function proc_facebook_login() {
-      logger.trace('private.proc_facebook_login -- enter');
-      $.get('/api/user/access/facebook/auth', function(resp_data, textStatus, jqXhr) {
-        logger.debug('private.proc_facebook_login - /api/user/access/facebook/auth response -- ' +
-          'textStatus: ' + JSON.stringify(textStatus) + ' ' + JSON.stringify(resp_data));
-      });
+      logger.trace('private.proc_facebook_login -- redirecting to facebook');
+      var facebook_url = 'https://www.facebook.com/v2.2/dialog/oauth?' +
+        'response_type=' + AppObj.config.apps.user.facebook_response_type + '&' +
+        'redirect_uri=' + encodeURIComponent(AppObj.config.apps.user.facebook_redirect_uri) + '&' +
+        'display=' + get_facebook_display_mode_from_ui_scale(Marionette.get_ui_scale()) + '&' +
+        'scope=' + escape(AppObj.config.apps.user.facebook_scope.join(',')) + '&' +
+        'client_id=' + AppObj.config.apps.user.facebook_client_id;
+      window.location.href = facebook_url;
     }
 
     function proc_local_login(form_data, access_view, trigger_after_login) {

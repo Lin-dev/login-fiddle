@@ -51,8 +51,9 @@ module.exports = {
    * @type {[type]}
    */
   access_facebook_callback: auth.passport.authenticate('facebook-auth', {
-    successRedirect: '/api/util/success',
-    failureRedirect: '/api/util/failure'
+    successRedirect: '/profile',
+    failureRedirect: '/access',
+    failureFlash: true
   }),
 
   /**
