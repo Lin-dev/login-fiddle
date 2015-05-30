@@ -123,6 +123,80 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   )
 
   groups.append(configure.Group(
+    group_name='User configuration',
+    current_value_install_dir=current_value_install_dir,
+    output_value_install_dir=output_value_install_dir,
+    default_config_file_rel_path='./server/js/app/user.js'
+  ))
+  groups[-1].add_option(
+    name='Facebook - client id',
+    desc='For application (client, server config should be equal) [a number]',
+    re_string='client_id: \'(\d+)\',? // configure.py: facebook'
+  )
+  groups[-1].add_option(
+    name='Facebook - client secret',
+    desc='For application (do not share this information or record it elsewhere) [a hex string]',
+    re_string='client_secret: \'([abcdef\d]+)\',? // configure.py: facebook'
+  )
+  groups[-1].add_option(
+    name='Local auth - username field',
+    desc='DB field name and variable name [alphanumeric string with _]',
+    re_string='username_field: \'[a-zA-Z_]+\''
+  )
+  groups[-1].add_option(
+    name='Local auth - password field',
+    desc='DB field name and variable name [alphanumeric string with _]',
+    re_string='username_field: \'[a-zA-Z_]+\''
+  )
+  groups[-1].add_option(
+    name='Logged in cookie name',
+    desc='Cookie name set to indicate logged in (client, server config should be equal) [alphanumeric string with _])',
+    re_string='logged_in_cookie_name: \'[a-zA-Z_]+\''
+  )
+  groups[-1].add_option(
+    name='Cookie - secret',
+    desc='To secure server cookies [alphanumeric string with _])',
+    re_string='secret: \'[a-zA-Z_]+\''
+  )
+  groups[-1].add_option(
+    name='Cookie - store host',
+    desc='For storing sessions [hostname or IP address])',
+    re_string='host: \'[a-zA-Z_0-9.]+\',? // configure.py: store'
+  )
+  groups[-1].add_option(
+    name='Cookie - store port',
+    desc='For storing sessions [number])',
+    re_string='port: \'\d+\',? // configure.py: store'
+  )
+  groups[-1].add_option(
+    name='Cookie - store DB number',
+    desc='To secure server cookies [number])',
+    re_string='db: \'\d+\',? // configure.py: store'
+  )
+  groups[-1].add_option(
+    name='Salt rounds',
+    desc='For hashing passwords, do not change after any passwords are hashed [number, small])',
+    re_string='salt_rounds: \'\d+\''
+  )
+
+  groups.append(configure.Group(
+    group_name='Client configuration',
+    current_value_install_dir=current_value_install_dir,
+    output_value_install_dir=output_value_install_dir,
+    default_config_file_rel_path='./client/js/app/config.js'
+  ))
+  groups[-1].add_option(
+    name='Logged in cookie name',
+    desc='Cookie name set to indicate logged in (client, server config should be equal) [alphanumeric string with _])',
+    re_string='logged_in_cookie_name: \'[a-zA-Z_]+\''
+  )
+  groups[-1].add_option(
+    name='Facebook - client id',
+    desc='For application (client, server config should be equal) [a number]',
+    re_string='facebook_client_id: \'(\d+)\''
+  )
+
+  groups.append(configure.Group(
     group_name='Client logging',
     current_value_install_dir=current_value_install_dir,
     output_value_install_dir=output_value_install_dir,

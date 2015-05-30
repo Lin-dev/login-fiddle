@@ -5,8 +5,8 @@
  */
 module.exports = {
   facebook_auth: {
-    client_id: 'facebook-application-id-goes-here',
-    client_secret: 'facebook-client-secret-goes-here',
+    client_id: '', // configure.py: facebook
+    client_secret: '', // configure.py: facebook
     callback_url: 'https://localhost:27974/api/user/access/facebook/callback'
   },
   local_auth: {
@@ -25,9 +25,9 @@ module.exports = {
     rolling: true, // force cookie to be set on every response, resetting the expiration date
     secret: 'default', // can not be randomly generated else sessions can't be shared across nodes in cluster
     store: {
-      host: 'localhost',
-      port: 6379,
-      db: 3
+      host: 'localhost', // configure.py: store
+      port: 6379, // configure.py: store
+      db: 3 // configure.py: store
     }
   },
   salt_rounds: 10
