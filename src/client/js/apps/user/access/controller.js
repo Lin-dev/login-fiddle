@@ -107,7 +107,7 @@ define(function(require) {
     Access.controller = {
       show_access_form: function(trigger_after_login) {
         logger.trace('show_access_form -- trigger_after_login: ' + trigger_after_login);
-        if(trigger_after_login == undefined) { // not strict because might be null
+        if(!trigger_after_login) { // not strict === because might be null
           trigger_after_login = 'user:profile';
         }
         var Views = require('js/apps/user/access/views');
