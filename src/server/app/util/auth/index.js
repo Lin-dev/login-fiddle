@@ -42,6 +42,7 @@ passport.use('local-signup', new LocalStrategy({
   passReqToCallback: true
 }, function(req, email, password, done) {
   // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
+  // Prob: "Quora: What does process.nextTick(callback) actually do in Node.js?" - answer by Aran Mulholland, bullet 3
   process.nextTick(function() {
     var where_object = {};
     where_object[user_config.local_auth.username_field] = email;
@@ -58,7 +59,7 @@ passport.use('local-signup', new LocalStrategy({
         })
         .fail(function(error) {
           // DB or validation error - do not distinguish validation or set flash because that is also done client side
-          logger.warn('local-signup callback for ' + email + ' failed user creation: ' + error);
+          logger.warn('local-signup callback for ' + email + ' failed user creation, error: ' + error);
           return done(error, undefined, req.flash('message', 'Account creation failed'));
         });
       }
@@ -113,13 +114,12 @@ passport.use('facebook-auth', new FacebookStrategy({
   callbackURL: user_config.facebook_auth.callback_url,
   passReqToCallback: true
 }, function(req, token, refresh_token, profile, done) {
-  logger.error('FACEBOOK TOKEN:         ' + JSON.stringify(token) + ' -- type(' + typeof(token) +')');
-  logger.error('FACEBOOK REFRESH TOKEN: ' + JSON.stringify(refresh_token) + ' -- type(' + typeof(refresh_token) + ')');
-  logger.error('FACEBOOK PROFILE:       ' + JSON.stringify(profile) + ' -- type(' + typeof(profile) + ')');
-  var where_object = {};
+  // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
+  var where_object = { facebook_id: profile.id };
   q(pr.pr.auth.user.find({ where: where_object }))
   .then(function(user) {
     if(user !== null) { // user found - log in
+      logger.debug('facebook-auth callback -- Found existing user, logging in: ' + JSON.stringify(user));
       return done(null, user);
     }
     else { // user not found - create account
@@ -129,6 +129,7 @@ passport.use('facebook-auth', new FacebookStrategy({
         facebook_name: profile.name.givenName + ' ' + profile.name.familyName,
         facebook_email: profile.emails[0].value
       };
+      logger.debug('facebook-auth callback -- user not found, creating: ' + JSON.stringify(user_attrs));
       q(pr.pr.auth.user.create(user_attrs))
       .then(function(user) {
         logger.info('facebook-auth user created: ' + email);
@@ -142,7 +143,7 @@ passport.use('facebook-auth', new FacebookStrategy({
     }
   })
   .fail(function(error) {
-    logger.error('facebook-auth callback for token ' + token + ' failed while loading user: ' + error);
+    logger.error('facebook-auth callback for token ' + token + ' failed while loading user, error: ' + error);
     return done(error, undefined, req.flash('message', 'System error'));
   });
 }));

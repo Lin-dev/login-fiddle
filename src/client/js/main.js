@@ -41,6 +41,7 @@ require.config({
 });
 
 require([
+  'jquery',
   'marionette',
   'js/app/obj',
   'js/apps/footer/footer_app',
@@ -50,26 +51,26 @@ require([
   'js/apps/entry/entry_app',
   'js/apps/session/session_app',
   'js/apps/user/user_app'
-], function(Marionette, AppObj){
+], function($, Marionette, AppObj){
   'use strict';
 
   // get_ui_scale assigned to Marionette not AppObj because may be used in custom Marionette classes, e.g. a modal
   // dialog region
   Marionette.get_ui_scale = function() {
-    if($("div.test_size#mobile").css("display") === "none") {
-      return "mobile";
+    if($('div.test_size#mobile').css('display') === 'none') {
+      return 'mobile';
     }
-    else if($("div.test_size#tablet").css("display") === "none") {
-      return "tablet";
+    else if($('div.test_size#tablet').css('display') === 'none') {
+      return 'tablet';
     }
-    else if($("div.test_size#smalldesk").css("display") === "none") {
-      return "smalldesk";
+    else if($('div.test_size#smalldesk').css('display') === 'none') {
+      return 'smalldesk';
     }
-    else if($("div.test_size#bigdesk").css("display") === "none") {
-      return "bigdesk";
+    else if($('div.test_size#bigdesk').css('display') === 'none') {
+      return 'bigdesk';
     }
     else {
-      return "unknown";
+      return 'unknown';
     }
   };
 

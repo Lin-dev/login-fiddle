@@ -40,7 +40,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true
       },
       facebook_token: {
-        type: DataTypes.STRING(256),
+        type: DataTypes.STRING(512),
         allowNull: true,
         unique: true
       },
