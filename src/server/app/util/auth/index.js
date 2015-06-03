@@ -132,12 +132,13 @@ passport.use('facebook-auth', new FacebookStrategy({
       logger.debug('facebook-auth callback -- user not found, creating: ' + JSON.stringify(user_attrs));
       q(pr.pr.auth.user.create(user_attrs))
       .then(function(user) {
-        logger.info('facebook-auth user created: ' + email);
+        logger.info('facebook-auth user created: ' + user_attrs.facebook_id + ' / ' + user_attrs.facebook_name);
         return done(null, user);
       })
       .fail(function(error) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
-        logger.warn('facebook-auth callback for ' + email + ' failed user creation: ' + error);
+        logger.warn('facebook-auth callback for ' + user_attrs.facebook_id + ' / ' + user_attrs.facebook_name +
+          ' failed user creation, error: ' + error);
         return done(error, undefined, req.flash('message', 'Account creation failed'));
       });
     }
