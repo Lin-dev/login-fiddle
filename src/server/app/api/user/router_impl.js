@@ -41,12 +41,6 @@ module.exports = {
   },
 
   /**
-   * Initiates requests for Facebook authentication
-   * @type {Function}
-   */
-  access_facebook_auth: auth.passport.authenticate('facebook-auth', { scope: ['public_profile', 'email'] }),
-
-  /**
    * Completes requests for Facebook authentication
    * @type {[type]}
    */
