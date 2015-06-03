@@ -56,6 +56,14 @@ module.exports = function(sequelize, DataTypes) {
         }
       }
     }, {
+      validate: {
+        has_valid_account_source: function() {
+          if(this.local_email && this.local_password) { return; } // local source
+          else if(this.facebook_id && this.facebook_token) { return; } // facebook source
+          else { Error('No valid account source'); }
+        }
+      },
+
       classMethods: {
         /**
          * Generates a password hash to write to the DB so that the unhashed password is never stored
