@@ -42,6 +42,7 @@ require.config({
 
 require([
   'jquery',
+  'underscore',
   'marionette',
   'js/app/obj',
   'js/apps/footer/footer_app',
@@ -51,7 +52,7 @@ require([
   'js/apps/entry/entry_app',
   'js/apps/session/session_app',
   'js/apps/user/user_app'
-], function($, Marionette, AppObj){
+], function($, _, Marionette, AppObj){
   'use strict';
   var logger = AppObj.logger.get('root/js/main');
   logger.trace('require:lambda -- enter');
@@ -78,6 +79,29 @@ require([
     else {
       return 'unknown';
     }
+  };
+
+  /**
+   * Parses a URL query string
+   * @param  {String} query_string A URL query string, e.g. '?variable=foo&another_variable=bar'
+   * @return {Object}              An object with a key/string value pair for each variable in the query string
+   */
+  Marionette.parse_query_string = function(query_string) {
+    if(!_.isString(query_string)) { return undefined; }
+    query_string = query_string.substring(query_string.indexOf('?') + 1);
+    var params = {};
+    var query_parts = decodeURI(query_string).split(/&/g);
+    _.each(query_parts, function(val) {
+      var parts = val.split('=');
+      if(parts.length >= 1) {
+        val = undefined;
+        if (parts.length === 2) {
+          val = parts[1];
+        }
+        params[parts[0]] = val;
+      }
+    });
+    return params;
   };
 
   /**

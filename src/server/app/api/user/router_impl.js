@@ -46,7 +46,7 @@ module.exports = {
    */
   access_facebook_callback: auth.passport.authenticate('facebook-auth', {
     successRedirect: '/profile',
-    failureRedirect: '/access',
+    failureRedirect: '/access?reason=fb_declined',
     failureFlash: true
   }),
 

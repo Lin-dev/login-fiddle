@@ -31,6 +31,22 @@ define(function(require) {
         'client_id=' + AppObj.config.apps.user.facebook_client_id;
     }
 
+    function get_decline_msg_from_query_string_reason(query_string) {
+      var parsed_query = Marionette.parse_query_string(query_string);
+      if(parsed_query === undefined) {
+        return undefined;
+      }
+      else {
+        switch(parsed_query.reason) {
+          case undefined: return undefined;
+          case 'fb_declined': return 'Facebook login cancelled';
+          default:
+            logger.error('private.get_decline_msg_from_query_string_reason -- unknown reason: ' + parsed_query.reason);
+            return 'Unknown error reason: ' + parsed_query.reason;
+        }
+      }
+    }
+
     function proc_facebook_login() {
       logger.trace('private.proc_facebook_login -- redirecting to facebook');
       window.location.href = get_facebook_auth_url();
@@ -105,15 +121,17 @@ define(function(require) {
     }
 
     Access.controller = {
-      show_access_form: function(trigger_after_login) {
-        logger.trace('show_access_form -- trigger_after_login: ' + trigger_after_login);
+      show_access_form: function(query_string, trigger_after_login) {
+        logger.trace('show_access_form -- query_string: ' + query_string + ', trigger_after_login: ' +
+          trigger_after_login);
         if(!trigger_after_login) { // not strict === because might be null
           trigger_after_login = 'user:profile';
         }
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
         var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel({
-          facebook_url: get_facebook_auth_url()
+          facebook_url: get_facebook_auth_url(),
+          message: get_decline_msg_from_query_string_reason(query_string)
         })});
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
         access_view.on('facebook-access-clicked', function facebook_access_clicked() { proc_facebook_login(); });
