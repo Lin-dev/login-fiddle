@@ -126,7 +126,7 @@ passport.use('facebook-auth', new FacebookStrategy({
         facebook_id: profile.id,
         facebook_token: token,
         facebook_name: profile.name.givenName + ' ' + profile.name.familyName,
-        facebook_email: profile.emails[0].value
+        facebook_email: profile.emails ? profile.emails[0].value : undefined
       };
       logger.debug('facebook-auth callback -- user not found, creating: ' + JSON.stringify(user_attrs));
       q(pr.pr.auth.user.create(user_attrs))
