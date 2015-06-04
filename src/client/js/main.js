@@ -53,9 +53,15 @@ require([
   'js/apps/user/user_app'
 ], function($, Marionette, AppObj){
   'use strict';
+  var logger = AppObj.logger.get('root/js/main');
+  logger.trace('require:lambda -- enter');
 
-  // get_ui_scale assigned to Marionette not AppObj because may be used in custom Marionette classes, e.g. a modal
-  // dialog region
+  /**
+   * Returns the client browser window scale (mobile, tablet, smalldesk or bigdesk) based on dummy DOM elements
+   * and some media CSS queries. get_ui_scale is assigned to Marionette not AppObj because may be used in custom
+   * Marionette classes, e.g. a modal dialog region
+   * @return {String} One of 'mobile', 'tablet', 'smalldesk' or 'bigdesk' (or 'unknown' in the case of an error)
+   */
   Marionette.get_ui_scale = function() {
     if($('div.test_size#mobile').css('display') === 'none') {
       return 'mobile';
@@ -74,16 +80,15 @@ require([
     }
   };
 
-  var logger = AppObj.logger.get('root/js/main');
-  logger.trace('require:lambda -- enter');
   /**
    * Escapes a string for use in a regular expression
    * @param  {String} s The string to be escaped
    * @return {String}   A string which can be used in a JS regex, it will match occurrences of `s`
    */
   RegExp.escape_text= function(s) {
-      return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
+
   AppObj.start();
   logger.trace('require:lambda -- exit');
 });

@@ -114,7 +114,6 @@ passport.use('facebook-auth', new FacebookStrategy({
   callbackURL: user_config.facebook_auth.callback_url,
   passReqToCallback: true
 }, function(req, token, refresh_token, profile, done) {
-  // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
   var where_object = { facebook_id: profile.id };
   q(pr.pr.auth.user.find({ where: where_object }))
   .then(function(user) {
