@@ -14,13 +14,13 @@ define(function(require) {
     });
 
     var API = {
-      get_session_info_promise: function() {
+      get_session_info_promise: function get_session_info_promise() {
         logger.trace('API.get_session_info_promise -- enter');
         var deferred = q.defer();
         var session_info = new Entities.SessionInfo();
         session_info.fetch({
-          success: function(model) { deferred.resolve(model); },
-          error: function() { deferred.resolve(undefined); }
+          success: function success(model) { deferred.resolve(model); },
+          error: function error() { deferred.resolve(undefined); }
         });
         return deferred.promise;
       }

@@ -6,7 +6,7 @@ define(function(require) {
 
   AppObj.module('UserApp.Profile', function(Profile, AppObj, Backbone, Marionette, $, _) {
     Profile.controller = {
-      show_user_profile: function() {
+      show_user_profile: function show_user_profile() {
         if(AppObj.is_logged_in()) {
           var up_promise = AppObj.request('userapp:entities:userprofile');
           up_promise.then(function(up) {

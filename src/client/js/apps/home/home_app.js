@@ -14,7 +14,7 @@ define(function(require) {
     });
 
     var API = {
-      show_home: function() {
+      show_home: function show_home() {
         logger.trace('API.show_home -- enter');
         var controller = require('js/apps/home/show/controller');
         controller.show_home();

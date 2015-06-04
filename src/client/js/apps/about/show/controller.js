@@ -8,7 +8,7 @@ define(function(require) {
   AppObj.module('AboutApp.Show', function(Show, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
     Show.controller = {
-      show_about: function() {
+      show_about: function show_about() {
         logger.trace('show_about -- enter');
         var Views = require('js/apps/about/show/views');
         var view = new Views.About();

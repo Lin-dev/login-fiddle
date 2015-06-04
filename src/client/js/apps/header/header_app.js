@@ -8,7 +8,7 @@ define(function(require) {
   AppObj.module('HeaderApp', function(HeaderApp, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
     var API = {
-      show_header: function() {
+      show_header: function show_header() {
         logger.trace('API.show_header -- enter');
         var controller = require('js/apps/header/show/controller');
         controller.show_header();

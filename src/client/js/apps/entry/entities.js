@@ -22,7 +22,7 @@ define(function(require) {
     Entities.Tag = AppObj.Entities.ServerModel.extend({
       __name: 'Tag',
       urlRoot: '/api/entry/tag',
-      initialize: function() {
+      initialize: function initialize() {
         _.extend(this, new Backbone.Picky.Selectable(this));
       }
     });
@@ -32,31 +32,31 @@ define(function(require) {
       url: '/api/entry/tag',
       model: Entities.Tag,
 
-      initialize: function() {
+      initialize: function initialize() {
         _.extend(this, new Backbone.Picky.SingleSelect(this));
       }
     });
 
     var API = {
       // TODO: Use tag_string to filter returned entries when fetching from DB
-      get_entries_promise: function(tag_string) {
+      get_entries_promise: function get_entries_promise(tag_string) {
         logger.trace('API.get_entries_promise -- enter');
         var deferred = q.defer();
         var entry_collection = new Entities.EntryCollection();
         entry_collection.fetch({
-          success: function(entry_collection) { deferred.resolve(entry_collection); },
-          error: function() { deferred.resolve(undefined); }
+          success: function success(entry_collection) { deferred.resolve(entry_collection); },
+          error: function error() { deferred.resolve(undefined); }
         });
         return deferred.promise;
       },
 
-      get_tags_promise: function() {
+      get_tags_promise: function get_tags_promise() {
         logger.trace('API.get_tags_promise -- enter');
         var deferred = q.defer();
         var tag_collection = new Entities.TagCollection();
         tag_collection.fetch({
-          success: function(tag_collection) { deferred.resolve(tag_collection); },
-          error: function() { deferred.resolve(undefined); }
+          success: function success(tag_collection) { deferred.resolve(tag_collection); },
+          error: function error() { deferred.resolve(undefined); }
         });
         return deferred.promise;
       }

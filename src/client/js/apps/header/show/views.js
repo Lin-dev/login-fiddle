@@ -18,7 +18,7 @@ define(function(require) {
         'click a.js-navitem': 'navigate'
       },
 
-      onRender: function() {
+      onRender: function onRender() {
         if(this.model.selected) {
           this.$el.addClass('active');
         }

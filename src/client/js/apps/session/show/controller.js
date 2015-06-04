@@ -6,7 +6,7 @@ define(function(require) {
 
   AppObj.module('SessionApp.Show', function(Show, AppObj, Backbone, Marionette, $, _) {
     Show.controller = {
-      show_session_info: function() {
+      show_session_info: function show_session_info() {
         logger.trace('show_session_info -- enter');
         require('js/apps/session/entities');
         var Views = require('js/apps/session/show/views');

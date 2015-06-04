@@ -13,7 +13,7 @@ var log4js_loggers = {};
  * Converts level string from logger config into numerical value. Valid strings (case insensitive) are: all. trace,
  * debug, info, warn, error, fatal
  */
-var parse_level = function(level_string) {
+var parse_level = function parse_level(level_string) {
   var levels = {
     all:   0,
     trace: 100,
@@ -32,11 +32,11 @@ var parse_level = function(level_string) {
  * A logger object, associated with a group and with some set of appenders attached to it
  * @param {Object} options Required and possible properties are String:level Array[String]:appenders, String:group
  */
-var Logger = function(options) {
+var Logger = function Logger(options) {
   // PRIVATE FUNCTIONS
   var that = this;
 
-  var assemble_log_entry = function(message, level_string) {
+  var assemble_log_entry = function assemble_log_entry(message, level_string) {
     var timestamp = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
     return timestamp + ' ' + level_string.toUpperCase() + ' [' + that.group + '] ' + message;
   };
@@ -44,11 +44,11 @@ var Logger = function(options) {
 
   // PUBLIC PRIVILEGED FUNCTIONS
   // TODO: Refactor so that these methos are on the prototype, not the instance
-  this.is_trace_enabled = function() {
+  this.is_trace_enabled = function is_trace_enabled() {
     return this.level <= parse_level('trace');
   };
 
-  this.trace = function(message) {
+  this.trace = function trace(message) {
     if(this.is_trace_enabled()) {
       var log_entry = assemble_log_entry(message, 'trace');
       _.each(this.destgroups, function(destgroup_name) {
@@ -62,11 +62,11 @@ var Logger = function(options) {
     }
   };
 
-  this.is_debug_enabled = function() {
+  this.is_debug_enabled = function is_debug_enabled() {
     return this.level <= parse_level('debug');
   };
 
-  this.debug = function(message) {
+  this.debug = function debug(message) {
     if(this.is_debug_enabled()) {
       var log_entry = assemble_log_entry(message, 'debug');
       _.each(this.destgroups, function(destgroup_name) {
@@ -80,11 +80,11 @@ var Logger = function(options) {
     }
   };
 
-  this.is_info_enabled = function() {
+  this.is_info_enabled = function is_info_enabled() {
     return this.level <= parse_level('info');
   };
 
-  this.info = function(message) {
+  this.info = function info(message) {
     if(this.is_info_enabled()) {
       var log_entry = assemble_log_entry(message, 'info');
       _.each(this.destgroups, function(destgroup_name) {
@@ -98,11 +98,11 @@ var Logger = function(options) {
     }
   };
 
-  this.is_warn_enabled = function() {
+  this.is_warn_enabled = function is_warn_enabled() {
     return this.level <= parse_level('warn');
   };
 
-  this.warn = function(message) {
+  this.warn = function warn(message) {
     if(this.is_warn_enabled()) {
       var log_entry = assemble_log_entry(message, 'warn');
       _.each(this.destgroups, function(destgroup_name) {
@@ -116,11 +116,11 @@ var Logger = function(options) {
     }
   };
 
-  this.is_error_enabled = function() {
+  this.is_error_enabled = function is_error_enabled() {
     return this.level <= parse_level('error');
   };
 
-  this.error = function(message) {
+  this.error = function error(message) {
     if(this.is_error_enabled()) {
       var log_entry = assemble_log_entry(message, 'error');
       _.each(this.destgroups, function(destgroup_name) {
@@ -134,11 +134,11 @@ var Logger = function(options) {
     }
   };
 
-  this.is_fatal_enabled = function() {
+  this.is_fatal_enabled = function is_fatal_enabled() {
     return this.level <= parse_level('fatal');
   };
 
-  this.fatal = function(message) {
+  this.fatal = function fatal(message) {
     if(this.is_fatal_enabled()) {
       var log_entry = assemble_log_entry(message, 'fatal');
       _.each(this.destgroups, function(destgroup_name) {
@@ -165,7 +165,7 @@ var Logger = function(options) {
  * @param  {[type]} config_to_validate The configuration to validate
  * @return {boolean}                   True if the configuration is valid, false otherwise
  */
-var validate_config = function(config_to_validate) {
+var validate_config = function validate_config(config_to_validate) {
   if(!config_to_validate.group) {
     console.log('Invalid configuration: no valid group in ' + JSON.stringify(config_to_validate));
     return false;
@@ -198,7 +198,7 @@ var validate_config = function(config_to_validate) {
  * @param  {Object} log_config   The logger configuration
  * @return {Object}              A conf object with fields group, level and destgroups
  */
-var get_group_config_clone = function(group_string, log_config) {
+var get_group_config_clone = function get_group_config_clone(group_string, log_config) {
   var group_elements = group_string.split('/');
   var current_level = log_config;
   for(var i = 0; i < group_elements.length; ++i) {
@@ -225,7 +225,7 @@ var get_group_config_clone = function(group_string, log_config) {
  * potential destination for each destgroup
  * @param  {string} log4js_config Path to the logger config JSON file
  */
-var configure_log4js = function(log4js_config) {
+var configure_log4js = function configure_log4js(log4js_config) {
   _.each(log4js_config.appenders, function(appender_obj) { // ensure log4js does not modify log messages
     appender_obj.layout = {};
     appender_obj.layout.type = 'messagePassThrough';
@@ -247,7 +247,7 @@ module.exports = {
    * Returns a logger object. Also loads logger and caches log4js loggers (one or more per destgroup category) as nec.
    * @param  {string} group Get the logger for this group
    */
-  get: function(group) {
+  get: function get(group) {
     if(!raw_logger_config) {
       raw_logger_config = require('app/util/logger/logger_config.json');
       configure_log4js(raw_logger_config.log4js); // configure log4js, create appenders in cache for each appender
@@ -272,7 +272,7 @@ module.exports = {
    * @param  {[type]} logger_name The logger name to get
    * @return {[type]}             The log4js logger of this name
    */
-  get_log4js: function(logger_name) {
+  get_log4js: function get_log4js(logger_name) {
     if(!log4js_loggers[logger_name]) {
       throw new Error('Unknown log4js logger_name - ensure appender with this category is in logger_config.json');
     }

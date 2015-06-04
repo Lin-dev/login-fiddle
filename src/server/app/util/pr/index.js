@@ -23,11 +23,11 @@ var sq = new Sequelize(database_config.name, database_config.user, database_conf
   },
   sync: {
     match: database_config.database_name_check_before_sync, // match regex against DB name before sync'ing, for safety
-    logging: function(msg) {
+    logging: function logging(msg) {
       logger.debug('sq:sync -- ' + msg);
     }
   },
-  logging: function(msg) {
+  logging: function logging(msg) {
     logger.debug('sq -- ' + msg);
   },
   pool: database_config.pool

@@ -8,7 +8,7 @@ define(function(require) {
   AppObj.module('HeaderApp.Show', function(Show, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
     Show.controller = {
-      show_header: function() {
+      show_header: function show_header() {
         logger.trace('show_header -- enter');
         require('js/apps/header/entities');
         var Views = require('js/apps/header/show/views');
@@ -33,7 +33,7 @@ define(function(require) {
         logger.trace('show_header -- exit');
       },
 
-      set_active_navitem: function(url) {
+      set_active_navitem: function set_active_navitem(url) {
         logger.debug('set_active_navitem -- setting ' + url + ' to active');
         require('backbone_picky');
         require('js/apps/header/entities');

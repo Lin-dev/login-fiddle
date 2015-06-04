@@ -39,13 +39,13 @@ define(function(require) {
       },
 
       // Class methods
-      initialize: function() {
+      initialize: function initialize() {
         this.current_has_pw_flag = true; // label text clicks gen 2 events so if-gate DOM changes based on them
         AppObj.Common.Views.AppObjFormItemView.prototype.initialize.call(this);
       },
 
       // Event handlers
-      submit_clicked: function(event) {
+      submit_clicked: function submit_clicked(event) {
         require('backbone_syphon');
         event.preventDefault();
         var data = Backbone.Syphon.serialize(this);
@@ -54,7 +54,7 @@ define(function(require) {
         this.trigger('local-access-submitted', data);
       },
 
-      facebook_clicked: function(event) {
+      facebook_clicked: function facebook_clicked(event) {
         event.preventDefault();
         logger.debug('facebook_clicked');
         this.trigger('facebook-access-clicked');
@@ -68,7 +68,7 @@ define(function(require) {
        *
        * @param  {Object} vmc An object with this `view`, its `model` and its `collection` (`undefined`)
        */
-      onHasPasswordFlagClicked: function(vmc) {
+      onHasPasswordFlagClicked: function onHasPasswordFlagClicked(vmc) {
         require('backbone_syphon');
         var data = Backbone.Syphon.serialize(this);
         var new_has_pw_flag = $.parseJSON(data.has_pw_flag);
@@ -100,7 +100,7 @@ define(function(require) {
       },
 
       // Event handlers
-      submit_clicked: function(event) {
+      submit_clicked: function submit_clicked(event) {
         require('backbone_syphon');
         event.preventDefault();
         var data = Backbone.Syphon.serialize(this);

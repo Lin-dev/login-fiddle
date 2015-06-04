@@ -10,7 +10,7 @@ define(function(require) {
   AppObj.module('EntryApp.List', function(List, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
     List.controller = {
-      show_list: function(tag_string) {
+      show_list: function show_list(tag_string) {
         logger.trace('show_list -- enter - ' + tag_string);
         require('js/apps/entry/entities');
         var tags_promise = AppObj.request('entryapp:entities:tags');
@@ -29,7 +29,7 @@ define(function(require) {
           var FWC = require('js/common/filtering_wrapper_collection').FilteringWrapperCollection;
           var filterable_entries = FWC({
             collection: entries,
-            filter_generator: function() {
+            filter_generator: function filter_generator() {
               return function(entry) {
                 return _.any(entry.get('tags'), function(tag) { return tag.value === tag_string; });
               };

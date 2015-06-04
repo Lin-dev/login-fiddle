@@ -17,13 +17,13 @@ define(function(require) {
       __name: 'AppObjFormItemView',
 
       /** Check __form_element_id_prefix is set - expect sub classes with custom initialise to call this */
-      initialize: function() {
+      initialize: function initialize() {
         if(this.__form_element_id_prefix === undefined) {
           logger.error('AppObjFormItemView.initialize -- __form_element_id_prefix is undefined, subclass must define');
         }
       },
 
-      show_validation_errors: function(validation_errors) {
+      show_validation_errors: function show_validation_errors(validation_errors) {
         if(this.__form_element_id_prefix === undefined) {
           // Backup check in case AppObjFormItemView extending object overrides initialize and doesn't call super
           // initialize
@@ -31,7 +31,7 @@ define(function(require) {
         }
         var $view = this.$el;
         /** Remove all error messages added to form */
-        var clear_form_errors = function(){
+        var clear_form_errors = function clear_form_errors(){
           var $form = $view.find('form');
           $form.find('.js-validation-message').each(function(){
             $(this).remove();
@@ -42,7 +42,7 @@ define(function(require) {
         };
         /** Add error message `value` to form for field `key` */
         var that = this;
-        var mark_error = function(value, key){
+        var mark_error = function mark_error(value, key){
           var $form_group = $view.find('#' + that.__form_element_id_prefix + key).parent();
           var $errorEl = $('<span>', {class: 'js-validation-message help-block', text: value});
           $form_group.append($errorEl).addClass('has-error');

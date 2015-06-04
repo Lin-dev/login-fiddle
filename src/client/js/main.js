@@ -63,7 +63,7 @@ require([
    * Marionette classes, e.g. a modal dialog region
    * @return {String} One of 'mobile', 'tablet', 'smalldesk' or 'bigdesk' (or 'unknown' in the case of an error)
    */
-  Marionette.get_ui_scale = function() {
+  Marionette.get_ui_scale = function get_ui_scale() {
     if($('div.test_size#mobile').css('display') === 'none') {
       return 'mobile';
     }
@@ -86,7 +86,7 @@ require([
    * @param  {String} query_string A URL query string, e.g. '?variable=foo&another_variable=bar'
    * @return {Object}              An object with a key/string value pair for each variable in the query string
    */
-  Marionette.parse_query_string = function(query_string) {
+  Marionette.parse_query_string = function parse_query_string(query_string) {
     if(!_.isString(query_string)) { return undefined; }
     query_string = query_string.substring(query_string.indexOf('?') + 1);
     var params = {};
@@ -109,7 +109,7 @@ require([
    * @param  {String} s The string to be escaped
    * @return {String}   A string which can be used in a JS regex, it will match occurrences of `s`
    */
-  RegExp.escape_text= function(s) {
+  RegExp.escape_text= function escape_text(s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
 

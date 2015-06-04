@@ -7,7 +7,7 @@ module.exports = {
   /**
    * Returns JSON with session start time stamp
    */
-  get_session: function(req, res, next) {
+  get_session: function get_session(req, res, next) {
     logger.trace('exports.get_session -- enter');
     req.session.views = req.session.views ? req.session.views + 1 : 1;
     var result = {

@@ -32,7 +32,7 @@ define(function(require) {
     var original_extend = Backbone.View.extend; // Model, Collection, Router and View shared the same extend function
     var name_property = '__name';
 
-    var newExtend = function(protoProps, classProps) {
+    var newExtend = function newExtend(protoProps, classProps) {
       if (protoProps && protoProps.hasOwnProperty(name_property)) {
         var name = protoProps[name_property]; // NB: this does not check that name_property is a valid identifier
         // wrap constructor from protoProps if supplied or 'this' (the function we are extending)
@@ -51,15 +51,15 @@ define(function(require) {
     Backbone.Router.prototype[name_property] = 'Router';
     Backbone.View.prototype[name_property] = 'View';
 
-    Backbone.Model.prototype.toString = function() {
+    Backbone.Model.prototype.toString = function toString() {
       return this[name_property] + '(cid: ' + this.cid + ', attr: ' + JSON.stringify(this.attributes) + ')';
     };
 
-    Backbone.Collection.prototype.toString = function() {
+    Backbone.Collection.prototype.toString = function toString() {
       return this[name_property] + '(models: ' + JSON.stringify(this.models) + ')';
     };
 
-    Backbone.View.prototype.toString = function() {
+    Backbone.View.prototype.toString = function toString() {
       return this[name_property] + '(cid: ' + this.cid + ', outerHTML: ' + this.$el.prop('outerHTML') + ')';
     };
   });

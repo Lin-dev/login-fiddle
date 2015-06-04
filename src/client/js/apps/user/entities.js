@@ -14,7 +14,7 @@ define(function(require) {
    */
   var val_checks = {
     /** Checks an email is correctly formatted */
-    email: function(email_string) {
+    email: function email(email_string) {
       if(!validator.isEmail(email_string)) {
         return 'Invalid email address format';
       }
@@ -27,7 +27,7 @@ define(function(require) {
     },
 
     /** Checks a password field that is required / not optional */
-    password: function(password_string) {
+    password: function password(password_string) {
       if(!validator.isLength(password_string, AppObj.config.apps.user.local_password_min_length)) {
         return 'Passwords must be at least 8 characters long';
       }
@@ -52,7 +52,7 @@ define(function(require) {
     Entities.UserLocalAccess = AppObj.Entities.ClientModel.extend({
       __name: 'UserLocalAccess',
 
-      validate: function(attrs, options) {
+      validate: function validate(attrs, options) {
         var errors = {};
         errors['local-email'] = val_checks.email(attrs.local_email);
         if(attrs.has_pw_flag === 'true') {
@@ -70,7 +70,7 @@ define(function(require) {
     Entities.UserLocalSignup = AppObj.Entities.ClientModel.extend({
       __name: 'UserLocalSignup',
 
-      validate: function(attrs, options) {
+      validate: function validate(attrs, options) {
         var errors = {};
         errors['local-email'] = val_checks.email(attrs.local_email);
         errors['local-password'] = val_checks.password(attrs.local_password);
@@ -91,7 +91,7 @@ define(function(require) {
     Entities.UserProfile = AppObj.Entities.ServerModel.extend({
       __name: 'UserProfile',
       urlRoot: '/api/user/user',
-      sync: function(method, model, options) {
+      sync: function sync(method, model, options) {
         if(method === 'read' || method === 'update' || method === 'delete') {
           return Backbone.Model.prototype.sync.call(this, method, model, options);
         }
@@ -102,13 +102,13 @@ define(function(require) {
     });
 
     var API = {
-      get_user_profile_promise: function(user_id) {
+      get_user_profile_promise: function get_user_profile_promise(user_id) {
         logger.trace('API.get_promise -- enter');
         var deferred = q.defer();
         var user_profile = new Entities.UserProfile();
         user_profile.fetch({
-          success: function(user_profile_model) { deferred.resolve(user_profile_model); },
-          error: function() { deferred.resolve(undefined); }
+          success: function success(user_profile_model) { deferred.resolve(user_profile_model); },
+          error: function error() { deferred.resolve(undefined); }
         });
         return deferred.promise;
       }

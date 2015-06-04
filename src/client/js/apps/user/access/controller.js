@@ -121,7 +121,7 @@ define(function(require) {
     }
 
     Access.controller = {
-      show_access_form: function(query_string, trigger_after_login) {
+      show_access_form: function show_access_form(query_string, trigger_after_login) {
         logger.trace('show_access_form -- query_string: ' + query_string + ', trigger_after_login: ' +
           trigger_after_login);
         if(!trigger_after_login) { // not strict === because might be null

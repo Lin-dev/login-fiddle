@@ -14,7 +14,7 @@ define(function(require) {
     });
 
     var API = {
-      show_list: function(tag_string) {
+      show_list: function show_list(tag_string) {
         logger.trace('API.show_list -- enter - tag_string: ' + tag_string);
         var controller = require('js/apps/entry/list/controller');
         controller.show_list(tag_string);

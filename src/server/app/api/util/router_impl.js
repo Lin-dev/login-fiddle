@@ -4,7 +4,7 @@ module.exports = {
   /**
    * Used for signalling success to the client - server actions can redirect to this API endpoint
    */
-  success: function(req, res, next) {
+  success: function success(req, res, next) {
     var result = {
       status: 'success',
       message: req.flash('message')[0]
@@ -15,7 +15,7 @@ module.exports = {
   /**
    * Used for signalling failure to the client - server actions can redirect to this API endpoint
    */
-  failure: function(req, res, next) {
+  failure: function failure(req, res, next) {
     var result = {
       status: 'failure',
       message: req.flash('message')[0]

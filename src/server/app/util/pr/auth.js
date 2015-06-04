@@ -57,7 +57,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }, {
       validate: {
-        has_valid_account_source: function() {
+        has_valid_account_source: function has_valid_account_source() {
           if(this.local_email && this.local_password) { return; } // local source
           else if(this.facebook_id && this.facebook_token) { return; } // facebook source
           else { Error('No valid account source'); }
@@ -70,7 +70,7 @@ module.exports = function(sequelize, DataTypes) {
          * @param  {String} unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
          * @return {String}                   The hashed password
          */
-        hash_password: function(unhashed_password) {
+        hash_password: function hash_password(unhashed_password) {
           return bcrypt.hashSync(unhashed_password, bcrypt.genSaltSync(user_config.salt_rounds));
         }
       },
@@ -81,7 +81,7 @@ module.exports = function(sequelize, DataTypes) {
          * @param  {String}  unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
          * @return {Boolean}                   True if the unhashed_password hash matches the stored hash
          */
-        check_password: function(unhashed_password) {
+        check_password: function check_password(unhashed_password) {
           return bcrypt.compareSync(unhashed_password, this.local_password);
         }
       }

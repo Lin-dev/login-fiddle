@@ -10,7 +10,7 @@ define(function(require) {
 
     Entities.NavItem = AppObj.Entities.ClientModel.extend({
       __name: 'NavItem',
-      initialize: function() {
+      initialize: function initialize() {
         logger.trace('NavItem.initialize -- enter w/ url: ' + this.get('url'));
         _.extend(this, new Backbone.Picky.Selectable(this));
         logger.trace('NavItem.initialize -- exit');
@@ -21,14 +21,14 @@ define(function(require) {
       __name: 'NavItemCollection',
       model: Entities.NavItem,
 
-      initialize: function() {
+      initialize: function initialize() {
         logger.trace('NavItemCollection.initialize -- enter');
         _.extend(this, new Backbone.Picky.SingleSelect(this));
         logger.trace('NavItemCollection.initialize -- exit');
       }
     });
 
-    var initialize_navitems = function() {
+    var initialize_navitems = function initialize_navitems() {
       logger.trace('initialize_navitems -- enter');
       Entities.navitem_collection = new Entities.NavItemCollection([
         { name: 'Home Page',  url: 'home',     nav_trigger: 'home:show',     icon: 'glyphicon-home' },
@@ -41,11 +41,11 @@ define(function(require) {
     };
 
     var API = {
-      get_navitem_promise: function() {
-        logger.trace('API.get_navitems_promise -- enter');
+      get_navitem_promise: function get_navitem_promise() {
+        logger.trace('API.get_navitem_promise -- enter');
         var deferred = q.defer();
         if(Entities.navitem_collection === undefined) {
-          logger.trace('API.get_navitems_promise -- initializing navitems');
+          logger.trace('API.get_navitem_promise -- initializing navitems');
           initialize_navitems();
         }
         deferred.resolve(Entities.navitem_collection);

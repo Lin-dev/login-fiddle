@@ -17,7 +17,7 @@ module.exports = {
   /**
    * Returns user description - assumes that the requester must be logged in to access this API endpoint
    */
-  get_user: function(pr, req, res, next) {
+  get_user: function get_user(pr, req, res, next) {
     var result = {
       local_email: req.user.local_email,
       signup_date: req.user.sq_created_at,
@@ -31,7 +31,7 @@ module.exports = {
    * Logs user out and destroys session (the logic for this: if they're logging out then in user's mind this session
    * is over)
    */
-  logout: function(req, res, next) {
+  logout: function logout(req, res, next) {
     req.logout();
     res.clearCookie(user_config.logged_in_cookie_name);
     req.session.destroy(function() {

@@ -8,7 +8,7 @@ define(function(require) {
   AppObj.module('FooterApp.Show', function(Show, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
     Show.controller = {
-      show_footer: function() {
+      show_footer: function show_footer() {
         logger.trace('FooterApp.Show.controller.show_footer -- enter');
         var Views = require('js/apps/footer/show/views');
         var view = new Views.Footer();

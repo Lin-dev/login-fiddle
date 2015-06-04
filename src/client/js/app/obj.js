@@ -22,7 +22,7 @@ define(function(require) {
   /**
    * Updates the URL in the address bar - wraps Backbone.history.navigate
    */
-  AppObj.navigate = function(route, options) {
+  AppObj.navigate = function navigate(route, options) {
     options = options || {};
     Backbone.history.navigate(route, options);
   };
@@ -30,7 +30,7 @@ define(function(require) {
   /**
    * Returns current routing fragment - wraps Backbone.history.fragment
    */
-  AppObj.get_current_route = function() {
+  AppObj.get_current_route = function get_current_route() {
     return Backbone.history.fragment;
   };
 
@@ -39,10 +39,9 @@ define(function(require) {
    * @return {Boolean} True if the user is logged in and the Server user_config.logged_in_cookie_name === 'true',
    *                   false otherwise
    */
-  AppObj.is_logged_in = function() {
+  AppObj.is_logged_in = function is_logged_in() {
     require('jquery_cookie');
     /* global $: false */
-    // $ is defined by requiring jquery_cookie so ignore following line in jshint:
     return $.cookie.get('logged_in') === 'true';
   };
 

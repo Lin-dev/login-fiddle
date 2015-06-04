@@ -12,7 +12,7 @@ define(function(require) {
     });
 
     var API = {
-      show_session_info: function() {
+      show_session_info: function show_session_info() {
         var controller = require('js/apps/session/show/controller');
         controller.show_session_info();
         AppObj.execute('headerapp:set_active_navitem', 'session');

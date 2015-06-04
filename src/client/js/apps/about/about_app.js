@@ -14,7 +14,7 @@ define(function(require) {
     });
 
     var API = {
-      show_about: function() {
+      show_about: function show_about() {
         logger.trace('API.show_about -- enter');
         var controller = require('js/apps/about/show/controller');
         controller.show_about();

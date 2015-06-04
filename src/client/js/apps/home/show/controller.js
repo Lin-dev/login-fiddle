@@ -8,7 +8,7 @@ define(function(require) {
   AppObj.module('HomeApp.Show', function(Show, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
     Show.controller = {
-      show_home: function() {
+      show_home: function show_home() {
         logger.trace('show_home -- enter');
         var Views = require('js/apps/home/show/views');
         var view = new Views.Home();

@@ -13,14 +13,14 @@ define(function(require) {
     });
 
     var API = {
-      show_access_form: function(query_string, trigger_after_login) {
+      show_access_form: function show_access_form(query_string, trigger_after_login) {
         logger.trace('API.show_access_form -- enter');
         var controller = require('js/apps/user/access/controller');
         controller.show_access_form(query_string, trigger_after_login);
         AppObj.execute('headerapp:set_active_navitem', 'user');
       },
 
-      show_user_profile: function() {
+      show_user_profile: function show_user_profile() {
         logger.trace('API.show_user_profile -- enter');
         var controller = require('js/apps/user/profile/controller');
         controller.show_user_profile();
