@@ -213,6 +213,9 @@ module.exports = {
       if(req.isAuthenticated()) {
         res.cookie(user_config.logged_in_cookie_name, 'true', { maxAge: user_config.session.cookie.maxAge });
       }
+      else {
+        res.cookie(user_config.logged_in_cookie_name, 'false', { maxAge: user_config.session.cookie.maxAge });
+      }
       next();
     },
 
