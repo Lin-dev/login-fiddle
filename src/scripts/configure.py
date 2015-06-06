@@ -149,6 +149,16 @@ def configure_app(current_value_install_dir, output_value_install_dir):
     re_string='username_field: \'([a-zA-Z_]+)\''
   )
   groups[-1].add_option(
+    name='Twitter - consumer key',
+    desc='For application (client, server config should be equal) [an alphanumeric string]',
+    re_string='consumer_key: \'([a-zA-Z0-9.]+)\',? // configure.py: twitter'
+  )
+  groups[-1].add_option(
+    name='Twitter - consumer secret',
+    desc='For application (do not share this information or record it elsewhere) [an alphanumeric string]',
+    re_string='client_secret: \'([a-zA-Z0-9]+)\',? // configure.py: facebook'
+  )
+  groups[-1].add_option(
     name='Logged in cookie name',
     desc='Cookie name set to indicate logged in (client, server config should be equal) [alphabet string with _])',
     re_string='logged_in_cookie_name: \'([a-zA-Z_]+)\''
@@ -194,6 +204,11 @@ def configure_app(current_value_install_dir, output_value_install_dir):
     name='Facebook - client id',
     desc='For application (client, server config should be equal) [a number]',
     re_string='facebook_client_id: \'(\d+)\''
+  )
+  groups[-1].add_option(
+    name='Twitter - consumer key',
+    desc='For application (client, server config should be equal) [an alphanumeric string]',
+    re_string='twitter_consumer_key: \'([a-zA-Z0-9]+)\''
   )
 
   groups.append(configure.Group(
