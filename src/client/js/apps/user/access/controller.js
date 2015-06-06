@@ -50,11 +50,27 @@ define(function(require) {
     }
 
     /**
+     * Returns the string to set the client browser location to, to request auth from the provider. Is usually a
+     * server API endpoint, which in turn generates and redirects to the provider
+     */
+    function get_twitter_request_url() {
+      return AppObj.config.apps.user.twitter_request_url;
+    }
+
+    /**
      * Process a FB login request - redirect the client browser to the facebook auth request URL
      */
     function proc_facebook_login() {
       logger.trace('private.proc_facebook_login -- redirecting to facebook');
       window.location.href = get_facebook_request_url();
+    }
+
+    /**
+     * Process a twitter login request - redirect the client browser to the twitter auth request URL
+     */
+    function proc_twitter_login() {
+      logger.trace('private.proc_twitter_login -- redirecting to twitter');
+      window.location.href = get_twitter_request_url();
     }
 
     /**
@@ -153,10 +169,12 @@ define(function(require) {
         // Model is needed in view so that view can be updated following if the post response is a failure
         var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel({
           facebook_url: get_facebook_request_url(),
+          twitter_url: get_twitter_request_url(),
           message: get_decline_msg_from_query_string_reason(query_string)
         })});
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
         access_view.on('facebook-access-clicked', function facebook_access_clicked() { proc_facebook_login(); });
+        access_view.on('twitter-access-clicked', function twitter_access_clicked() { proc_twitter_login(); });
         access_view.on('local-access-submitted', function local_access_submitted(form_data) {
           require('js/apps/user/entities');
 

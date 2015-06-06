@@ -27,7 +27,8 @@ define(function(require) {
 
       events: {
         'click button.js-submit': 'submit_clicked',
-        'click button.js-facebook': 'facebook_clicked'
+        'click button.js-facebook': 'facebook_clicked',
+        'click button.js-twitter': 'twitter_clicked'
       },
 
       modelEvents: {
@@ -58,6 +59,12 @@ define(function(require) {
         event.preventDefault();
         logger.debug('facebook_clicked');
         this.trigger('facebook-access-clicked');
+      },
+
+      twitter_clicked: function twitter_clicked(event) {
+        event.preventDefault();
+        logger.debug('twitter_clicked');
+        this.trigger('twitter-access-clicked');
       },
 
       /**
