@@ -6,6 +6,7 @@ var _ = require('underscore');
 
 var FacebookStrategy = require('passport-facebook').Strategy;
 var LocalStrategy = require('passport-local').Strategy;
+var TwitterStrategy = require('passport-twitter').Strategy;
 
 var pr = require('app/util/pr');
 var user_config = require('app/config/user');
@@ -144,6 +145,46 @@ passport.use('facebook-auth', new FacebookStrategy({
   })
   .fail(function(error) {
     logger.error('facebook-auth callback for token ' + token + ' failed while loading user, error: ' + error);
+    return done(error, undefined, req.flash('message', 'System error'));
+  });
+}));
+
+passport.use('twitter-auth', new TwitterStrategy({
+  consumerKey: user_config.twitter_auth.consumer_key,
+  consumerSecret: user_config.twitter_auth.consumer_secret,
+  callbackURL: user_config.twitter_auth.callback_url,
+  passReqToCallback: true
+}, function(req, token, token_secret, profile, done) {
+  var where_object = { twitter_id: profile.id };
+  q(pr.pr.auth.user.find({ where: where_object }))
+  .then(function(user) {
+    if(user !== null) { // user found - log in
+      logger.debug('twitter-auth callback -- Found existing user, logging in: ' + JSON.stringify(user));
+      return done(null, user);
+    }
+    else { // user not found - create account
+      var user_attrs = {
+        twitter_id: profile.id,
+        twitter_token: token,
+        twitter_username: profile.username,
+        twitter_name: profile.name ? profile.name : undefined
+      };
+      logger.debug('twitter-auth callback -- user not found, creating: ' + JSON.stringify(user_attrs));
+      q(pr.pr.auth.user.create(user_attrs))
+      .then(function(user) {
+        logger.info('twitter-auth user created: ' + user_attrs.twitter_id  + ' / ' + user_attrs.twitter_username);
+        return done(null, user);
+      })
+      .fail(function(error) {
+        // DB or validation error - do not distinguish validation or set flash because that is also done client side
+        logger.warn('twitter-auth callback for ' + user_attrs.twitter_id + ' / ' + user_attrs.twitter_username +
+          ' failed user creation, error: ' + error);
+        return done(error, undefined, req.flash('message', 'Account creation failed'));
+      });
+    }
+  })
+  .fail(function(error) {
+    logger.error('twitter-auth callback for token ' + token + ' failed while loading user, error: ' + error);
     return done(error, undefined, req.flash('message', 'System error'));
   });
 }));

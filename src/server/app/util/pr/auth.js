@@ -54,12 +54,33 @@ module.exports = function(sequelize, DataTypes) {
         validate: {
           isEmail: true
         }
+      },
+      // Twitter
+      twitter_id: {
+        type: DataTypes.STRING(256),
+        allowNull: true,
+        unique: true
+      },
+      twitter_token: {
+        type: DataTypes.STRING(512),
+        allowNull: true,
+        unique: true
+      },
+      twitter_username: {
+        type: DataTypes.STRING(15), // twitter max username length is 15
+        allowNull: true,
+        unique: true
+      },
+      twitter_name: {
+        type: DataTypes.STRING(256),
+        allowNull: true
       }
     }, {
       validate: {
         has_valid_account_source: function has_valid_account_source() {
           if(this.local_email && this.local_password) { return; } // local source
           else if(this.facebook_id && this.facebook_token) { return; } // facebook source
+          else if(this.twitter_id && this.twitter_token) { return; } // twitter source
           else { Error('No valid account source'); }
         }
       },

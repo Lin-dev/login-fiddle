@@ -93,5 +93,22 @@ module.exports = {
     successRedirect: '/api/util/success',
     failureRedirect: '/api/util/failure',
     failureFlash: true
+  }),
+
+  /**
+   * Initiates requests for Twitter authentication, using passport to redirect to Twitter - this API endpoint should
+   * be access directly by the browser, not via AJAX
+   * @type {Function}
+   */
+  access_twitter_auth: auth.passport.authenticate('twitter-auth')
+
+  /**
+   * Completes request for Twitter authentication
+   * @type {Function}
+   */
+  access_twitter_callback: auth.passport.authenticate('twitter-auth', {
+    successRedirect: '/profile',
+    failureRedirect: '/access?reason=twitter_declined',
+    failureFlash: true
   })
 };

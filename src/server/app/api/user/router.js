@@ -16,5 +16,7 @@ router.post('/access/local/login', auth.mw.ensure_unauth, router_impl.access_loc
   router_impl.access_local_login);
 router.post('/access/local/signup', auth.mw.ensure_unauth, router_impl.access_local_check_login_signup,
   router_impl.access_local_signup);
+router.get('/access/twitter/auth', auth.mw.ensure_unauth, router_impl.access_twitter_auth);
+router.get('/access/twitter/callback', auth.mw.ensure_unauth, router_impl.access_twitter_callback);
 
 module.exports = router;
