@@ -5,6 +5,22 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/apps/user/access/controller');
 
   AppObj.module('UserApp.Access', function(Access, AppObj, Backbone, Marionette, $, _) {
+    function get_decline_msg_from_query_string_reason(query_string) {
+      var parsed_query = Marionette.parse_query_string(query_string);
+      if(parsed_query === undefined) {
+        return undefined;
+      }
+      else {
+        switch(parsed_query.reason) {
+          case undefined: return undefined;
+          case 'fb_declined': return 'Facebook login cancelled';
+          default:
+            logger.error('private.get_decline_msg_from_query_string_reason -- unknown reason: ' + parsed_query.reason);
+            return 'Unknown error reason: ' + parsed_query.reason;
+        }
+      }
+    }
+
     /**
      * Gets the facebook display mode string to use based on the client window size
      * @param  {String} ui_scale The UI scale as returned by `Marionette.get_ui_scale()`
@@ -22,34 +38,9 @@ define(function(require) {
       }
     }
 
-    function get_facebook_auth_url() {
-      return 'https://www.facebook.com/v2.2/dialog/oauth?' +
-        'response_type=' + AppObj.config.apps.user.facebook_response_type + '&' +
-        'redirect_uri=' + encodeURIComponent(AppObj.config.apps.user.facebook_redirect_uri) + '&' +
-        'display=' + get_facebook_display_mode_from_ui_scale(Marionette.get_ui_scale()) + '&' +
-        'scope=' + escape(AppObj.config.apps.user.facebook_scope.join(',')) + '&' +
-        'client_id=' + AppObj.config.apps.user.facebook_client_id;
-    }
-
-    function get_decline_msg_from_query_string_reason(query_string) {
-      var parsed_query = Marionette.parse_query_string(query_string);
-      if(parsed_query === undefined) {
-        return undefined;
-      }
-      else {
-        switch(parsed_query.reason) {
-          case undefined: return undefined;
-          case 'fb_declined': return 'Facebook login cancelled';
-          default:
-            logger.error('private.get_decline_msg_from_query_string_reason -- unknown reason: ' + parsed_query.reason);
-            return 'Unknown error reason: ' + parsed_query.reason;
-        }
-      }
-    }
-
     function proc_facebook_login() {
       logger.trace('private.proc_facebook_login -- redirecting to facebook');
-      window.location.href = get_facebook_auth_url();
+      window.location.href = AppObj.config.apps.user.facebook_redirect_uri;
     }
 
     function proc_local_login(form_data, access_view, trigger_after_login) {
