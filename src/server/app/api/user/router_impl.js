@@ -22,7 +22,9 @@ module.exports = {
       local_email: req.user.local_email,
       signup_date: req.user.sq_created_at,
       facebook_email: req.user.facebook_email,
-      facebook_name: req.user.facebook_name
+      facebook_name: req.user.facebook_name,
+      twitter_username: req.user.twitter_username,
+      twitter_name: req.user.twitter_name
     };
     res.status(200).send(result);
   },
