@@ -141,42 +141,42 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   groups[-1].add_option(
     name='Local auth - username field',
     desc='DB field name and variable name [alphanumeric string with _]',
-    re_string='username_field: \'[a-zA-Z_]+\''
+    re_string='username_field: \'([a-zA-Z_]+)\''
   )
   groups[-1].add_option(
     name='Local auth - password field',
     desc='DB field name and variable name [alphanumeric string with _]',
-    re_string='username_field: \'[a-zA-Z_]+\''
+    re_string='username_field: \'([a-zA-Z_]+)\''
   )
   groups[-1].add_option(
     name='Logged in cookie name',
-    desc='Cookie name set to indicate logged in (client, server config should be equal) [alphanumeric string with _])',
-    re_string='logged_in_cookie_name: \'[a-zA-Z_]+\''
+    desc='Cookie name set to indicate logged in (client, server config should be equal) [alphabet string with _])',
+    re_string='logged_in_cookie_name: \'([a-zA-Z_]+)\''
   )
   groups[-1].add_option(
     name='Cookie - secret',
-    desc='To secure server cookies [alphanumeric string with _])',
-    re_string='secret: \'[a-zA-Z_]+\''
+    desc='To secure server cookies [alphabet string with _])',
+    re_string='secret: \'([a-zA-Z_]+)\''
   )
   groups[-1].add_option(
     name='Cookie - store host',
     desc='For storing sessions [hostname or IP address])',
-    re_string='host: \'[a-zA-Z_0-9.]+\',? // configure.py: store'
+    re_string='host: \'([a-zA-Z_0-9.]+)\',? // configure.py: store'
   )
   groups[-1].add_option(
     name='Cookie - store port',
     desc='For storing sessions [number])',
-    re_string='port: \'\d+\',? // configure.py: store'
+    re_string='port: \'(\d+)\',? // configure.py: store'
   )
   groups[-1].add_option(
     name='Cookie - store DB number',
     desc='To secure server cookies [number])',
-    re_string='db: \'\d+\',? // configure.py: store'
+    re_string='db: \'(\d+)\',? // configure.py: store'
   )
   groups[-1].add_option(
     name='Salt rounds',
     desc='For hashing passwords, do not change after any passwords are hashed [number, small])',
-    re_string='salt_rounds: \'\d+\''
+    re_string='salt_rounds: \'(\d+)\''
   )
 
   groups.append(configure.Group(
@@ -188,7 +188,7 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   groups[-1].add_option(
     name='Logged in cookie name',
     desc='Cookie name set to indicate logged in (client, server config should be equal) [alphanumeric string with _])',
-    re_string='logged_in_cookie_name: \'[a-zA-Z_]+\''
+    re_string='logged_in_cookie_name: \'([a-zA-Z_]+)\''
   )
   groups[-1].add_option(
     name='Facebook - client id',

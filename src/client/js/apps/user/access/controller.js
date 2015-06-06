@@ -5,19 +5,21 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/apps/user/access/controller');
 
   AppObj.module('UserApp.Access', function(Access, AppObj, Backbone, Marionette, $, _) {
+    /**
+     * Returns a user-displayable explanation of why the access form is being displayed again (i.e. they refused
+     * permission at same oauth provider)
+     * @param  {String} query_string The query string code included in the URL query string the server redirects to
+     * @return {String}              A user-displayable explanation of why the access form is being displayed again
+     */
     function get_decline_msg_from_query_string_reason(query_string) {
       var parsed_query = Marionette.parse_query_string(query_string);
-      if(parsed_query === undefined) {
-        return undefined;
-      }
-      else {
-        switch(parsed_query.reason) {
-          case undefined: return undefined;
-          case 'fb_declined': return 'Facebook login cancelled';
-          default:
-            logger.error('private.get_decline_msg_from_query_string_reason -- unknown reason: ' + parsed_query.reason);
-            return 'Unknown error reason: ' + parsed_query.reason;
-        }
+      switch(parsed_query && parsed_query.reason) {
+        case undefined: return undefined;
+        case 'fb_declined': return 'Facebook login cancelled';
+        case 'twitter_declined': return 'Twitter login cancelled';
+        default:
+          logger.error('private.get_decline_msg_from_query_string_reason -- unknown reason: ' + parsed_query.reason);
+          return 'Unknown error reason: ' + parsed_query.reason;
       }
     }
 
@@ -38,16 +40,29 @@ define(function(require) {
       }
     }
 
-    function get_facebook_auth_url() {
-      return AppObj.config.apps.user.facebook_auth_url + '?display=' +
+    /**
+     * Returns the string to set the client browser location to, to request auth from the provider. Is usually a
+     * server API endpoint, which in turn generates and redirects to the provider
+     */
+    function get_facebook_request_url() {
+      return AppObj.config.apps.user.facebook_request_url + '?display=' +
         get_facebook_display_mode_from_ui_scale(Marionette.get_ui_scale());
     }
 
+    /**
+     * Process a FB login request - redirect the client browser to the facebook auth request URL
+     */
     function proc_facebook_login() {
       logger.trace('private.proc_facebook_login -- redirecting to facebook');
-      window.location.href = get_facebook_auth_url();
+      window.location.href = get_facebook_request_url();
     }
 
+    /**
+     * Process a local login request
+     * @param  {Object} form_data           An object with a key for each form data field
+     * @param  {Object} signup_view         The view (whose model should be updated with any validation errors)
+     * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
+     */
     function proc_local_login(form_data, access_view, trigger_after_login) {
       // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
       var ula = new AppObj.UserApp.Entities.UserLocalAccess({
@@ -82,6 +97,12 @@ define(function(require) {
       }
     }
 
+    /**
+     * Process a local signup request, validating it and synchronising to the DB
+     * @param  {Object} form_data           An object with a key for each form data field
+     * @param  {Object} signup_view         The view (whose model should be updated with any validation errors)
+     * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
+     */
     function proc_local_signup(form_data, signup_view, trigger_after_login) {
       var uls = new AppObj.UserApp.Entities.UserLocalSignup({
         local_email: form_data.local_email,
@@ -117,6 +138,11 @@ define(function(require) {
     }
 
     Access.controller = {
+      /**
+       * Display the access form, allowing users to sign up and login
+       * @param  {String} query_string        Used so the server can send a reason code to trigger a message display
+       * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
+       */
       show_access_form: function show_access_form(query_string, trigger_after_login) {
         logger.trace('show_access_form -- query_string: ' + query_string + ', trigger_after_login: ' +
           trigger_after_login);
@@ -126,7 +152,7 @@ define(function(require) {
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
         var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel({
-          facebook_url: get_facebook_auth_url(),
+          facebook_url: get_facebook_request_url(),
           message: get_decline_msg_from_query_string_reason(query_string)
         })});
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });

@@ -7,7 +7,7 @@ module.exports = {
   facebook_auth: {
     client_id: '', // configure.py: facebook
     client_secret: '', // configure.py: facebook
-    callback_url: 'https://localhost:27974/api/user/access/facebook/callback'
+    callback_url: 'https://localhost:27974/api/user/access/facebook/callback' // configure.py: facebook
   },
   local_auth: {
     username_field: 'local_email',

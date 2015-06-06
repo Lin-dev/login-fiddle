@@ -20,16 +20,16 @@ describe('js/app/config', function() {
       expect(this.config.apps.user.local_password_max_length).toEqual(256);
     });
     it(
-      'apps.user.facebook_auth_url should be https://localhost:27974/api/user/access/facebook/auth',
+      'apps.user.facebook_request_url should be https://localhost:27974/api/user/access/facebook/auth',
       function() {
-        expect(this.config.apps.user.facebook_auth_url)
+        expect(this.config.apps.user.facebook_request_url)
           .toEqual('https://localhost:27974/api/user/access/facebook/auth');
       }
     );
     it(
-      'apps.user.facebook_redirect_uri should be https://localhost:27974/api/user/access/facebook/callback',
+      'apps.user.facebook_redirect_url should be https://localhost:27974/api/user/access/facebook/callback',
       function() {
-        expect(this.config.apps.user.facebook_redirect_uri)
+        expect(this.config.apps.user.facebook_redirect_url)
           .toEqual('https://localhost:27974/api/user/access/facebook/callback');
       }
     );

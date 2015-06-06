@@ -55,7 +55,7 @@ module.exports = {
 
   /**
    * Completes requests for Facebook authentication
-   * @type {[type]}
+   * @type {Function}
    */
   access_facebook_callback: auth.passport.authenticate('facebook-auth', {
     successRedirect: '/profile',
