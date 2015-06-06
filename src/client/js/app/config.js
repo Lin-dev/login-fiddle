@@ -14,7 +14,10 @@ define(function(require) {
         local_password_max_length: 256,
         facebook_request_url: 'https://localhost:27974/api/user/access/facebook/auth',
         facebook_redirect_url: 'https://localhost:27974/api/user/access/facebook/callback',
-        facebook_client_id: ''
+        facebook_client_id: '',
+        twitter_consumer_key: '',
+        twitter_request_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth',
+        twitter_redirect_url: 'https://127.0.0.1:27974/api/user/access/twitter/callback'
       }
     },
     logger: {

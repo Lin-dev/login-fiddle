@@ -33,5 +33,12 @@ describe('js/app/config', function() {
           .toEqual('https://localhost:27974/api/user/access/facebook/callback');
       }
     );
+    it(
+      'apps.user.twitter_redirect_url should be https://localhost:27974/api/user/access/twitter/callback',
+      function() {
+        expect(this.config.apps.user.twitter_redirect_url)
+          .toEqual('https://127.0.0.1:27974/api/user/access/twitter/callback');
+      }
+    );
   });
 });
