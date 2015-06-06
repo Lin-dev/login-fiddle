@@ -56,6 +56,8 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.access_local_signup.should.be.a.function;
     num_funcs[name]++;
+    module.access_facebook_auth.should.be.a.function;
+    num_funcs[name]++;
     module.access_facebook_callback.should.be.a.function;
     num_funcs[name]++;
   });

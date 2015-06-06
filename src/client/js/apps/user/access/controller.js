@@ -33,14 +33,19 @@ define(function(require) {
         case 'smalldesk': return 'page';
         case 'bigdesk': return 'page';
         default:
-          logger.error('private.get_facebook_display_mode_from_scale -- unknown UI scale: ' + ui_scale);
+          logger.error('private.get_facebook_display_mode_from_ui_scale -- unknown UI scale: ' + ui_scale);
           return 'touch';
       }
     }
 
+    function get_facebook_auth_url() {
+      return AppObj.config.apps.user.facebook_auth_url + '?display=' +
+        get_facebook_display_mode_from_ui_scale(Marionette.get_ui_scale());
+    }
+
     function proc_facebook_login() {
       logger.trace('private.proc_facebook_login -- redirecting to facebook');
-      window.location.href = AppObj.config.apps.user.facebook_redirect_uri;
+      window.location.href = get_facebook_auth_url();
     }
 
     function proc_local_login(form_data, access_view, trigger_after_login) {

@@ -4,8 +4,8 @@ var _ = require('underscore');
 
 var auth = require('app/util/auth');
 var user_config = require('app/config/user');
-//var logger_module = require('app/util/logger');
-//var logger = logger_module.get('app/api/session/router_impl');
+var logger_module = require('app/util/logger');
+var logger = logger_module.get('app/api/session/router_impl');
 
 //var keys_required_for_login = [user_config.local_auth.username_field, user_config.local_auth.password_field];
 var keys_required_for_login = [user_config.local_auth.username_field, user_config.local_auth.password_field];
@@ -41,10 +41,17 @@ module.exports = {
   },
 
   /**
-   * Initiates requests for Facebook authentication
+   * Initiates requests for Facebook authentication, using passport to redirect to Facebook - this API endpoint should
+   * be access directly by the browser, not via AJAX
    * @type {Function}
    */
-  access_facebook_auth: auth.passport.authenticate('facebook-auth', { scope: ['public_profile', 'email'] }),
+  access_facebook_auth: function(req, res, next) {
+    logger.debug('exports.access_facebook_auth -- redir request to FB (display mode: ' + req.query.display + ')');
+    (auth.passport.authenticate('facebook-auth', {
+      scope: ['public_profile', 'email'],
+      display: req.query.display
+    }))(req, res, next);
+  },
 
   /**
    * Completes requests for Facebook authentication
