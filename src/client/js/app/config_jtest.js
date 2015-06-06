@@ -23,6 +23,13 @@ describe('js/app/config', function() {
       expect(this.config.apps.user.facebook_response_type).toEqual('code');
     });
     it(
+      'apps.user.facebook_auth_url should be https://localhost:27974/api/user/access/facebook/auth',
+      function() {
+        expect(this.config.apps.user.facebook_auth_url)
+          .toEqual('https://localhost:27974/api/user/access/facebook/auth');
+      }
+    );
+    it(
       'apps.user.facebook_redirect_uri should be https://localhost:27974/api/user/access/facebook/callback',
       function() {
         expect(this.config.apps.user.facebook_redirect_uri)
