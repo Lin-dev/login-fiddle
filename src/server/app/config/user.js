@@ -15,6 +15,11 @@ module.exports = {
     password_field: 'local_password',
     password_max_length: 256
   },
+  twitter_auth: {
+    consumer_key: '', // configure.py: twitter
+    consumer_secret: '', // configure.py: twitter
+    callback_url: 'https://127.0.0.1:27974/api/user/access/twitter/callback' // configure.py: twitter
+  },
   logged_in_cookie_name: 'logged_in',
   session: {
     cookie: {

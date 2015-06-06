@@ -28,6 +28,9 @@ describe('app/config', function() {
     it('local_auth.password_field should be local_password', function() {
       user_config.local_auth.password_field.should.equal('local_password');
     });
+    it('twitter_auth.callback_url should be https://127.0.0.1:27974/api/user/access/twitter/callback', function() {
+      user_config.twitter_auth.callback_url.should.equal('https://127.0.0.1:27974/api/user/access/twitter/callback');
+    });
     it('logged_in_cookie_name should be logged_in', function() {
       user_config.logged_in_cookie_name.should.equal('logged_in');
     });

@@ -15,5 +15,12 @@ describe('app/api/user/router', function() {
         'The faceback_auth.callback_url in app/api/user/router.js expects /api/user/access/facebook/callback'
       );
     });
+
+    it('has a twitter call back URL of /api/user/access/twitter/callback', function() {
+      /\/api\/user\/access\/twitter\/callback$/.test(user_config.twitter_auth.callback_url).should.equal(
+        true,
+        'The twitter_auth.callback_url in app/api/user/router.js expects /api/user/access/twitter/callback'
+      );
+    });
   });
 });
