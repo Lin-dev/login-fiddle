@@ -19,9 +19,6 @@ describe('js/app/config', function() {
     it('apps.user.local_password_max_length should be 256', function() {
       expect(this.config.apps.user.local_password_max_length).toEqual(256);
     });
-    it('apps.user.facebook_response_type should be code', function() {
-      expect(this.config.apps.user.facebook_response_type).toEqual('code');
-    });
     it(
       'apps.user.facebook_auth_url should be https://localhost:27974/api/user/access/facebook/auth',
       function() {
@@ -36,10 +33,5 @@ describe('js/app/config', function() {
           .toEqual('https://localhost:27974/api/user/access/facebook/callback');
       }
     );
-    it('apps.user.facebook_scope should be [public_profile, email]', function() {
-      expect(this.config.apps.user.facebook_scope.indexOf('public_profile')).not.toEqual(-1);
-      expect(this.config.apps.user.facebook_scope.indexOf('email')).not.toEqual(-1);
-      expect(this.config.apps.user.facebook_scope.length).toEqual(2);
-    });
   });
 });
