@@ -47,7 +47,7 @@ module.exports = {
    * be access directly by the browser, not via AJAX
    * @type {Function}
    */
-  access_facebook_auth: function(req, res, next) {
+  access_facebook_auth: function access_facebook_auth(req, res, next) {
     logger.debug('exports.access_facebook_auth -- redir request to FB (display mode: ' + req.query.display + ')');
     (auth.passport.authenticate('facebook-auth', {
       scope: ['public_profile', 'email'],
@@ -102,7 +102,7 @@ module.exports = {
    * be access directly by the browser, not via AJAX
    * @type {Function}
    */
-  access_twitter_auth: auth.passport.authenticate('twitter-auth')
+  access_twitter_auth: auth.passport.authenticate('twitter-auth'),
 
   /**
    * Completes request for Twitter authentication
