@@ -153,7 +153,7 @@ passport.use('facebook-auth', new FacebookStrategy({
 passport.use('google-auth', new GoogleStrategy({
   clientID: user_config.google_auth.client_id,
   clientSecret: user_config.google_auth.client_secret,
-  clientURL: user_config.google_auth.callback_url,
+  callbackURL: user_config.google_auth.callback_url,
   passReqToCallback: true
 }, function(req, token, refresh_token, profile, done) {
   var where_object = { google_id: profile.id };
