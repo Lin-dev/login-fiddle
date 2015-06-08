@@ -139,6 +139,16 @@ def configure_app(current_value_install_dir, output_value_install_dir):
     re_string='client_secret: \'([abcdef\d]+)\',? // configure.py: facebook'
   )
   groups[-1].add_option(
+    name='Google - client id',
+    desc='For application (client, server config should be equal) [an alphanumeric string with - and .]',
+    re_string='client_id: \'([a-zA-Z_.0-9]+)\',? // configure.py google'
+  )
+  groups[-1].add_option(
+    name='Google - client secret',
+    desc='For application (do not share this information or record it elsewhere) [an alphanumeric string with - and .]',
+    re_string='client_secret: \'([a-zA-Z_.0-9]+)\',? // configure.py google'
+  )
+  groups[-1].add_option(
     name='Local auth - username field',
     desc='DB field name and variable name [alphanumeric string with _]',
     re_string='username_field: \'([a-zA-Z_]+)\''
@@ -204,6 +214,11 @@ def configure_app(current_value_install_dir, output_value_install_dir):
     name='Facebook - client id',
     desc='For application (client, server config should be equal) [a number]',
     re_string='facebook_client_id: \'(\d+)\''
+  )
+  groups[-1].add_option(
+    name='Google - client id',
+    desc='For application (client, server config should be equal) [an alphanumeric string with - and .]',
+    re_string='google_client_id: \'([a-zA-Z_.0-9]+)\''
   )
   groups[-1].add_option(
     name='Twitter - consumer key',
