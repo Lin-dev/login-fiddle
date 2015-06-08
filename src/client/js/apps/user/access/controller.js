@@ -41,8 +41,8 @@ define(function(require) {
     }
 
     /**
-     * Returns the string to set the client browser location to, to request auth from the provider. Is usually a
-     * server API endpoint, which in turn generates and redirects to the provider
+     * Returns the string to set the client browser location to, to request auth from FB. Is the
+     * server API endpoint, which in turn generates and redirects to FB
      */
     function get_facebook_request_url() {
       return AppObj.config.apps.user.facebook_request_url + '?display=' +
@@ -50,8 +50,8 @@ define(function(require) {
     }
 
     /**
-     * Returns the string to set the client browser location to, to request auth from the provider. Is usually a
-     * server API endpoint, which in turn generates and redirects to the provider
+     * Returns the string to set the client browser location to, to request auth from Twitter. Is the
+     * server API endpoint, which in turn generates and redirects to Twitter
      */
     function get_twitter_request_url() {
       return AppObj.config.apps.user.twitter_request_url;
