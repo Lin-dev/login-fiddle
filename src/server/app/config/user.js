@@ -9,6 +9,11 @@ module.exports = {
     client_secret: '', // configure.py: facebook
     callback_url: 'https://localhost:27974/api/user/access/facebook/callback' // configure.py: facebook
   },
+  google_auth: {
+    client_id: '', // configure.py: google
+    client_secret: '', // configure.py: google
+    callback_url: 'https://localhost:27974/api/user/access/google/callback' // configure.py: google
+  },
   local_auth: {
     username_field: 'local_email',
     username_max_length: 254, // ensure this agrees with value in client/js/apps/user/entities.js

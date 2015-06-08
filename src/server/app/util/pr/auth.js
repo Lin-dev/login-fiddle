@@ -74,6 +74,28 @@ module.exports = function(sequelize, DataTypes) {
       twitter_name: {
         type: DataTypes.STRING(256),
         allowNull: true
+      },
+      // Google
+      google_id: {
+        type: DataTypes.STRING(256),
+        allowNull: true,
+        unique: true
+      },
+      google_token: {
+        type: DataTypes.STRING(512),
+        allowNull: true,
+        unique: true
+      },
+      google_name: {
+        type: DataTypes.STRING(256),
+        allowNull: true
+      },
+      google_email: {
+        type: DataTypes.STRING(254), // max length of email is 254
+        allowNull: true,
+        validate: {
+          isEmail: true
+        }
       }
     }, {
       validate: {
@@ -81,6 +103,7 @@ module.exports = function(sequelize, DataTypes) {
           if(this.local_email && this.local_password) { return; } // local source
           else if(this.facebook_id && this.facebook_token) { return; } // facebook source
           else if(this.twitter_id && this.twitter_token) { return; } // twitter source
+          else if(this.google_id && this.google_token) { return; } // google source
           else { Error('No valid account source'); }
         }
       },

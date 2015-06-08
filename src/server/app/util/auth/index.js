@@ -5,6 +5,7 @@ var q = require('q');
 var _ = require('underscore');
 
 var FacebookStrategy = require('passport-facebook').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var LocalStrategy = require('passport-local').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 
@@ -145,6 +146,46 @@ passport.use('facebook-auth', new FacebookStrategy({
   })
   .fail(function(error) {
     logger.error('facebook-auth callback for token ' + token + ' failed while loading user, error: ' + error);
+    return done(error, undefined, req.flash('message', 'System error'));
+  });
+}));
+
+passport.use('google-auth', new GoogleStrategy({
+  clientID: user_config.google_auth.client_id,
+  clientSecret: user_config.google_auth.client_secret,
+  clientURL: user_config.google_auth.callback_url,
+  passReqToCallback: true
+}, function(req, token, refresh_token, profile, done) {
+  var where_object = { google_id: profile.id };
+  q(pr.pr.auth.user.find({ where: where_object }))
+  .then(function(user) {
+    if(user !== null) { // user found - log in
+      logger.debug('google-auth callback -- Found existing user, logging in: ' + JSON.stringify(user));
+      return done(null, user);
+    }
+    else { // user not found - create account
+      var user_attrs = {
+        google_id: profile.id,
+        google_token: token,
+        google_name: profile.display_name,
+        google_email: profile.emails ? profile.emails[0].value : undefined
+      };
+      logger.debug('google-auth callback -- user not found, creating: ' + JSON.stringify(user_attrs));
+      q(pr.pr.auth.user.create(user_attrs))
+      .then(function(user) {
+        logger.info('google-auth user created: ' + user_attrs.google_id + ' / ' + user_attrs.google_name);
+        return done(null, user);
+      })
+      .fail(function(error) {
+        // DB or validation error - do not distinguish validation or set flash because that is also done client side
+        logger.warn('google-auth callback for ' + user_attrs.google_id + ' / ' + user_attrs.google_name +
+          ' failed user creation, error: ' + error);
+        return done(error, undefined, req.flash('message', 'Account creation failed'));
+      });
+    }
+  })
+  .fail(function(error) {
+    logger.error('google-auth callback for token ' + token + ' failed while loading user, error: ' + error);
     return done(error, undefined, req.flash('message', 'System error'));
   });
 }));

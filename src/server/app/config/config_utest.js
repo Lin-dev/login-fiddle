@@ -16,6 +16,9 @@ describe('app/config', function() {
     it('facebook_auth.callback_url should be https://localhost:27974/api/user/access/facebook/callback', function() {
       user_config.facebook_auth.callback_url.should.equal('https://localhost:27974/api/user/access/facebook/callback');
     });
+    it('google_auth.callback_url should be https://localhost:27974/api/user/access/google/callback', function() {
+      user_config.google_auth.callback_url.should.equal('https://localhost:27974/api/user/access/google/callback');
+    });
     it('local_auth.username_max_length should be 254', function() {
       user_config.local_auth.username_max_length.should.equal(254);
     });

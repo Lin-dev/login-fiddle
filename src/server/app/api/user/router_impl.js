@@ -43,6 +43,29 @@ module.exports = {
   },
 
   /**
+   * Initiates requests for Google authentication, using passport to redirect to Google - this API endpoint should
+   * be access directly by the browser, not via AJAX
+   * @type {Function}
+   */
+  access_google_auth: function access_google_auth(req, res, next) {
+    logger.debug('exports.access_google_auth -- redir request to FB (display mode: ' + req.query.diplay + ')');
+    (auth.passport.authenticate('google-auth', {
+      scope: ['profile', 'email'],
+      display: req.query.display
+    }))(req, res, next);
+  },
+
+  /**
+   * Completes requests for Google authentication
+   * @type {Function}
+   */
+  access_google_callback: auth.passport.authenticate('google-auth', {
+    successRedirect: '/profile',
+    failureRedirect: '/access?reason=google_declined',
+    failureFlash: true
+  }),
+
+  /**
    * Initiates requests for Facebook authentication, using passport to redirect to Facebook - this API endpoint should
    * be access directly by the browser, not via AJAX
    * @type {Function}

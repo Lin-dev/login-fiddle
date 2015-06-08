@@ -15,6 +15,9 @@ define(function(require) {
         facebook_request_url: 'https://localhost:27974/api/user/access/facebook/auth',
         facebook_redirect_url: 'https://localhost:27974/api/user/access/facebook/callback',
         facebook_client_id: '',
+        google_client_id: '',
+        google_request_url: 'https://localhost:27974/api/user/access/google/auth',
+        google_redirect_url: 'https://localhost:27974/api/user/access/google/callback',
         twitter_consumer_key: '',
         twitter_request_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth',
         twitter_redirect_url: 'https://127.0.0.1:27974/api/user/access/twitter/callback'
