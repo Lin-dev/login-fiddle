@@ -17,6 +17,7 @@ define(function(require) {
         case undefined: return undefined;
         case 'fb_declined': return 'Facebook login cancelled';
         case 'twitter_declined': return 'Twitter login cancelled';
+        case 'google_declined': return 'Google login cancelled';
         default:
           logger.error('private.get_decline_msg_from_query_string_reason -- unknown reason: ' + parsed_query.reason);
           return 'Unknown error reason: ' + parsed_query.reason;
@@ -28,14 +29,14 @@ define(function(require) {
      * @param  {String} ui_scale The UI scale as returned by `Marionette.get_ui_scale()`
      * @return {String}          The facebook display mode to render the auth request in
      */
-    function get_facebook_display_mode_from_ui_scale(ui_scale) {
+    function get_facebook_google_display_mode_from_ui_scale(ui_scale) {
       switch(ui_scale) {
         case 'mobile': return 'touch';
         case 'tablet': return 'touch';
         case 'smalldesk': return 'page';
         case 'bigdesk': return 'page';
         default:
-          logger.error('private.get_facebook_display_mode_from_ui_scale -- unknown UI scale: ' + ui_scale);
+          logger.error('private.get_facebook_google_display_mode_from_ui_scale -- unknown UI scale: ' + ui_scale);
           return 'touch';
       }
     }
@@ -46,7 +47,16 @@ define(function(require) {
      */
     function get_facebook_request_url() {
       return AppObj.config.apps.user.facebook_request_url + '?display=' +
-        get_facebook_display_mode_from_ui_scale(Marionette.get_ui_scale());
+        get_facebook_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
+    }
+
+    /**
+     * Returns the string to set the client browser location to, to request auth from Google. Is the
+     * server API endpoint, which in turn generates and redirects to Google
+     */
+    function get_google_request_url() {
+      return AppObj.config.apps.user.google_request_url + '?display=' +
+        get_facebook_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
     }
 
     /**
@@ -63,6 +73,14 @@ define(function(require) {
     function proc_facebook_login() {
       logger.trace('private.proc_facebook_login -- redirecting to facebook');
       window.location.href = get_facebook_request_url();
+    }
+
+    /**
+     * Process a Google login request - redirect the client browser to the Google auth request URL
+     */
+    function proc_google_login() {
+      logger.trace('private.proc_facebook_login -- redirecting to Google');
+      window.location.href = get_google_request_url();
     }
 
     /**
@@ -169,11 +187,13 @@ define(function(require) {
         // Model is needed in view so that view can be updated following if the post response is a failure
         var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel({
           facebook_url: get_facebook_request_url(),
+          google_url: get_google_request_url(),
           twitter_url: get_twitter_request_url(),
           message: get_decline_msg_from_query_string_reason(query_string)
         })});
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
         access_view.on('facebook-access-clicked', function facebook_access_clicked() { proc_facebook_login(); });
+        access_view.on('google-access-clicked', function google_access_clicked() { proc_google_login(); });
         access_view.on('twitter-access-clicked', function twitter_access_clicked() { proc_twitter_login(); });
         access_view.on('local-access-submitted', function local_access_submitted(form_data) {
           require('js/apps/user/entities');

@@ -28,6 +28,7 @@ define(function(require) {
       events: {
         'click button.js-submit': 'submit_clicked',
         'click button.js-facebook': 'facebook_clicked',
+        'click button.js-google': 'google_clicked',
         'click button.js-twitter': 'twitter_clicked'
       },
 
@@ -59,6 +60,12 @@ define(function(require) {
         event.preventDefault();
         logger.debug('facebook_clicked');
         this.trigger('facebook-access-clicked');
+      },
+
+      google_clicked: function google_clicked(event) {
+        event.preventDefault();
+        logger.debug('google_clicked');
+        this.trigger('google-access-clicked');
       },
 
       twitter_clicked: function twitter_clicked(event) {
