@@ -24,7 +24,9 @@ module.exports = {
       facebook_email: req.user.facebook_email,
       facebook_name: req.user.facebook_name,
       twitter_username: req.user.twitter_username,
-      twitter_name: req.user.twitter_name
+      twitter_name: req.user.twitter_name,
+      google_name: req.user.google_name,
+      google_email: req.user.google_email
     };
     res.status(200).send(result);
   },
