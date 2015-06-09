@@ -13,6 +13,10 @@ define(function(require) {
 
       triggers: {
         'click a.js-logout': 'logout-clicked',
+        'click a.js-email': 'email-connect-clicked',
+        'click a.js-facebook': 'facebook-connect-clicked',
+        'click a.js-google': 'google-connect-clicked',
+        'click a.js-twitter': 'twitter-connect-clicked'
       }
     });
   });

@@ -3,6 +3,11 @@
 
       <div>
         <h1>User Profile</h1>
+        <!-- show any messages that come back with authentication -->
+        <% if(data.message !== undefined && data.message.length > 0) { %>
+            <div class="alert alert-danger"><%= data.message %></div>
+        <% } %>
+
         <table class="table">
           <tr>
             <th>Profile field</th>
@@ -45,10 +50,18 @@
       <hr>
       <div>
         <h1>Connect...</h1>
-        <a class="btn btn-warning js-email" href="<%= data.connect_email_url %>">Email</a>
-        <a class="btn btn-warning js-facebook" href="<%= data.connect_facebook_url %>">Facebook</a>
-        <a class="btn btn-warning js-google" href="<%= data.connect_google_url %>">Google</a>
-        <a class="btn btn-warning js-twitter" href="<%= data.connect_twitter_url %>">Twitter</a>
+        <% if(!data.local_email) { %>
+          <a class="btn btn-warning js-email" href="<%= data.connect_email_url %>">Email</a>
+        <% } %>
+        <% if(!data.facebook_id) { %>
+          <a class="btn btn-warning js-facebook" href="<%= data.connect_facebook_url %>">Facebook</a>
+        <% } %>
+        <% if(!data.google_id) { %>
+          <a class="btn btn-warning js-google" href="<%= data.connect_google_url %>">Google</a>
+        <% } %>
+        <% if(!data.twitter_id) { %>
+          <a class="btn btn-warning js-twitter" href="<%= data.connect_twitter_url %>">Twitter</a>
+        <% } %>
       </div>
       <hr>
       <div>

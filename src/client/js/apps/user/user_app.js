@@ -8,7 +8,7 @@ define(function(require) {
     UserApp.Router = Marionette.AppRouter.extend({
       appRoutes: {
         'access(?*query_string)': 'show_access_form',
-        'profile': 'show_user_profile'
+        'profile(?*query_string)': 'show_user_profile'
       }
     });
 
@@ -20,10 +20,10 @@ define(function(require) {
         AppObj.execute('headerapp:set_active_navitem', 'user');
       },
 
-      show_user_profile: function show_user_profile() {
+      show_user_profile: function show_user_profile(query_string) {
         logger.trace('API.show_user_profile -- enter');
         var controller = require('js/apps/user/profile/controller');
-        controller.show_user_profile();
+        controller.show_user_profile(query_string);
         AppObj.execute('headerapp:set_active_navitem', 'user');
       }
     };
@@ -35,7 +35,7 @@ define(function(require) {
 
     AppObj.on('user:profile', function() {
       AppObj.navigate('profile');
-      API.show_user_profile();
+      API.show_user_profile(undefined);
     });
 
     AppObj.addInitializer(function(){

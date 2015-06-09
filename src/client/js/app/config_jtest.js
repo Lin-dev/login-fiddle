@@ -16,6 +16,7 @@ describe('js/app/config', function() {
   });
 
   describe('apps/user', function() {
+    // TODO: Add tests here for google_auth_url, google_redirect_url, connect urls
     it('apps.user.local_password_max_length should be 256', function() {
       expect(this.config.apps.user.local_password_max_length).toEqual(256);
     });

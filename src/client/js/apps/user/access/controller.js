@@ -26,6 +26,7 @@ define(function(require) {
 
     /**
      * Gets the facebook display mode string to use based on the client window size
+     * TODO: Duplicated in user/access and user/profile controllers - de-duplicate on next edit
      * @param  {String} ui_scale The UI scale as returned by `Marionette.get_ui_scale()`
      * @return {String}          The facebook display mode to render the auth request in
      */
