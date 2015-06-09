@@ -45,8 +45,8 @@ define(function(require) {
      * Returns the string to set the client browser location to, to request auth from FB. Is the
      * server API endpoint, which in turn generates and redirects to FB
      */
-    function get_facebook_request_url() {
-      return AppObj.config.apps.user.facebook_request_url + '?display=' +
+    function get_facebook_auth_url() {
+      return AppObj.config.apps.user.facebook_auth_url + '?display=' +
         get_facebook_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
     }
 
@@ -54,8 +54,8 @@ define(function(require) {
      * Returns the string to set the client browser location to, to request auth from Google. Is the
      * server API endpoint, which in turn generates and redirects to Google
      */
-    function get_google_request_url() {
-      return AppObj.config.apps.user.google_request_url + '?display=' +
+    function get_google_auth_url() {
+      return AppObj.config.apps.user.google_auth_url + '?display=' +
         get_facebook_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
     }
 
@@ -63,8 +63,8 @@ define(function(require) {
      * Returns the string to set the client browser location to, to request auth from Twitter. Is the
      * server API endpoint, which in turn generates and redirects to Twitter
      */
-    function get_twitter_request_url() {
-      return AppObj.config.apps.user.twitter_request_url;
+    function get_twitter_auth_url() {
+      return AppObj.config.apps.user.twitter_auth_url;
     }
 
     /**
@@ -72,7 +72,7 @@ define(function(require) {
      */
     function proc_facebook_login() {
       logger.trace('private.proc_facebook_login -- redirecting to facebook');
-      window.location.href = get_facebook_request_url();
+      window.location.href = get_facebook_auth_url();
     }
 
     /**
@@ -80,7 +80,7 @@ define(function(require) {
      */
     function proc_google_login() {
       logger.trace('private.proc_facebook_login -- redirecting to Google');
-      window.location.href = get_google_request_url();
+      window.location.href = get_google_auth_url();
     }
 
     /**
@@ -88,7 +88,7 @@ define(function(require) {
      */
     function proc_twitter_login() {
       logger.trace('private.proc_twitter_login -- redirecting to twitter');
-      window.location.href = get_twitter_request_url();
+      window.location.href = get_twitter_auth_url();
     }
 
     /**
@@ -186,9 +186,9 @@ define(function(require) {
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
         var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel({
-          facebook_url: get_facebook_request_url(),
-          google_url: get_google_request_url(),
-          twitter_url: get_twitter_request_url(),
+          facebook_url: get_facebook_auth_url(),
+          google_url: get_google_auth_url(),
+          twitter_url: get_twitter_auth_url(),
           message: get_decline_msg_from_query_string_reason(query_string)
         })});
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
