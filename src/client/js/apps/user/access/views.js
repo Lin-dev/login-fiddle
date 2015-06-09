@@ -22,14 +22,14 @@ define(function(require) {
           event: 'hasPasswordFlagClicked',
           preventDefault: false,
           stopPropogation: false
-        }
+        },
+        'click button.js-facebook': 'facebook-access-clicked',
+        'click button.js-google': 'google-access-clicked',
+        'click button.js-twitter': 'twitter-access-clicked'
       },
 
       events: {
-        'click button.js-submit': 'submit_clicked',
-        'click button.js-facebook': 'facebook_clicked',
-        'click button.js-google': 'google_clicked',
-        'click button.js-twitter': 'twitter_clicked'
+        'click button.js-submit': 'submit_clicked'
       },
 
       modelEvents: {
@@ -54,24 +54,6 @@ define(function(require) {
         this.model.set(data, { silent: true });
         logger.debug('submit_clicked with: ' + JSON.stringify(data));
         this.trigger('local-access-submitted', data);
-      },
-
-      facebook_clicked: function facebook_clicked(event) {
-        event.preventDefault();
-        logger.debug('facebook_clicked');
-        this.trigger('facebook-access-clicked');
-      },
-
-      google_clicked: function google_clicked(event) {
-        event.preventDefault();
-        logger.debug('google_clicked');
-        this.trigger('google-access-clicked');
-      },
-
-      twitter_clicked: function twitter_clicked(event) {
-        event.preventDefault();
-        logger.debug('twitter_clicked');
-        this.trigger('twitter-access-clicked');
       },
 
       /**
