@@ -1,50 +1,58 @@
 <div class="container">
   <div class="col-sm-6 col-sm-offset-3">
 
-      <h1>User Profile</h1>
-
-      <table class="table">
-        <tr>
-          <th>Profile field</th>
-          <th>Value</th>
-        </tr>
-        <tr>
-          <td>Local email</td>
-          <td><%= data.local_email %></td>
-        </tr>
-        <tr>
-          <td>Signup date</td>
-          <td><%= data.signup_date %></td>
-        </tr>
-        <tr>
-          <td>Facebook email</td>
-          <td><%= data.facebook_email %></td>
-        </tr>
-        <tr>
-          <td>Facebook name</td>
-          <td><%= data.facebook_name %></td>
-        </tr>
-        <tr>
-          <td>Twitter username</td>
-          <td><%= data.twitter_username %></td>
-        </tr>
-        <tr>
-          <td>Twitter name</td>
-          <td><%= data.twitter_name %></td>
-        </tr>
-        <tr>
-          <td>Google name</td>
-          <td><%= data.google_name %></td>
-        </tr>
-        <tr>
-          <td>Google email</td>
-          <td><%= data.google_email %></td>
-        </tr>
-      </table>
-
+      <div>
+        <h1>User Profile</h1>
+        <table class="table">
+          <tr>
+            <th>Profile field</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>Local email</td>
+            <td><%= data.local_email %></td>
+          </tr>
+          <tr>
+            <td>Signup date</td>
+            <td><%= data.signup_date %></td>
+          </tr>
+          <tr>
+            <td>Facebook email</td>
+            <td><%= data.facebook_email %></td>
+          </tr>
+          <tr>
+            <td>Facebook name</td>
+            <td><%= data.facebook_name %></td>
+          </tr>
+          <tr>
+            <td>Twitter username</td>
+            <td><%= data.twitter_username %></td>
+          </tr>
+          <tr>
+            <td>Twitter name</td>
+            <td><%= data.twitter_name %></td>
+          </tr>
+          <tr>
+            <td>Google name</td>
+            <td><%= data.google_name %></td>
+          </tr>
+          <tr>
+            <td>Google email</td>
+            <td><%= data.google_email %></td>
+          </tr>
+        </table>
+      </div>
       <hr>
-
-      <p><a href="/logout" class="js-logout">Logout</a></p>
-
+      <div>
+        <h1>Connect...</h1>
+        <a class="btn btn-warning js-email" href="<%= data.connect_email_url %>">Email</a>
+        <a class="btn btn-warning js-facebook" href="<%= data.connect_facebook_url %>">Facebook</a>
+        <a class="btn btn-warning js-google" href="<%= data.connect_google_url %>">Google</a>
+        <a class="btn btn-warning js-twitter" href="<%= data.connect_twitter_url %>">Twitter</a>
+      </div>
+      <hr>
+      <div>
+        <p><a href="/logout" class="js-logout">Logout</a></p>
+      </div>
   </div>
 </div>
