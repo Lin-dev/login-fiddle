@@ -50,7 +50,7 @@ module.exports = {
    * @type {Function}
    */
   access_google_auth: function access_google_auth(req, res, next) {
-    logger.debug('exports.access_google_auth -- redir request to FB (display mode: ' + req.query.diplay + ')');
+    logger.debug('exports.access_google_auth -- redir request to Google (display mode: ' + req.query.diplay + ')');
     (auth.passport.authenticate('google-auth', {
       scope: ['profile', 'email'],
       display: req.query.display
