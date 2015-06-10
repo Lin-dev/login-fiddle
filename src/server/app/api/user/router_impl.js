@@ -58,6 +58,19 @@ module.exports = {
   },
 
   /**
+   * Initiates request for Google authorization, to connect accounts, using passport to redirect to Google - this
+   * API endpoint should be accessed directly by the browser, not via AJAX
+   * @type {Function}
+   */
+  access_google_connect: function access_google_connect(req, res, next) {
+    logger.debug('exports.access_google_connect -- redir request to Google (display mode: ' + req.query.diplay + ')');
+    (auth.passport.authorize('google-auth', {
+      scope: ['profile', 'email'],
+      display: req.query.display
+    }))(req, res, next);
+  },
+
+  /**
    * Completes requests for Google authentication
    * @type {Function}
    */
@@ -75,6 +88,19 @@ module.exports = {
   access_facebook_auth: function access_facebook_auth(req, res, next) {
     logger.debug('exports.access_facebook_auth -- redir request to FB (display mode: ' + req.query.display + ')');
     (auth.passport.authenticate('facebook-auth', {
+      scope: ['public_profile', 'email'],
+      display: req.query.display
+    }))(req, res, next);
+  },
+
+  /**
+   * Initiates request for Facebook authorization, to connect accounts, using passport to redirect to Facebook - this
+   * API endpoint should be accessed directly by the browser, not via AJAX
+   * @type {Function}
+   */
+  access_facebook_connect: function access_facebook_connect(req, res, next) {
+    logger.debug('exports.access_facebook_connect -- redir request to FB (display mode: ' + req.query.display + ')');
+    (auth.passport.authorize('facebook-auth', {
       scope: ['public_profile', 'email'],
       display: req.query.display
     }))(req, res, next);
@@ -128,6 +154,13 @@ module.exports = {
    * @type {Function}
    */
   access_twitter_auth: auth.passport.authenticate('twitter-auth'),
+
+  /**
+   * Initiates request for Twitter authorization, to connect accounts, using passport to redirect to Twitter - this
+   * API endpoint should be accessed directly by the browser, not via AJAX
+   * @type {Function}
+   */
+  access_twitter_connect: auth.passport.authorize('twitter-auth'),
 
   /**
    * Completes request for Twitter authentication
