@@ -11,17 +11,14 @@ var router = new express.Router();
 router.get('/user', auth.mw.ensure_auth, helpers.inject_pr_into_router_impl(router_impl.get_user, pr));
 router.get('/logout', auth.mw.ensure_auth, router_impl.logout);
 router.get('/access/facebook/auth', auth.mw.ensure_unauth, router_impl.access_facebook_auth);
-router.get('/access/facebook/connect', auth.mw.ensure_auth, router_impl.access_facebook_connect);
-router.get('/access/facebook/callback', router_impl.access_facebook_callback);
+router.get('/access/facebook/callback', auth.mw.ensure_unauth, router_impl.access_facebook_callback);
 router.get('/access/google/auth', auth.mw.ensure_unauth, router_impl.access_google_auth);
-router.get('/access/google/connect', auth.mw.ensure_auth, router_impl.access_google_connect);
-router.get('/access/google/callback', router_impl.access_google_callback);
+router.get('/access/google/callback', auth.mw.ensure_unauth, router_impl.access_google_callback);
 router.post('/access/local/login', auth.mw.ensure_unauth, router_impl.access_local_check_login_post,
   router_impl.access_local_login);
 router.post('/access/local/signup', auth.mw.ensure_unauth, router_impl.access_local_check_login_signup,
   router_impl.access_local_signup);
 router.get('/access/twitter/auth', auth.mw.ensure_unauth, router_impl.access_twitter_auth);
-router.get('/access/twitter/connect', auth.mw.ensure_auth, router_impl.access_twitter_connect);
-router.get('/access/twitter/callback', router_impl.access_twitter_callback);
+router.get('/access/twitter/callback', auth.mw.ensure_unauth, router_impl.access_twitter_callback);
 
 module.exports = router;
