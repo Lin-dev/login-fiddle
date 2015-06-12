@@ -12,27 +12,27 @@ var user_config = require('app/config/user');
 
 describe('app/config', function() {
   describe('app/config/user', function() {
-    // NB: don't check facebook_auth.client_id or facebook_auth.client_secret as those are set at install, not build
-    it('facebook_auth.callback_url should be https://localhost:27974/api/user/access/facebook/callback', function() {
-      user_config.facebook_auth.callback_url.should.equal('https://localhost:27974/api/user/access/facebook/callback');
+    // NB: don't check facebook.auth_client_id or facebook.auth_client_secret as those are set at install, not build
+    it('facebook.auth_callback_url should be /api/user/access/facebook/callback', function() {
+      user_config.facebook.auth_callback_url.should.equal('/api/user/access/facebook/callback');
     });
-    it('google_auth.callback_url should be https://localhost:27974/api/user/access/google/callback', function() {
-      user_config.google_auth.callback_url.should.equal('https://localhost:27974/api/user/access/google/callback');
+    it('google.auth_callback_url should be /api/user/access/google/callback', function() {
+      user_config.google.auth_callback_url.should.equal('/api/user/access/google/callback');
     });
-    it('local_auth.username_max_length should be 254', function() {
-      user_config.local_auth.username_max_length.should.equal(254);
+    it('local.auth_username_max_length should be 254', function() {
+      user_config.local.username_max_length.should.equal(254);
     });
-    it('local_auth.password_max_length should be 256', function() {
-      user_config.local_auth.password_max_length.should.equal(256);
+    it('local.auth_password_max_length should be 256', function() {
+      user_config.local.password_max_length.should.equal(256);
     });
-    it('local_auth.username_field should be local_email', function() {
-      user_config.local_auth.username_field.should.equal('local_email');
+    it('local.auth_username_field should be local_email', function() {
+      user_config.local.username_field.should.equal('local_email');
     });
-    it('local_auth.password_field should be local_password', function() {
-      user_config.local_auth.password_field.should.equal('local_password');
+    it('local.auth_password_field should be local_password', function() {
+      user_config.local.password_field.should.equal('local_password');
     });
-    it('twitter_auth.callback_url should be https://127.0.0.1:27974/api/user/access/twitter/callback', function() {
-      user_config.twitter_auth.callback_url.should.equal('https://127.0.0.1:27974/api/user/access/twitter/callback');
+    it('twitter.auth_callback_url should be /api/user/access/twitter/callback', function() {
+      user_config.twitter.auth_callback_url.should.equal('/api/user/access/twitter/callback');
     });
     it('logged_in_cookie_name should be logged_in', function() {
       user_config.logged_in_cookie_name.should.equal('logged_in');

@@ -13,17 +13,14 @@ define(function(require) {
         local_password_min_length: 8,
         local_password_max_length: 256,
         facebook_auth_url: 'https://localhost:27974/api/user/access/facebook/auth',
-        facebook_connect_url: 'https://localhost:27974/api/user/access/facebook/connect',
-        facebook_redirect_url: 'https://localhost:27974/api/user/access/facebook/callback',
+        facebook_connect_url: 'https://localhost:27974/api/user/connect/facebook/auth',
         facebook_client_id: '',
-        google_client_id: '',
         google_auth_url: 'https://localhost:27974/api/user/access/google/auth',
-        google_connect_url: 'https://localhost:27974/api/user/access/google/connect',
-        google_redirect_url: 'https://localhost:27974/api/user/access/google/callback',
-        twitter_consumer_key: '',
+        google_connect_url: 'https://localhost:27974/api/user/connect/google/auth',
+        google_client_id: '',
         twitter_auth_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth',
-        twitter_connect_url: 'https://localhost:27974/api/user/access/twitter/connect',
-        twitter_redirect_url: 'https://127.0.0.1:27974/api/user/access/twitter/callback'
+        twitter_connect_url: 'https://localhost:27974/api/user/connect/twitter/auth',
+        twitter_consumer_key: ''
       }
     },
     logger: {

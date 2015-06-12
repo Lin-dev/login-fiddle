@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
       },
       // Local
       local_email: {
-        type: DataTypes.STRING(user_config.local_auth.username_max_length),
+        type: DataTypes.STRING(user_config.local.username_max_length),
         allowNull: true,
         unique: true,
         validate: {
@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
       local_password: {
-        type: DataTypes.STRING(user_config.local_auth.password_max_length),
+        type: DataTypes.STRING(user_config.local.password_max_length),
         allowNull: true,
         validate: {
           is: /^[A-Za-z0-9.\/$]+$/, // regex matches a bcrypt hash, which is how password is stored

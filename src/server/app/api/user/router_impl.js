@@ -7,8 +7,8 @@ var user_config = require('app/config/user');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/api/session/router_impl');
 
-//var keys_required_for_login = [user_config.local_auth.username_field, user_config.local_auth.password_field];
-var keys_required_for_login = [user_config.local_auth.username_field, user_config.local_auth.password_field];
+//var keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
+var keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
 var keys_required_for_signup = keys_required_for_login.concat(
   _.map(keys_required_for_login, function(field) { return field + '_check'; })
 );
@@ -51,14 +51,14 @@ module.exports = {
    */
   access_google_auth: function access_google_auth(req, res, next) {
     logger.debug('exports.access_google_auth -- redir request to Google (display mode: ' + req.query.diplay + ')');
-    (auth.passport.authenticate('google-auth', {
+    (auth.passport.authenticate('google-access', {
       scope: ['profile', 'email'],
       display: req.query.display
     }))(req, res, next);
   },
 
   /**
-   * Completes requests for Google authentication
+   * Completes requests for Google authentication for account signup
    * @type {Function}
    */
   access_google_callback: auth.passport.authenticate('google-auth', {
@@ -74,17 +74,17 @@ module.exports = {
    */
   access_facebook_auth: function access_facebook_auth(req, res, next) {
     logger.debug('exports.access_facebook_auth -- redir request to FB (display mode: ' + req.query.display + ')');
-    (auth.passport.authenticate('facebook-auth', {
+    (auth.passport.authenticate('facebook-access', {
       scope: ['public_profile', 'email'],
       display: req.query.display
     }))(req, res, next);
   },
 
   /**
-   * Completes requests for Facebook authentication
+   * Completes requests for Facebook authentication for account signup
    * @type {Function}
    */
-  access_facebook_callback: auth.passport.authenticate('facebook-auth', {
+  access_facebook_callback: auth.passport.authenticate('facebook-access', {
     successRedirect: '/profile',
     failureRedirect: '/access?reason=fb_declined',
     failureFlash: true
@@ -127,13 +127,13 @@ module.exports = {
    * be access directly by the browser, not via AJAX
    * @type {Function}
    */
-  access_twitter_auth: auth.passport.authenticate('twitter-auth'),
+  access_twitter_auth: auth.passport.authenticate('twitter-access'),
 
   /**
-   * Completes request for Twitter authentication
+   * Completes request for Twitter authentication for account signup
    * @type {Function}
    */
-  access_twitter_callback: auth.passport.authenticate('twitter-auth', {
+  access_twitter_callback: auth.passport.authenticate('twitter-access', {
     successRedirect: '/profile',
     failureRedirect: '/access?reason=twitter_declined',
     failureFlash: true

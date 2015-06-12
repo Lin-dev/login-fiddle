@@ -43,6 +43,16 @@ def configure_app(current_value_install_dir, output_value_install_dir):
     re_string='https_port: (\d+)'
   )
   groups[-1].add_option(
+    name='Server host',
+    desc='The servers externally accessible hostname or IP address [host or IP]',
+    re_string='server_host: \'([a-zA-Z_0-9.]+)\''
+  )
+  groups[-1].add_option(
+    name='Server protocol',
+    desc='The protocol the server expects access requests to use [http or https]',
+    re_string='server_host: \'(http|https)\''
+  )
+  groups[-1].add_option(
     name='q long stack traces',
     desc='Enable long stack traces from Q [true or false]',
     re_string='q_longStackSupport: (true|false|undefined)'
