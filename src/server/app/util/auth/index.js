@@ -146,22 +146,17 @@ passport.use('facebook-access', new FacebookStrategy({
       return done(null, user);
     }
     else { // user not found - create account
-      var user_attrs = {
-        facebook_id: profile.id,
-        facebook_token: token,
-        facebook_name: profile.name.givenName + ' ' + profile.name.familyName,
-        facebook_email: profile.emails ? profile.emails[0].value : undefined
-      };
-      logger.debug('facebook-access callback -- user not found, creating: ' + JSON.stringify(user_attrs));
-      q(pr.pr.auth.user.create(user_attrs))
+      logger.debug('facebook-access callback -- user not found, creating from: ' + JSON.stringify(profile));
+      q(pr.pr.auth.user.create_from_facebook_and_save(profile, token))
       .then(function(user) {
-        logger.info('facebook-access user created: ' + user_attrs.facebook_id + ' / ' + user_attrs.facebook_name);
+        logger.info('facebook-access user created: ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
+          profile.name.familyName);
         return done(null, user);
       })
       .fail(function(error) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
-        logger.warn('facebook-access callback for ' + user_attrs.facebook_id + ' / ' + user_attrs.facebook_name +
-          ' failed user creation, error: ' + error);
+        logger.warn('facebook-access callback for ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
+          profile.name.familyName + ' failed user creation, error: ' + error);
         return done(error, undefined, req.flash('message', 'Account creation failed'));
       });
     }
@@ -186,21 +181,15 @@ passport.use('google-access', new GoogleStrategy({
       return done(null, user);
     }
     else { // user not found - create account
-      var user_attrs = {
-        google_id: profile.id,
-        google_token: token,
-        google_name: profile.display_name,
-        google_email: profile.emails ? profile.emails[0].value : undefined
-      };
-      logger.debug('google-access callback -- user not found, creating: ' + JSON.stringify(user_attrs));
-      q(pr.pr.auth.user.create(user_attrs))
+      logger.debug('google-access callback -- user not found, creating from: ' + JSON.stringify(profile));
+      q(pr.pr.auth.user.create_from_google_and_save(profile, token))
       .then(function(user) {
-        logger.info('google-access user created: ' + user_attrs.google_id + ' / ' + user_attrs.google_name);
+        logger.info('google-access user created: ' + profile.id + ' / ' + profile.display_name);
         return done(null, user);
       })
       .fail(function(error) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
-        logger.warn('google-access callback for ' + user_attrs.google_id + ' / ' + user_attrs.google_name +
+        logger.warn('google-access callback for ' + profile.id + ' / ' + profile.display_name +
           ' failed user creation, error: ' + error);
         return done(error, undefined, req.flash('message', 'Account creation failed'));
       });
@@ -226,21 +215,15 @@ passport.use('twitter-access', new TwitterStrategy({
       return done(null, user);
     }
     else { // user not found - create account
-      var user_attrs = {
-        twitter_id: profile.id,
-        twitter_token: token,
-        twitter_username: profile.username,
-        twitter_name: profile.name ? profile.name : undefined
-      };
-      logger.debug('twitter-access callback -- user not found, creating: ' + JSON.stringify(user_attrs));
-      q(pr.pr.auth.user.create(user_attrs))
+      logger.debug('twitter-access callback -- user not found, creating from: ' + JSON.stringify(profile));
+      q(pr.pr.auth.user.create_from_twitter_and_save(profile, token))
       .then(function(user) {
-        logger.info('twitter-access user created: ' + user_attrs.twitter_id  + ' / ' + user_attrs.twitter_username);
+        logger.info('twitter-access user created: ' + profile.id  + ' / ' + profile.username);
         return done(null, user);
       })
       .fail(function(error) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
-        logger.warn('twitter-access callback for ' + user_attrs.twitter_id + ' / ' + user_attrs.twitter_username +
+        logger.warn('twitter-access callback for ' + profile.id + ' / ' + profile.username +
           ' failed user creation, error: ' + error);
         return done(error, undefined, req.flash('message', 'Account creation failed'));
       });

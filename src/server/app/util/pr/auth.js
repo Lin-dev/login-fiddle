@@ -3,6 +3,8 @@
 var bcrypt = require('bcrypt');
 
 var user_config = require('app/config/user');
+var logger_module = require('app/util/logger');
+var logger = logger_module.get('app/util/pr/auth');
 
 module.exports = function(sequelize, DataTypes) {
   var models = {
@@ -116,6 +118,57 @@ module.exports = function(sequelize, DataTypes) {
          */
         hash_password: function hash_password(unhashed_password) {
           return bcrypt.hashSync(unhashed_password, bcrypt.genSaltSync(user_config.salt_rounds));
+        },
+
+        /**
+         * Creates a user instance from a Facebook oauth profile object (from passport) and returns a promise for their
+         * successful save to the DB
+         * @param  {Object} facebook_profile The profile sent by facebook oauth
+         * @param  {String} token            The string token sent by facebook oauth
+         * @return {Object}                  A promise for the new user's success persistence to the DB
+         */
+        create_from_facebook_and_save: function create_from_facebook_and_save(facebook_profile, token) {
+          var user_attrs = {
+            facebook_id: facebook_profile.id,
+            facebook_token: token,
+            facebook_name: facebook_profile.name.givenName + ' ' + facebook_profile.name.familyName,
+            facebook_email: facebook_profile.emails ? facebook_profile.emails[0].value : undefined
+          };
+          return this.create(user_attrs);
+        },
+
+        /**
+         * Creates a user instance from a Google oauth profile object (from passport) and returns a promise for their
+         * successful save to the DB
+         * @param  {Object} google_profile The profile sent by google oauth
+         * @param  {String} token          The string token sent by google oauth
+         * @return {Object}                A promise for the new user's success persistence to the DB
+         */
+        create_from_google_and_save: function create_from_google_and_save(google_profile, token) {
+          var user_attrs = {
+            google_id: google_profile.id,
+            google_token: token,
+            google_name: google_profile.display_name,
+            google_email: google_profile.emails ? google_profile.emails[0].value : undefined
+          };
+          return this.create(user_attrs);
+        },
+
+        /**
+         * Creates a user instance from a Twitter oauth profile object (from passport) and returns a promise for their
+         * successful save to the DB
+         * @param  {Object} twitter_profile The profile sent by twitter oauth
+         * @param  {String} token           The string token sent by twitter oauth
+         * @return {Object}                 A promise for the new user's success persistence to the DB
+         */
+        create_from_twitter_and_save: function create_from_google_and_save(twitter_profile, token) {
+          var user_attrs = {
+            twitter_id: twitter_profile.id,
+            twitter_token: token,
+            twitter_username: twitter_profile.username,
+            twitter_name: twitter_profile.name ? twitter_profile.name : undefined
+          };
+          return this.create(user_attrs);
         }
       },
 

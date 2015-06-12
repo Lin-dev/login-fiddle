@@ -4,6 +4,7 @@ var _ = require('underscore');
 
 var auth = require('app/util/auth');
 var user_config = require('app/config/user');
+var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/api/session/router_impl');
 
@@ -40,7 +41,7 @@ module.exports = {
     res.clearCookie(user_config.logged_in_cookie_name);
     req.session.destroy(function() {
       // No req.flash message because we just destroyed the session: req.flash('message', 'Logged out');
-      res.redirect('/api/util/success');
+      res.redirect(server_config.util_route_success);
     });
   },
 
@@ -107,8 +108,8 @@ module.exports = {
    * @type {Function}
    */
   access_local_login: auth.passport.authenticate('local-login', {
-    successRedirect: '/api/util/success',
-    failureRedirect: '/api/util/failure',
+    successRedirect: server_config.util_route_success,
+    failureRedirect: server_config.util_route_failure,
     failureFlash: true
   }),
 
@@ -117,8 +118,8 @@ module.exports = {
    * @type {Function}
    */
   access_local_signup: auth.passport.authenticate('local-signup', {
-    successRedirect: '/api/util/success',
-    failureRedirect: '/api/util/failure',
+    successRedirect: server_config.util_route_success,
+    failureRedirect: server_config.util_route_failure,
     failureFlash: true
   }),
 

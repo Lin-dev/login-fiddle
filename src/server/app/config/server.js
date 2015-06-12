@@ -13,6 +13,8 @@ module.exports = {
   server_root: __dirname,
   client_root: path.join(__dirname, '..', '..', '..', 'client'), // .. x3 to cancel out server/app/config
   security_dir: path.join(__dirname, '..', '..', '..', 'security'), // .. x3 to cancel out server/app/config
+  util_route_success: '/api/util/success',
+  util_route_failure: '/api/util/failure',
   q_longStackSupport: false,
   static_max_age: 1000
 };
