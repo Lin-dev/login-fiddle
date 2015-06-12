@@ -12,14 +12,14 @@ define(function(require) {
         // TODO: Is it worth config'ing local_username_field = local_email and local_password_field = local_password?
         local_password_min_length: 8,
         local_password_max_length: 256,
-        facebook_auth_url: 'https://localhost:27974/api/user/access/facebook/auth',
-        facebook_connect_url: 'https://localhost:27974/api/user/connect/facebook/auth',
+        facebook_auth_url: 'https://127.0.0.1:27974/api/user/access/facebook/auth',
+        facebook_connect_url: 'https://127.0.0.1:27974/api/user/connect/facebook/auth',
         facebook_client_id: '',
-        google_auth_url: 'https://localhost:27974/api/user/access/google/auth',
-        google_connect_url: 'https://localhost:27974/api/user/connect/google/auth',
+        google_auth_url: 'https://127.0.0.1:27974/api/user/access/google/auth',
+        google_connect_url: 'https://127.0.0.1:27974/api/user/connect/google/auth',
         google_client_id: '',
         twitter_auth_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth',
-        twitter_connect_url: 'https://localhost:27974/api/user/connect/twitter/auth',
+        twitter_connect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/auth',
         twitter_consumer_key: ''
       }
     },

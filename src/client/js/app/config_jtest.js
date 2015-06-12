@@ -21,14 +21,14 @@ describe('js/app/config', function() {
       expect(this.config.apps.user.local_password_max_length).toEqual(256);
     });
     it(
-      'apps.user.facebook_auth_url should be https://localhost:27974/api/user/access/facebook/auth',
+      'apps.user.facebook_auth_url should be https://127.0.0.1:27974/api/user/access/facebook/auth',
       function() {
         expect(this.config.apps.user.facebook_auth_url)
-          .toEqual('https://localhost:27974/api/user/access/facebook/auth');
+          .toEqual('https://127.0.0.1:27974/api/user/access/facebook/auth');
       }
     );
     it(
-      'apps.user.twitter_auth_url should be https://localhost:27974/api/user/access/twitter/auth',
+      'apps.user.twitter_auth_url should be https://127.0.0.1:27974/api/user/access/twitter/auth',
       function() {
         expect(this.config.apps.user.twitter_auth_url)
           .toEqual('https://127.0.0.1:27974/api/user/access/twitter/auth');
