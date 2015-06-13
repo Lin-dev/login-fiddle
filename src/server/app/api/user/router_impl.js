@@ -22,12 +22,15 @@ module.exports = {
     var result = {
       local_email: req.user.local_email,
       signup_date: req.user.sq_created_at,
+      facebook_id: req.user.facebook_id,
       facebook_email: req.user.facebook_email,
       facebook_name: req.user.facebook_name,
+      twitter_id: req.user.twitter_id,
       twitter_username: req.user.twitter_username,
       twitter_name: req.user.twitter_name,
       google_name: req.user.google_name,
-      google_email: req.user.google_email
+      google_email: req.user.google_email,
+      google_id: req.user.google_id
     };
     res.status(200).send(result);
   },
