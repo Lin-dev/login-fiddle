@@ -19,21 +19,24 @@ var logger = logger_module.get('app/util/auth/index');
  * Returns the facebook auth callback URL (assembled from server and user configs)
  */
 function get_facebook_auth_callback_url() {
-  return server_config.server_protocol + '://' + server_config.server_host + user_config.facebook.auth_callback_url;
+  return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
+    user_config.facebook.auth_callback_url;
 }
 
 /**
  * Returns the google auth callback URL (assembled from server and user configs)
  */
 function get_google_auth_callback_url() {
-  return server_config.server_protocol + '://' + server_config.server_host + user_config.google.auth_callback_url;
+  return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
+    user_config.google.auth_callback_url;
 }
 
 /**
  * Returns the twitter auth callback URL (assembled from server and user configs)
  */
 function get_twitter_auth_callback_url() {
-  return server_config.server_protocol + '://' + server_config.server_host + user_config.twitter.auth_callback_url;
+  return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
+    user_config.twitter.auth_callback_url;
 }
 
 /**
