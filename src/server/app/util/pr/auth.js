@@ -131,7 +131,7 @@ module.exports = function(sequelize, DataTypes) {
           var user_attrs = {
             facebook_id: facebook_profile.id,
             facebook_token: token,
-            facebook_name: facebook_profile.name.givenName + ' ' + facebook_profile.name.familyName,
+            facebook_name: facebook_profile.displayName,
             facebook_email: facebook_profile.emails ? facebook_profile.emails[0].value : undefined
           };
           return this.create(user_attrs);
@@ -148,7 +148,7 @@ module.exports = function(sequelize, DataTypes) {
           var user_attrs = {
             google_id: google_profile.id,
             google_token: token,
-            google_name: google_profile.display_name,
+            google_name: google_profile.displayName,
             google_email: google_profile.emails ? google_profile.emails[0].value : undefined
           };
           return this.create(user_attrs);
@@ -166,7 +166,7 @@ module.exports = function(sequelize, DataTypes) {
             twitter_id: twitter_profile.id,
             twitter_token: token,
             twitter_username: twitter_profile.username,
-            twitter_name: twitter_profile.name ? twitter_profile.name : undefined
+            twitter_name: twitter_profile.displayName
           };
           return this.create(user_attrs);
         }
