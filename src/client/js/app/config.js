@@ -14,12 +14,15 @@ define(function(require) {
         local_password_max_length: 256,
         facebook_auth_url: 'https://127.0.0.1:27974/api/user/access/facebook/auth',
         facebook_connect_url: 'https://127.0.0.1:27974/api/user/connect/facebook/auth',
+        facebook_disconnect_url: 'https://127.0.0.1:27974/api/user/connect/facebook/disconnect',
         facebook_client_id: '',
         google_auth_url: 'https://127.0.0.1:27974/api/user/access/google/auth',
         google_connect_url: 'https://127.0.0.1:27974/api/user/connect/google/auth',
+        google_disconnect_url: 'https://127.0.0.1:27974/api/user/connect/google/disconnect',
         google_client_id: '',
         twitter_auth_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth',
         twitter_connect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/auth',
+        twitter_disconnect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/disconnect',
         twitter_consumer_key: ''
       }
     },
