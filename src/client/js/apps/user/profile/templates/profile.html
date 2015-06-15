@@ -51,16 +51,25 @@
       <div>
         <h1>Connect...</h1>
         <% if(!data.local_email) { %>
-          <a class="btn btn-warning js-email" href="<%= data.connect_email_url %>">Email</a>
+          <a class="btn btn-warning js-email-connect" href="<%= data.connect_email_url %>">Email</a>
         <% } %>
+
         <% if(!data.facebook_id) { %>
-          <a class="btn btn-warning js-facebook" href="<%= data.connect_facebook_url %>">Facebook</a>
+          <a class="btn btn-warning js-facebook-connect" href="<%= data.connect_facebook_url %>">Facebook</a>
+        <% } else if(data.facebook_id  && (data.local_email || data.google_id || data.twitter_id)) { %>
+          <a class="btn btn-warning js-facebook-disconnect">Disconnect Facebook</a>
         <% } %>
+
         <% if(!data.google_id) { %>
-          <a class="btn btn-warning js-google" href="<%= data.connect_google_url %>">Google</a>
+          <a class="btn btn-warning js-google-connect" href="<%= data.connect_google_url %>">Google</a>
+        <% } else if(data.google_id  && (data.local_email || data.facebook_id || data.twitter_id)) { %>
+          <a class="btn btn-warning js-google-disconnect">Disconnect Google</a>
         <% } %>
+
         <% if(!data.twitter_id) { %>
-          <a class="btn btn-warning js-twitter" href="<%= data.connect_twitter_url %>">Twitter</a>
+          <a class="btn btn-warning js-twitter-connect" href="<%= data.connect_twitter_url %>">Twitter</a>
+        <% } else if(data.twitter_id  && (data.local_email || data.facebook_id || data.google_id)) { %>
+          <a class="btn btn-warning js-twitter-disconnect">Disconnect Twitter</a>
         <% } %>
       </div>
       <hr>

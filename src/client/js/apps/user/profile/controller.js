@@ -107,6 +107,79 @@ define(function(require) {
     }
 
     /**
+     * Disconnect Facebook account from user account
+     */
+    function proc_disconnect_facebook() {
+      $.post(AppObj.config.user.facebook_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+        if(resp_data.status === 'success') {
+          logger.debug('private.proc_disconnect_facebook - server response -- success, re-rendering profile');
+          profile_view.model.set({ message: resp_data.message });
+          AppObj.trigger('profile:show');
+        }
+        else if(resp_data.status === 'failure') {
+          logger.debug('private.proc_disconnect_facebook - server response -- success, re-rendering profile');
+          profile_view.model.set({ message: resp_data.message });
+          AppObj.trigger('profile:show');
+        }
+        else {
+          logger.error('private.proc_disconnect_facebook - server response -- unknown status: ' + resp_data.status +
+            ' (message: ' + resp_data.message + ')');
+          profile_view.model.set({ message: 'Unknown server status: ' + resp_data.status });
+          AppObj.trigger('profile:show');
+        }
+      });
+    }
+
+    /**
+     * Disconnect Google account from user account
+     */
+    function proc_disconnect_google() {
+      $.post(AppObj.config.user.google_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+        if(resp_data.status === 'success') {
+          logger.debug('private.proc_disconnect_google - server response -- success, re-rendering profile');
+          profile_view.model.set({ message: resp_data.message });
+          AppObj.trigger('profile:show');
+        }
+        else if(resp_data.status === 'failure') {
+          logger.debug('private.proc_disconnect_google - server response -- success, re-rendering profile');
+          profile_view.model.set({ message: resp_data.message });
+          AppObj.trigger('profile:show');
+        }
+        else {
+          logger.error('private.proc_disconnect_google - server response -- unknown status: ' + resp_data.status +
+            ' (message: ' + resp_data.message + ')');
+          profile_view.model.set({ message: 'Unknown server status: ' + resp_data.status });
+          AppObj.trigger('profile:show');
+        }
+      });
+    }
+
+    /**
+     * Disconnect Twitter account from user account
+     * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
+     */
+    function proc_disconnect_twitter(profile_view) {
+      $.post(AppObj.config.user.twitter_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+        if(resp_data.status === 'success') {
+          logger.debug('private.proc_disconnect_twitter - server response -- success, re-rendering profile');
+          profile_view.model.set({ message: resp_data.message });
+          AppObj.trigger('profile:show');
+        }
+        else if(resp_data.status === 'failure') {
+          logger.debug('private.proc_disconnect_twitter - server response -- success, re-rendering profile');
+          profile_view.model.set({ message: resp_data.message });
+          AppObj.trigger('profile:show');
+        }
+        else {
+          logger.error('private.proc_disconnect_twitter - server response -- unknown status: ' + resp_data.status +
+            ' (message: ' + resp_data.message + ')');
+          profile_view.model.set({ message: 'Unknown server status: ' + resp_data.status });
+          AppObj.trigger('profile:show');
+        }
+      });
+    }
+
+    /**
      * Log out logged in user, redirect to home:show
      */
     function proc_logout() {
@@ -139,6 +212,9 @@ define(function(require) {
             view.on('facebook-connect-clicked', proc_connect_facebook);
             view.on('google-connect-clicked', proc_connect_google);
             view.on('twitter-connect-clicked', proc_connect_twitter);
+            view.on('facebook-disconnect-clicked', proc_disconnect_facebook);
+            view.on('google-disconnect-clicked', proc_disconnect_google);
+            view.on('twitter-disconnect-clicked', proc_disconnect_twitter);
             AppObj.region_main.show(view);
           });
         }
