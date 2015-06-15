@@ -184,9 +184,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('assemble', ['exec:mkdir', 'exec:copy']);
   grunt.registerTask('metadata', ['usebanner', 'version_file']);
-  grunt.registerTask('test', ['jshint', 'mochaTest', 'jasmine', 'git-is-clean']);
-  grunt.registerTask('dirty_test', ['jshint', 'mochaTest', 'jasmine']);
+  grunt.registerTask('build_test', ['jshint', 'mochaTest', 'jasmine', 'git-is-clean']);
+  grunt.registerTask('test', ['jshint', 'mochaTest', 'jasmine']);
 
-  grunt.registerTask('build', ['test', 'clean', 'assemble', 'metadata', 'exec:compress']);
-  grunt.registerTask('dirty_build', ['dirty_test', 'clean', 'assemble', 'metadata', 'exec:compress']);
+  grunt.registerTask('build', ['build_test', 'clean', 'assemble', 'metadata', 'exec:compress']);
+  grunt.registerTask('dirty_build', ['test', 'clean', 'assemble', 'metadata', 'exec:compress']);
 };
