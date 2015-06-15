@@ -180,6 +180,105 @@ module.exports = function(sequelize, DataTypes) {
          */
         check_password: function check_password(unhashed_password) {
           return bcrypt.compareSync(unhashed_password, this.local_password);
+        },
+
+        /**
+         * Updates this user instance with connected Facebook account info and saves it
+         * @param  {Object} facebook_profile The raw Facebook profile as returned by oauth (passport)
+         * @param  {String} token            The oauth token sent by FB
+         * @return {Object}                  A promise for completion of the user instance save
+         */
+        connect_facebook_and_save: function connect_facebook_and_save(facebook_profile, token) {
+          logger.trace('exports.connect_facebook_and_save -- connecting: ' + JSON.stringify(facebook_profile));
+          this.set({
+            facebook_id: facebook_profile.id,
+            facebook_token: token,
+            facebook_name: facebook_profile.displayName,
+            facebook_email: facebook_profile.emails ? facebook_profile.emails[0].value : undefined
+          });
+          return this.save();
+        },
+
+        /**
+         * Updates this user instance by removing disconnected FB account info and saves it, does not alter auth
+         * status on FB
+         * @return {Object} A promise for completion of the user instance save
+         */
+        disconnect_facebook_and_save: function disconnect_facebook_and_save() {
+          logger.trace('exports.disconnect_facebook_and_save -- disconnecting: ' + this.facebook_id);
+          this.set({
+            facebook_id: undefined,
+            facebook_token: undefined,
+            facebook_name: undefined,
+            facebook_email: undefined
+          });
+          return this.save();
+        },
+
+        /**
+         * Updates this user instance with connected Google account info and saves it
+         * @param  {Object} google_profile The raw Google profile as returned by oauth (passport)
+         * @param  {String} token          The oauth token sent by Google
+         * @return {Object}                A promise for completion of the user instance save
+         */
+        connect_google_and_save: function connect_google_and_save(google_profile, token) {
+          logger.trace('exports.connect_google_and_save -- connecting: ' + JSON.stringify(google_profile));
+          this.set({
+            google_id: google_profile.id,
+            google_token: token,
+            google_name: google_profile.displayName,
+            google_email: google_profile.emails ? google_profile.emails[0].value : undefined
+          });
+          return this.save();
+        },
+
+        /**
+         * Updates this user instance by removing disconnected Google account info and saves it, does not alter auth
+         * status on Google
+         * @return {Object} A promise for completion of the user instance save
+         */
+        disconnect_google_and_save: function disconnect_google_and_save() {
+          logger.trace('exports.disconnect_google_and_save -- disconnecting: ' + this.twitter_id);
+          this.set({
+            google_id: undefined,
+            google_token: undefined,
+            google_name: undefined,
+            google_email: undefined
+          });
+          return this.save();
+        },
+
+        /**
+         * Updates this user instance with connected twitter account info and saves it
+         * @param  {Object} twitter_profile The raw twitter profile as returned by oauth (passport)
+         * @param  {String} token           The oauth token sent by twitter
+         * @return {Object}                 A promise for completion of the user instance save
+         */
+        connect_twitter_and_save: function connect_twitter_and_save(twitter_profile, token) {
+          logger.trace('exports.connect_twitter_and_save -- connecting: ' + JSON.stringify(twitter_profile));
+          this.set({
+            twitter_id: twitter_profile.id,
+            twitter_token: token,
+            twitter_username: twitter_profile.username,
+            twitter_name: twitter_profile.displayName
+          });
+          return this.save();
+        },
+
+        /**
+         * Updates this user instance by removing disconnected twitter account info and saves it, does not alter auth
+         * status on twitter
+         * @return {Object} A promise for completion of the user instance save
+         */
+        disconnect_twitter_and_save: function disconnect_twitter_and_save() {
+          logger.trace('exports.disconnect_twitter_and_save -- disconnecting: ' + this.twitter_id);
+          this.set({
+            twitter_id: undefined,
+            twitter_token: undefined,
+            twitter_username: undefined,
+            twitter_name: undefined
+          });
+          return this.save();
         }
       }
     })

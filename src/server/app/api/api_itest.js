@@ -68,6 +68,24 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.access_twitter_callback.should.be.a.function;
     num_funcs[name]++;
+    module.connect_google_auth.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_google_callback.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_google_disconnect.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_facebook_auth.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_facebook_callback.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_facebook_disconnect.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_twitter_auth.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_twitter_callback.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_twitter_disconnect.should.be.a.function;
+    num_funcs[name]++;
   });
 
   it('app/api/util/router_impl - expected methods found', function() {

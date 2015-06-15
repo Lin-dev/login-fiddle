@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
+var q = require('q');
 
 var auth = require('app/util/auth');
 var user_config = require('app/config/user');
@@ -65,11 +66,42 @@ module.exports = {
    * Completes requests for Google authentication for account signup
    * @type {Function}
    */
-  access_google_callback: auth.passport.authenticate('google-auth', {
+  access_google_callback: auth.passport.authenticate('google-access', {
     successRedirect: '/profile',
     failureRedirect: '/access?reason=google_declined',
     failureFlash: true
   }),
+
+  /**
+   * Initiates request for Google authorization, to connect accounts, using passport to redirect to Google - this
+   * API endpoint should be accessed directly by the browser, not via AJAX
+   * @type {Function}
+   */
+  connect_google_auth: auth.passport.authorize('google-connect'),
+
+  /**
+   * Completes request for google authentication for account connection
+   * @type {Function}
+   */
+  connect_google_callback: auth.passport.authorize('google-connect', {
+    successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
+    failureRedirect: '/profile?reason=google_declined',
+    failureFlash: true
+  }),
+
+  /**
+   * Disconnects user account from google, removing google-sourced fields from profile but does not deauth at Google
+   */
+  connect_google_disconnect: function connect_google_disconnect(req, res, next) {
+    q(req.user.disconnect_google_and_save())
+    .then(function(updated_user) {
+      res.redirect(server_config.util_route_success);
+    })
+    .fail(function(error) {
+      logger.error('exports.connect_google_disconnect -- error during disconnect: ' + error);
+      res.redirect(server_config.util_route_failure);
+    });
+  },
 
   /**
    * Initiates requests for Facebook authentication, using passport to redirect to Facebook - this API endpoint should
@@ -93,6 +125,37 @@ module.exports = {
     failureRedirect: '/access?reason=fb_declined',
     failureFlash: true
   }),
+
+  /**
+   * Initiates request for Facebook authorization, to connect accounts, using passport to redirect to Facebook - this
+   * API endpoint should be accessed directly by the browser, not via AJAX
+   * @type {Function}
+   */
+  connect_facebook_auth: auth.passport.authorize('facebook-connect'),
+
+  /**
+   * Completes request for facebook authentication for account connection
+   * @type {Function}
+   */
+  connect_facebook_callback: auth.passport.authorize('facebook-connect', {
+    successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
+    failureRedirect: '/profile?reason=facebook_declined',
+    failureFlash: true
+  }),
+
+  /**
+   * Disconnects user account from facebook, removing facebook-sourced fields from profile but does not deauth at FB
+   */
+  connect_facebook_disconnect: function connect_facebook_disconnect(req, res, next) {
+    q(req.user.disconnect_facebook_and_save())
+    .then(function(updated_user) {
+      res.redirect(server_config.util_route_success);
+    })
+    .fail(function(error) {
+      logger.error('exports.connect_facebook_disconnect -- error during disconnect: ' + error);
+      res.redirect(server_config.util_route_failure);
+    });
+  },
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
@@ -141,5 +204,36 @@ module.exports = {
     successRedirect: '/profile',
     failureRedirect: '/access?reason=twitter_declined',
     failureFlash: true
-  })
+  }),
+
+  /**
+   * Initiates request for Twitter authorization, to connect accounts, using passport to redirect to Twitter - this
+   * API endpoint should be accessed directly by the browser, not via AJAX
+   * @type {Function}
+   */
+  connect_twitter_auth: auth.passport.authorize('twitter-connect'),
+
+  /**
+   * Completes request for Twitter authentication for account connection
+   * @type {Function}
+   */
+  connect_twitter_callback: auth.passport.authorize('twitter-connect', {
+    successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
+    failureRedirect: '/profile?reason=twitter_declined',
+    failureFlash: true
+  }),
+
+  /**
+   * Disconnects user account from twitter, removing twitter-sourced fields from profile but does not deauth at Twitter
+   */
+  connect_twitter_disconnect: function connect_twitter_disconnect(req, res, next) {
+    q(req.user.disconnect_twitter_and_save())
+    .then(function(updated_user) {
+      res.redirect(server_config.util_route_success);
+    })
+    .fail(function(error) {
+      logger.error('exports.connect_twitter_disconnect -- error during disconnect: ' + error);
+      res.redirect(server_config.util_route_failure);
+    });
+  }
 };
