@@ -207,30 +207,30 @@ passport.use('facebook-connect', new FacebookStrategy({
       if(facebook_user === null) { // no account for this facebook id, update user and send back to client or error
         q(req.user.connect_facebook_and_save(profile, token))
         .then(function(updated_user) {
-          req.session.returnTo = '/profile?reason=facebook_connected';
+          req.session.returnTo = '/profile?message_code=facebook_connected';
           done(null, updated_user);
         })
         .fail(function(error) {
           logger.error('facebook-connect callback -- failed to save updated user object to DB');
-          req.session.returnTo = '/profile?reason=server_error';
+          req.session.returnTo = '/profile?message_code=server_error';
           done(null, req.user);
         });
       }
       else { // this google id already has an account
         logger.warn('facebook-connect callback -- facebook id  ' + facebook_user.facebook_id + ' already in use');
-        req.session.returnTo = '/profile?reason=facebook_inuse';
+        req.session.returnTo = '/profile?message_code=facebook_inuse';
         done(null, req.user);
       }
     })
     .fail(function(error) {
       logger.error('facebook-connect callback -- query for facebook id ' + profile.id + ' failed with server error');
-      req.session.returnTo = '/profile?reason=server_error';
+      req.session.returnTo = '/profile?message_code=server_error';
       done(null, req.user);
     });
   }
   else {
     logger.error('facebook-connect callback -- failed for google id ' + profile.id + ' - no user on req');
-    req.session.returnTo = '/profile?reason=server_error';
+    req.session.returnTo = '/profile?message_code=server_error';
     return done(null, undefined);
   }
 }));
@@ -282,30 +282,30 @@ passport.use('google-connect', new GoogleStrategy({
       if(google_user === null) { // no account for this google id, update user and send back to client or error
         q(req.user.connect_google_and_save(profile, token))
         .then(function(updated_user) {
-          req.session.returnTo = '/profile?reason=google_connected';
+          req.session.returnTo = '/profile?message_code=google_connected';
           done(null, updated_user);
         })
         .fail(function(error) {
           logger.error('google-connect callback -- failed to save updated user object to DB');
-          req.session.returnTo = '/profile?reason=server_error';
+          req.session.returnTo = '/profile?message_code=server_error';
           done(null, req.user);
         });
       }
       else { // this google id already has an account
         logger.warn('google-connect callback -- google id  ' + google_user.google_id + ' already in use');
-        req.session.returnTo = '/profile?reason=google_inuse';
+        req.session.returnTo = '/profile?message_code=google_inuse';
         done(null, req.user);
       }
     })
     .fail(function(error) {
       logger.error('google-connect callback -- query for google id ' + profile.id + ' failed with server error');
-      req.session.returnTo = '/profile?reason=server_error';
+      req.session.returnTo = '/profile?message_code=server_error';
       done(null, req.user);
     });
   }
   else {
     logger.error('google-connect callback -- failed for google id ' + profile.id + ' - no user on req');
-    req.session.returnTo = '/profile?reason=server_error';
+    req.session.returnTo = '/profile?message_code=server_error';
     return done(null, undefined);
   }
 }));
@@ -357,30 +357,30 @@ passport.use('twitter-connect', new TwitterStrategy({
       if(twitter_user === null) { // no account for this twitter id, update user and send back to client or error
         q(req.user.connect_twitter_and_save(profile, token))
         .then(function(updated_user) {
-          req.session.returnTo = '/profile?reason=twitter_connected';
+          req.session.returnTo = '/profile?message_code=twitter_connected';
           done(null, updated_user);
         })
         .fail(function(error) {
           logger.error('twitter-connect callback -- failed to save updated user object to DB');
-          req.session.returnTo = '/profile?reason=server_error';
+          req.session.returnTo = '/profile?message_code=server_error';
           done(null, req.user);
         });
       }
       else { // this twitter id already has an account
         logger.warn('twitter-connect callback -- twitter id  ' + twitter_user.twitter_id + ' already in use');
-        req.session.returnTo = '/profile?reason=twitter_inuse';
+        req.session.returnTo = '/profile?message_code=twitter_inuse';
         done(null, req.user);
       }
     })
     .fail(function(error) {
       logger.error('twitter-connect callback -- query for twitter id ' + profile.id + ' failed with server error');
-      req.session.returnTo = '/profile?reason=server_error';
+      req.session.returnTo = '/profile?message_code=server_error';
       done(null, req.user);
     });
   }
   else {
     logger.error('twitter-connect callback -- failed for twitter id ' + profile.id + ' - no user on req');
-    req.session.returnTo = '/profile?reason=server_error';
+    req.session.returnTo = '/profile?message_code=server_error';
     return done(null, undefined);
   }
 }));

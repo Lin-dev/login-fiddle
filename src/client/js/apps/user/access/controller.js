@@ -8,19 +8,20 @@ define(function(require) {
     /**
      * Returns a user-displayable explanation of why the access form is being displayed again (i.e. they refused
      * permission at same oauth provider)
+     * TODO - this method almost duplicated in client/js/apps/user/access/controller.js and .../profile/controller.js
      * @param  {String} query_string The query string code included in the URL query string the server redirects to
      * @return {String}              A user-displayable explanation of why the access form is being displayed again
      */
-    function get_decline_msg_from_query_string_reason(query_string) {
+    function get_message_from_code(query_string) {
       var parsed_query = Marionette.parse_query_string(query_string);
-      switch(parsed_query && parsed_query.reason) {
+      switch(parsed_query && parsed_query.message_code) {
         case undefined: return undefined;
         case 'fb_declined': return 'Facebook login cancelled';
         case 'twitter_declined': return 'Twitter login cancelled';
         case 'google_declined': return 'Google login cancelled';
         default:
-          logger.error('private.get_decline_msg_from_query_string_reason -- unknown reason: ' + parsed_query.reason);
-          return 'Unknown error reason: ' + parsed_query.reason;
+          logger.error('private.get_message_from_code -- unknown code: ' + parsed_query.message_code);
+          return 'Unknown code: ' + parsed_query.message_code;
       }
     }
 
@@ -175,7 +176,7 @@ define(function(require) {
     Access.controller = {
       /**
        * Display the access form, allowing users to sign up and login
-       * @param  {String} query_string        Used so the server can send a reason code to trigger a message display
+       * @param  {String} query_string        Used so the server can send a message code to trigger a message display
        * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
        */
       show_access_form: function show_access_form(query_string, trigger_after_login) {
@@ -190,7 +191,7 @@ define(function(require) {
           facebook_url: get_facebook_auth_url(),
           google_url: get_google_auth_url(),
           twitter_url: get_twitter_auth_url(),
-          message: get_decline_msg_from_query_string_reason(query_string)
+          message: get_message_from_code(query_string)
         })});
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
         access_view.on('facebook-access-clicked', function facebook_access_clicked() { proc_facebook_login(); });

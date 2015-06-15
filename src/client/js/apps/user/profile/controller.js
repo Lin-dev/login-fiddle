@@ -8,23 +8,29 @@ define(function(require) {
     /**
      * Returns a user-displayable explanation of why the profile connect failed (e.g. refused permission at provider or
      * account at provider is already connected to another account on this site)
+     * TODO - this method almost duplicated in client/js/apps/user/access/controller.js and .../profile/controller.js
      * @param  {String} query_string The query string code included in the URL query string the server redirects to
      * @return {String}              A user-displayable explanation of why the connect failed
      */
-    function get_failure_msg_from_query_string_reason(query_string) {
+    function get_message_from_code(query_string) {
       var parsed_query = Marionette.parse_query_string(query_string);
-      switch(parsed_query && parsed_query.reason) {
+      switch(parsed_query && parsed_query.message_code) {
         case undefined: return undefined;
-        case 'email_inuse': return 'Email address already used in another profile'
+        case 'server_error': return 'Server error';
+        case 'email_inuse': return 'Email address already used in another profile';
+        case 'email_connected': return 'Email address connected';
         case 'fb_declined': return 'Facebook login cancelled';
         case 'fb_inuse': return 'Facebook account already connected to another profile';
+        case 'fb_connected': return 'Facebook account connected';
         case 'twitter_declined': return 'Twitter login cancelled';
         case 'twitter_inuse': return 'Twitter account already connected to another profile';
+        case 'twitter_connected': return 'Twitter account connected';
         case 'google_declined': return 'Google login cancelled';
         case 'google_inuse': return 'Google account already connected to another profile';
+        case 'google_connected': return 'Google account connected';
         default:
-          logger.error('private.get_decline_msg_from_query_string_reason -- unknown reason: ' + parsed_query.reason);
-          return 'Unknown error reason: ' + parsed_query.reason;
+          logger.error('private.get_message_from_code -- unknown code: ' + parsed_query.message_code);
+          return 'Unknown code: ' + parsed_query.message_code;
       }
     }
 
@@ -111,13 +117,17 @@ define(function(require) {
     }
 
     Profile.controller = {
+      /**
+       * Display the user profile, allowing users to connect other providers and logout
+       * @param  {String} query_string        Used so the server can send a message code to trigger a message display
+       */
       show_user_profile: function show_user_profile(query_string) {
         logger.trace('show_user_profile -- query_string: ' + query_string);
         if(AppObj.is_logged_in()) {
           var up_promise = AppObj.request('userapp:entities:userprofile');
           up_promise.then(function(up) {
             logger.debug('AppObj.UserApp.Profile.contoller.show_user_profile -- showing: ' + JSON.stringify(up));
-            up.set('message', get_failure_msg_from_query_string_reason(query_string));
+            up.set('message', get_message_from_code(query_string));
             // TODO - up.set('email_connect_url', ...);
             up.set('connect_facebook_url', get_facebook_connect_url());
             up.set('connect_google_url', get_google_connect_url());

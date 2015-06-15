@@ -68,7 +68,7 @@ module.exports = {
    */
   access_google_callback: auth.passport.authenticate('google-access', {
     successRedirect: '/profile',
-    failureRedirect: '/access?reason=google_declined',
+    failureRedirect: '/access?message_code=google_declined',
     failureFlash: true
   }),
 
@@ -85,7 +85,7 @@ module.exports = {
    */
   connect_google_callback: auth.passport.authorize('google-connect', {
     successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
-    failureRedirect: '/profile?reason=google_declined',
+    failureRedirect: '/profile?message_code=google_declined',
     failureFlash: true
   }),
 
@@ -122,7 +122,7 @@ module.exports = {
    */
   access_facebook_callback: auth.passport.authenticate('facebook-access', {
     successRedirect: '/profile',
-    failureRedirect: '/access?reason=fb_declined',
+    failureRedirect: '/access?message_code=fb_declined',
     failureFlash: true
   }),
 
@@ -139,7 +139,7 @@ module.exports = {
    */
   connect_facebook_callback: auth.passport.authorize('facebook-connect', {
     successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
-    failureRedirect: '/profile?reason=facebook_declined',
+    failureRedirect: '/profile?message_code=facebook_declined',
     failureFlash: true
   }),
 
@@ -202,7 +202,7 @@ module.exports = {
    */
   access_twitter_callback: auth.passport.authenticate('twitter-access', {
     successRedirect: '/profile',
-    failureRedirect: '/access?reason=twitter_declined',
+    failureRedirect: '/access?message_code=twitter_declined',
     failureFlash: true
   }),
 
@@ -219,7 +219,7 @@ module.exports = {
    */
   connect_twitter_callback: auth.passport.authorize('twitter-connect', {
     successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
-    failureRedirect: '/profile?reason=twitter_declined',
+    failureRedirect: '/profile?message_code=twitter_declined',
     failureFlash: true
   }),
 
