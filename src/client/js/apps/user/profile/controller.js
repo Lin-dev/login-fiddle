@@ -108,8 +108,9 @@ define(function(require) {
 
     /**
      * Disconnect Facebook account from user account
+     * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
      */
-    function proc_disconnect_facebook() {
+    function proc_disconnect_facebook(profile_view) {
       $.post(AppObj.config.user.facebook_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
           logger.debug('private.proc_disconnect_facebook - server response -- success, re-rendering profile');
@@ -132,8 +133,9 @@ define(function(require) {
 
     /**
      * Disconnect Google account from user account
+     * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
      */
-    function proc_disconnect_google() {
+    function proc_disconnect_google(profile_view) {
       $.post(AppObj.config.user.google_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
           logger.debug('private.proc_disconnect_google - server response -- success, re-rendering profile');
@@ -212,9 +214,9 @@ define(function(require) {
             view.on('facebook-connect-clicked', proc_connect_facebook);
             view.on('google-connect-clicked', proc_connect_google);
             view.on('twitter-connect-clicked', proc_connect_twitter);
-            view.on('facebook-disconnect-clicked', proc_disconnect_facebook);
-            view.on('google-disconnect-clicked', proc_disconnect_google);
-            view.on('twitter-disconnect-clicked', proc_disconnect_twitter);
+            view.on('facebook-disconnect-clicked', function() { proc_disconnect_facebook(view); });
+            view.on('google-disconnect-clicked', function() { proc_disconnect_google(view); });
+            view.on('twitter-disconnect-clicked', function() { proc_disconnect_twitter(view); });
             AppObj.region_main.show(view);
           });
         }

@@ -57,7 +57,7 @@ module.exports = {
   access_google_auth: function access_google_auth(req, res, next) {
     logger.debug('exports.access_google_auth -- redir request to Google (display mode: ' + req.query.diplay + ')');
     (auth.passport.authenticate('google-access', {
-      scope: ['profile', 'email'],
+      scope: user_config.google.scope,
       display: req.query.display
     }))(req, res, next);
   },
@@ -77,7 +77,12 @@ module.exports = {
    * API endpoint should be accessed directly by the browser, not via AJAX
    * @type {Function}
    */
-  connect_google_auth: auth.passport.authorize('google-connect'),
+  connect_google_auth: function connect_google_auth(req, res, next) {
+    (auth.passport.authorize('google-connect', {
+      scope: user_config.google.scope,
+      display: req.query.display
+    }))(req, res, next);
+  },
 
   /**
    * Completes request for google authentication for account connection
@@ -111,7 +116,7 @@ module.exports = {
   access_facebook_auth: function access_facebook_auth(req, res, next) {
     logger.debug('exports.access_facebook_auth -- redir request to FB (display mode: ' + req.query.display + ')');
     (auth.passport.authenticate('facebook-access', {
-      scope: ['public_profile', 'email'],
+      scope: user_config.facebook.scope,
       display: req.query.display
     }))(req, res, next);
   },
@@ -131,7 +136,12 @@ module.exports = {
    * API endpoint should be accessed directly by the browser, not via AJAX
    * @type {Function}
    */
-  connect_facebook_auth: auth.passport.authorize('facebook-connect'),
+  connect_facebook_auth: function connect_facebook_auth(req, res, next) {
+    (auth.passport.authorize('facebook-connect', {
+      scope: user_config.facebook.scope,
+      display: req.query.display
+    }))(req, res, next);
+  },
 
   /**
    * Completes request for facebook authentication for account connection
