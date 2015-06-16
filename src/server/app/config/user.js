@@ -8,13 +8,15 @@ module.exports = {
     client_id: '', // configure.py: facebook
     client_secret: '', // configure.py: facebook
     auth_callback_url: '/api/user/access/facebook/callback', // configure.py: facebook
-    connect_callback_url: '/api/user/connect/facebook/callback' // configure.py: facebook
+    connect_callback_url: '/api/user/connect/facebook/callback', // configure.py: facebook
+    scope: ['public_profile', 'email']
   },
   google: {
     client_id: '', // configure.py: google
     client_secret: '', // configure.py: google
     auth_callback_url: '/api/user/access/google/callback', // configure.py: google
-    connect_callback_url: '/api/user/connect/google/callback' // configure.py: google
+    connect_callback_url: '/api/user/connect/google/callback', // configure.py: google
+    scope: ['profile', 'email']
   },
   local: {
     username_field: 'local_email',
