@@ -207,10 +207,10 @@ module.exports = function(sequelize, DataTypes) {
         disconnect_facebook_and_save: function disconnect_facebook_and_save() {
           logger.trace('exports.disconnect_facebook_and_save -- disconnecting: ' + this.facebook_id);
           this.set({
-            facebook_id: undefined,
-            facebook_token: undefined,
-            facebook_name: undefined,
-            facebook_email: undefined
+            facebook_id: null,
+            facebook_token: null,
+            facebook_name: null,
+            facebook_email: null
           });
           return this.save();
         },
@@ -240,10 +240,10 @@ module.exports = function(sequelize, DataTypes) {
         disconnect_google_and_save: function disconnect_google_and_save() {
           logger.trace('exports.disconnect_google_and_save -- disconnecting: ' + this.twitter_id);
           this.set({
-            google_id: undefined,
-            google_token: undefined,
-            google_name: undefined,
-            google_email: undefined
+            google_id: null,
+            google_token: null,
+            google_name: null,
+            google_email: null
           });
           return this.save();
         },
@@ -273,10 +273,10 @@ module.exports = function(sequelize, DataTypes) {
         disconnect_twitter_and_save: function disconnect_twitter_and_save() {
           logger.trace('exports.disconnect_twitter_and_save -- disconnecting: ' + this.twitter_id);
           this.set({
-            twitter_id: undefined,
-            twitter_token: undefined,
-            twitter_username: undefined,
-            twitter_name: undefined
+            twitter_id: null,
+            twitter_token: null,
+            twitter_username: null,
+            twitter_name: null
           });
           return this.save();
         }
