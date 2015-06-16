@@ -111,7 +111,7 @@ define(function(require) {
      * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
      */
     function proc_disconnect_facebook(profile_view) {
-      $.post(AppObj.config.user.facebook_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+      $.post(AppObj.config.apps.user.facebook_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
           logger.debug('private.proc_disconnect_facebook - server response -- success, re-rendering profile');
           profile_view.model.set({ message: resp_data.message });
@@ -136,7 +136,7 @@ define(function(require) {
      * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
      */
     function proc_disconnect_google(profile_view) {
-      $.post(AppObj.config.user.google_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+      $.post(AppObj.config.apps.user.google_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
           logger.debug('private.proc_disconnect_google - server response -- success, re-rendering profile');
           profile_view.model.set({ message: resp_data.message });
@@ -161,7 +161,7 @@ define(function(require) {
      * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
      */
     function proc_disconnect_twitter(profile_view) {
-      $.post(AppObj.config.user.twitter_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+      $.post(AppObj.config.apps.user.twitter_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
           logger.debug('private.proc_disconnect_twitter - server response -- success, re-rendering profile');
           profile_view.model.set({ message: resp_data.message });
