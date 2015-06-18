@@ -91,7 +91,7 @@ passport.use('local-signup', new LocalStrategy({
   usernameField: user_config.local.username_field,
   passwordField: user_config.local.password_field,
   passReqToCallback: true
-}, function(req, email, password, done) {
+}, function local_signup_strategy_callback(req, email, password, done) {
   // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
   // Prob: "Quora: What does process.nextTick(callback) actually do in Node.js?" - answer by Aran Mulholland, bullet 3
   process.nextTick(function() {
@@ -133,7 +133,7 @@ passport.use('local-login', new LocalStrategy({
   usernameField: user_config.local.username_field,
   passwordField: user_config.local.password_field,
   passReqToCallback: true
-}, function(req, email, password, done) {
+}, function local_login_strategy_callback(req, email, password, done) {
   var where_object = {};
   where_object[user_config.local.username_field] = email;
   q(pr.pr.auth.user.find({ where: where_object }))
@@ -164,7 +164,7 @@ passport.use('facebook-access', new FacebookStrategy({
   clientSecret: user_config.facebook.client_secret,
   callbackURL: get_facebook_auth_callback_url(),
   passReqToCallback: true
-}, function(req, token, refresh_token, profile, done) {
+}, function facebook_access_strategy_callback(req, token, refresh_token, profile, done) {
   var where_object = { facebook_id: profile.id };
   q(pr.pr.auth.user.find({ where: where_object }))
   .then(function(user) {
@@ -199,7 +199,7 @@ passport.use('facebook-connect', new FacebookStrategy({
   clientSecret: user_config.facebook.client_secret,
   callbackURL: get_facebook_connect_callback_url(),
   passReqToCallback: true
-}, function(req, token, token_secret, profile, done) {
+}, function facebook_connect_strategy_callback(req, token, token_secret, profile, done) {
   if(req.user) {
     var facebook_where_object = { facebook_id: profile.id };
     q(pr.pr.auth.user.find({ where: facebook_where_object }))
@@ -242,7 +242,7 @@ passport.use('google-access', new GoogleStrategy({
   clientSecret: user_config.google.client_secret,
   callbackURL: get_google_auth_callback_url(),
   passReqToCallback: true
-}, function(req, token, refresh_token, profile, done) {
+}, function google_access_strategy_callback(req, token, refresh_token, profile, done) {
   var where_object = { google_id: profile.id };
   q(pr.pr.auth.user.find({ where: where_object }))
   .then(function(user) {
@@ -276,7 +276,7 @@ passport.use('google-connect', new GoogleStrategy({
   clientSecret: user_config.google.client_secret,
   callbackURL: get_google_connect_callback_url(),
   passReqToCallback: true
-}, function(req, token, token_secret, profile, done) {
+}, function google_connect_strategy_callback(req, token, token_secret, profile, done) {
   if(req.user) {
     var google_where_object = { google_id: profile.id };
     q(pr.pr.auth.user.find({ where: google_where_object }))
@@ -319,7 +319,7 @@ passport.use('twitter-access', new TwitterStrategy({
   consumerSecret: user_config.twitter.consumer_secret,
   callbackURL: get_twitter_auth_callback_url(),
   passReqToCallback: true
-}, function(req, token, token_secret, profile, done) {
+}, function twitter_access_strategy_callback(req, token, token_secret, profile, done) {
   var where_object = { twitter_id: profile.id };
   q(pr.pr.auth.user.find({ where: where_object }))
   .then(function(user) {
@@ -353,7 +353,7 @@ passport.use('twitter-connect', new TwitterStrategy({
   consumerSecret: user_config.twitter.consumer_secret,
   callbackURL: get_twitter_connect_callback_url(),
   passReqToCallback: true
-}, function(req, token, token_secret, profile, done) {
+}, function twitter_connect_strategy_callback(req, token, token_secret, profile, done) {
   if(req.user) {
     var twitter_where_object = { twitter_id: profile.id };
     q(pr.pr.auth.user.find({ where: twitter_where_object }))
