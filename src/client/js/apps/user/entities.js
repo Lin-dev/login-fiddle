@@ -53,12 +53,12 @@ define(function(require) {
       __name: 'UserLocalAccess',
 
       validate: function validate(attrs, options) {
-        var errors = {};
-        errors['local-email'] = val_checks.email(attrs.local_email);
+        var errs = {};
+        errs['local-email'] = val_checks.email(attrs.local_email);
         if(attrs.has_pw_flag === 'true') {
-          errors['local-password'] = val_checks.password(attrs.local_password);
+          errs['local-password'] = val_checks.password(attrs.local_password);
         }
-        return _.pick(errors, _.identity); // remove undefined keys
+        return _.pick(errs, _.identity); // remove undefined keys
       }
     });
 
@@ -71,16 +71,16 @@ define(function(require) {
       __name: 'UserLocalSignup',
 
       validate: function validate(attrs, options) {
-        var errors = {};
-        errors['local-email'] = val_checks.email(attrs.local_email);
-        errors['local-password'] = val_checks.password(attrs.local_password);
-        if(errors['local-email'] === undefined && attrs.local_email !== attrs.local_email_check) {
-          errors['email-check'] = 'Email addresses must match';
+        var errs = {};
+        errs['local-email'] = val_checks.email(attrs.local_email);
+        errs['local-password'] = val_checks.password(attrs.local_password);
+        if(errs['local-email'] === undefined && attrs.local_email !== attrs.local_email_check) {
+          errs['email-check'] = 'Email addresses must match';
         }
-        if(errors['local-password'] === undefined && attrs.local_password !== attrs.local_password_check) {
-          errors['password-check'] = 'Passwords must match';
+        if(errs['local-password'] === undefined && attrs.local_password !== attrs.local_password_check) {
+          errs['password-check'] = 'Passwords must match';
         }
-        return _.pick(errors, _.identity); // remove undefined keys
+        return _.pick(errs, _.identity); // remove undefined keys
       }
     });
 

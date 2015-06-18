@@ -23,13 +23,13 @@ var auth_module = require('app/util/auth');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/server');
 
-process.on('uncaughtException', function(error) {
+process.on('uncaughtException', function(err) {
   if(logger) {
-    logger.error('Uncaught exception, exiting: ' + error.name + ' ' + error.message);
-    logger.error(error.stack);
+    logger.error('Uncaught exception, exiting: ' + err.name + ' ' + err.message);
+    logger.error(err.stack);
   }
   else {
-    console.error('BACKUP LOG TO CONSOLE IN CASE OF TOTAL SERVER/LOGGER FAILURE:\n' + error.stack);
+    console.error('BACKUP LOG TO CONSOLE IN CASE OF TOTAL SERVER/LOGGER FAILURE:\n' + err.stack);
   }
   process.exit();
 });

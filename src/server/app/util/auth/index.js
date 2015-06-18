@@ -78,9 +78,9 @@ passport.deserializeUser(function(id, done) {
   .then(function(user) {
     done(undefined, user);
   })
-  .fail(function(error) {
-    logger.error('pr.pr.auth.user.find(' + id + ') failed with error: ' + error);
-    done(error , undefined);
+  .fail(function(err) {
+    logger.error('pr.pr.auth.user.find(' + id + ') failed with error: ' + err);
+    done(err , undefined);
   });
 });
 
@@ -108,10 +108,10 @@ passport.use('local-signup', new LocalStrategy({
           logger.info('local-signup user created: ' + email);
           return done(null, user);
         })
-        .fail(function(error) {
+        .fail(function(err) {
           // DB or validation error - do not distinguish validation or set flash because that is also done client side
-          logger.warn('local-signup callback for ' + email + ' failed user creation, error: ' + error);
-          return done(error, undefined, req.flash('message', 'Account creation failed'));
+          logger.warn('local-signup callback for ' + email + ' failed user creation, error: ' + err);
+          return done(err, undefined, req.flash('message', 'Account creation failed'));
         });
       }
       else {
@@ -119,9 +119,9 @@ passport.use('local-signup', new LocalStrategy({
         return done(null, false, req.flash('message', 'An account with that email address already exists'));
       }
     })
-    .fail(function(error) {
-      logger.error('local-signup callback for ' + email + ' failed while checking if email already used: ' + error);
-      return done(error, undefined, req.flash('message', 'System error'));
+    .fail(function(err) {
+      logger.error('local-signup callback for ' + email + ' failed while checking if email already used: ' + err);
+      return done(err, undefined, req.flash('message', 'System error'));
     });
   });
 }));
@@ -153,9 +153,9 @@ passport.use('local-login', new LocalStrategy({
       return done(null, false, req.flash('message', 'No user with that email address found'));
     }
   })
-  .fail(function(error) {
-    logger.error('local-login callback for ' + email + ' failed while querying for user: ' + error);
-    return done(error, undefined, req.flash('message', 'System error'));
+  .fail(function(err) {
+    logger.error('local-login callback for ' + email + ' failed while querying for user: ' + err);
+    return done(err, undefined, req.flash('message', 'System error'));
   });
 }));
 
@@ -180,17 +180,17 @@ passport.use('facebook-access', new FacebookStrategy({
           profile.name.familyName);
         return done(null, user);
       })
-      .fail(function(error) {
+      .fail(function(err) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
         logger.warn('facebook-access callback for ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
-          profile.name.familyName + ' failed user creation, error: ' + error);
-        return done(error, undefined, req.flash('message', 'Account creation failed'));
+          profile.name.familyName + ' failed user creation, error: ' + err);
+        return done(err, undefined, req.flash('message', 'Account creation failed'));
       });
     }
   })
-  .fail(function(error) {
-    logger.error('facebook-access callback for token ' + token + ' failed while querying for user, error: ' + error);
-    return done(error, undefined, req.flash('message', 'System error'));
+  .fail(function(err) {
+    logger.error('facebook-access callback for token ' + token + ' failed while querying for user, error: ' + err);
+    return done(err, undefined, req.flash('message', 'System error'));
   });
 }));
 
@@ -211,8 +211,8 @@ passport.use('facebook-connect', new FacebookStrategy({
           req.session.redirect_to = '/profile?message_code=facebook_connected';
           done(null, updated_user);
         })
-        .fail(function(error) {
-          logger.error('facebook-connect callback -- failed to save updated user object to DB, error: ' + error);
+        .fail(function(err) {
+          logger.error('facebook-connect callback -- failed to save updated user object to DB, error: ' + err);
           req.session.redirect_to = '/profile?message_code=server_error';
           done(null, req.user);
         });
@@ -223,9 +223,9 @@ passport.use('facebook-connect', new FacebookStrategy({
         done(null, req.user);
       }
     })
-    .fail(function(error) {
-      logger.error('facebook-connect callback -- query for facebook id ' + profile.id +
-        ' failed with server error, error: ' + error);
+    .fail(function(err) {
+      logger.error('facebook-connect callback -- query for facebook id ' + profile.id + ' failed w/ server error: ' +
+        err);
       req.session.redirect_to = '/profile?message_code=server_error';
       done(null, req.user);
     });
@@ -257,17 +257,17 @@ passport.use('google-access', new GoogleStrategy({
         logger.info('google-access user created: ' + profile.id + ' / ' + profile.display_name);
         return done(null, user);
       })
-      .fail(function(error) {
+      .fail(function(err) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
         logger.warn('google-access callback for ' + profile.id + ' / ' + profile.display_name +
-          ' failed user creation, error: ' + error);
-        return done(error, undefined, req.flash('message', 'Account creation failed'));
+          ' failed user creation, error: ' + err);
+        return done(err, undefined, req.flash('message', 'Account creation failed'));
       });
     }
   })
-  .fail(function(error) {
-    logger.error('google-access callback for token ' + token + ' failed while querying for user, error: ' + error);
-    return done(error, undefined, req.flash('message', 'System error'));
+  .fail(function(err) {
+    logger.error('google-access callback for token ' + token + ' failed while querying for user, error: ' + err);
+    return done(err, undefined, req.flash('message', 'System error'));
   });
 }));
 
@@ -288,8 +288,8 @@ passport.use('google-connect', new GoogleStrategy({
           req.session.redirect_to = '/profile?message_code=google_connected';
           done(null, updated_user);
         })
-        .fail(function(error) {
-          logger.error('google-connect callback -- failed to save updated user object to DB, error: ' + error);
+        .fail(function(err) {
+          logger.error('google-connect callback -- failed to save updated user object to DB, error: ' + err);
           req.session.redirect_to = '/profile?message_code=server_error';
           done(null, req.user);
         });
@@ -300,9 +300,8 @@ passport.use('google-connect', new GoogleStrategy({
         done(null, req.user);
       }
     })
-    .fail(function(error) {
-      logger.error('google-connect callback -- query for google id ' + profile.id + ' failed with server error: ' +
-        error);
+    .fail(function(err) {
+      logger.error('google-connect callback -- query for google id ' + profile.id + ' failed w/ server error: ' + err);
       req.session.redirect_to = '/profile?message_code=server_error';
       done(null, req.user);
     });
@@ -334,17 +333,17 @@ passport.use('twitter-access', new TwitterStrategy({
         logger.info('twitter-access user created: ' + profile.id  + ' / ' + profile.username);
         return done(null, user);
       })
-      .fail(function(error) {
+      .fail(function(err) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
         logger.warn('twitter-access callback for ' + profile.id + ' / ' + profile.username +
-          ' failed user creation, error: ' + error);
-        return done(error, undefined, req.flash('message', 'Account creation failed'));
+          ' failed user creation, error: ' + err);
+        return done(err, undefined, req.flash('message', 'Account creation failed'));
       });
     }
   })
-  .fail(function(error) {
-    logger.error('twitter-access callback for token ' + token + ' failed while querying for user, error: ' + error);
-    return done(error, undefined, req.flash('message', 'System error'));
+  .fail(function(err) {
+    logger.error('twitter-access callback for token ' + token + ' failed while querying for user, error: ' + err);
+    return done(err, undefined, req.flash('message', 'System error'));
   });
 }));
 
@@ -365,8 +364,8 @@ passport.use('twitter-connect', new TwitterStrategy({
           req.session.redirect_to = '/profile?message_code=twitter_connected';
           done(null, updated_user);
         })
-        .fail(function(error) {
-          logger.error('twitter-connect callback -- failed to save updated user object to DB, error: ' + error);
+        .fail(function(err) {
+          logger.error('twitter-connect callback -- failed to save updated user object to DB, error: ' + err);
           req.session.redirect_to = '/profile?message_code=server_error';
           done(null, req.user);
         });
@@ -377,9 +376,8 @@ passport.use('twitter-connect', new TwitterStrategy({
         done(null, req.user);
       }
     })
-    .fail(function(error) {
-      logger.error('twitter-connect callback -- query for twitter id ' + profile.id +
-        ' failed with server error, error: ' + error);
+    .fail(function(err) {
+      logger.error('twitter-connect callback -- query for twitter id ' + profile.id + ' failed w/ error: ' + err);
       req.session.redirect_to = '/profile?message_code=server_error';
       done(null, req.user);
     });

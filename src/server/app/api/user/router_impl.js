@@ -102,8 +102,8 @@ module.exports = {
     .then(function(updated_user) {
       res.redirect(server_config.util_route_success);
     })
-    .fail(function(error) {
-      logger.error('exports.connect_google_disconnect -- error during disconnect: ' + error);
+    .fail(function(err) {
+      logger.error('exports.connect_google_disconnect -- error during disconnect: ' + err);
       res.redirect(server_config.util_route_failure);
     });
   },
@@ -161,8 +161,8 @@ module.exports = {
     .then(function(updated_user) {
       res.redirect(server_config.util_route_success);
     })
-    .fail(function(error) {
-      logger.error('exports.connect_facebook_disconnect -- error during disconnect: ' + error);
+    .fail(function(err) {
+      logger.error('exports.connect_facebook_disconnect -- error during disconnect: ' + err);
       res.redirect(server_config.util_route_failure);
     });
   },
@@ -241,8 +241,8 @@ module.exports = {
     .then(function(updated_user) {
       res.redirect(server_config.util_route_success);
     })
-    .fail(function(error) {
-      logger.error('exports.connect_twitter_disconnect -- error during disconnect: ' + error);
+    .fail(function(err) {
+      logger.error('exports.connect_twitter_disconnect -- error during disconnect: ' + err);
       res.redirect(server_config.util_route_failure);
     });
   }

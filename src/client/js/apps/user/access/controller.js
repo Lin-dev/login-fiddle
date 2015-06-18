@@ -106,8 +106,8 @@ define(function(require) {
         has_pw_flag: form_data.has_pw_flag,
         local_password: form_data.local_password
       });
-      var validation_errors = ula.validate(ula.attributes);
-      if(_.isEmpty(validation_errors)) {
+      var val_errs = ula.validate(ula.attributes);
+      if(_.isEmpty(val_errs)) {
         logger.debug('private.proc_local_login -- access form validation passed: ' + JSON.stringify(form_data));
         $.post('/api/user/access/local/login', form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
@@ -128,8 +128,8 @@ define(function(require) {
         });
       }
       else {
-        logger.debug('private.proc_local_login -- user form validation failed: ' + JSON.stringify(validation_errors));
-        access_view.show_validation_errors(validation_errors);
+        logger.debug('private.proc_local_login -- user form validation failed: ' + JSON.stringify(val_errs));
+        access_view.show_val_errs(val_errs);
       }
     }
 
@@ -146,8 +146,8 @@ define(function(require) {
         local_password: form_data.local_password,
         local_password_check: form_data.local_password_check
       });
-      var validation_errors = uls.validate(uls.attributes);
-      if(_.isEmpty(validation_errors)) {
+      var val_errs = uls.validate(uls.attributes);
+      if(_.isEmpty(val_errs)) {
         logger.debug('private.proc_local_signup -- user form validation passed: ' + JSON.stringify(form_data));
         $.post('/api/user/access/local/signup', form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
@@ -168,8 +168,8 @@ define(function(require) {
         });
       }
       else {
-        logger.debug('private.proc_local_signup -- user form validation failed: ' + JSON.stringify(validation_errors));
-        signup_view.show_validation_errors(validation_errors);
+        logger.debug('private.proc_local_signup -- user form validation failed: ' + JSON.stringify(val_errs));
+        signup_view.show_val_errs(val_errs);
       }
     }
 
@@ -205,8 +205,8 @@ define(function(require) {
           }
           else if(form_data.has_pw_flag === 'false') { // show the signup form if email address valid
             var email_validation = new AppObj.UserApp.Entities.UserLocalAccess();
-            var validation_errors = email_validation.validate(form_data);
-            if(_.isEmpty(validation_errors)) {
+            var val_errs = email_validation.validate(form_data);
+            if(_.isEmpty(val_errs)) {
               var uls = new AppObj.UserApp.Entities.UserLocalSignup({ local_email: form_data.local_email });
               var signup_view = new Views.SignupForm({ model: uls });
               signup_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
@@ -218,8 +218,8 @@ define(function(require) {
             }
             else {
               logger.debug('show_access_form -- user form validation failed: invalid email address for signup' +
-                JSON.stringify(validation_errors));
-              access_view.show_validation_errors(validation_errors);
+                JSON.stringify(val_errs));
+              access_view.show_val_errs(val_errs);
             }
           }
           else {
