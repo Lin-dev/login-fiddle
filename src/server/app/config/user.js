@@ -4,11 +4,11 @@
  * User and user-session specific configuration
  */
 module.exports = {
-  facebook: {
+  fb: {
     client_id: '', // configure.py: facebook
     client_secret: '', // configure.py: facebook
-    auth_callback_url: '/api/user/access/facebook/callback', // configure.py: facebook
-    connect_callback_url: '/api/user/connect/facebook/callback', // configure.py: facebook
+    auth_callback_url: '/api/user/access/fb/callback', // configure.py: facebook
+    connect_callback_url: '/api/user/connect/fb/callback', // configure.py: facebook
     scope: ['public_profile', 'email']
   },
   google: {

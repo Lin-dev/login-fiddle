@@ -26,19 +26,19 @@ define(function(require) {
     }
 
     /**
-     * Gets the facebook display mode string to use based on the client window size
+     * Gets the fb display mode string to use based on the client window size
      * TODO: Duplicated in user/access and user/profile controllers - de-duplicate on next edit
      * @param  {String} ui_scale The UI scale as returned by `Marionette.get_ui_scale()`
-     * @return {String}          The facebook display mode to render the auth request in
+     * @return {String}          The fb display mode to render the auth request in
      */
-    function get_facebook_google_display_mode_from_ui_scale(ui_scale) {
+    function get_fb_google_display_mode_from_ui_scale(ui_scale) {
       switch(ui_scale) {
         case 'mobile': return 'touch';
         case 'tablet': return 'touch';
         case 'smalldesk': return 'page';
         case 'bigdesk': return 'page';
         default:
-          logger.error('private.get_facebook_google_display_mode_from_ui_scale -- unknown UI scale: ' + ui_scale);
+          logger.error('private.get_fb_google_display_mode_from_ui_scale -- unknown UI scale: ' + ui_scale);
           return 'touch';
       }
     }
@@ -47,9 +47,9 @@ define(function(require) {
      * Returns the string to set the client browser location to, to request auth from FB. Is the
      * server API endpoint, which in turn generates and redirects to FB
      */
-    function get_facebook_auth_url() {
-      return AppObj.config.apps.user.facebook_auth_url + '?display=' +
-        get_facebook_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
+    function get_fb_auth_url() {
+      return AppObj.config.apps.user.fb_auth_url + '?display=' +
+        get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
     }
 
     /**
@@ -58,7 +58,7 @@ define(function(require) {
      */
     function get_google_auth_url() {
       return AppObj.config.apps.user.google_auth_url + '?display=' +
-        get_facebook_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
+        get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
     }
 
     /**
@@ -70,18 +70,18 @@ define(function(require) {
     }
 
     /**
-     * Process a FB login request - redirect the client browser to the facebook auth request URL
+     * Process a FB login request - redirect the client browser to the fb auth request URL
      */
-    function proc_facebook_login() {
-      logger.trace('private.proc_facebook_login -- redirecting to facebook');
-      window.location.href = get_facebook_auth_url();
+    function proc_fb_login() {
+      logger.trace('private.proc_fb_login -- redirecting to fb');
+      window.location.href = get_fb_auth_url();
     }
 
     /**
      * Process a Google login request - redirect the client browser to the Google auth request URL
      */
     function proc_google_login() {
-      logger.trace('private.proc_facebook_login -- redirecting to Google');
+      logger.trace('private.proc_fb_login -- redirecting to Google');
       window.location.href = get_google_auth_url();
     }
 
@@ -188,13 +188,13 @@ define(function(require) {
         var Views = require('js/apps/user/access/views');
         // Model is needed in view so that view can be updated following if the post response is a failure
         var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel({
-          facebook_url: get_facebook_auth_url(),
+          fb_url: get_fb_auth_url(),
           google_url: get_google_auth_url(),
           twitter_url: get_twitter_auth_url(),
           message: get_message_from_code(query_string)
         })});
         access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
-        access_view.on('facebook-access-clicked', function facebook_access_clicked() { proc_facebook_login(); });
+        access_view.on('fb-access-clicked', function fb_access_clicked() { proc_fb_login(); });
         access_view.on('google-access-clicked', function google_access_clicked() { proc_google_login(); });
         access_view.on('twitter-access-clicked', function twitter_access_clicked() { proc_twitter_login(); });
         access_view.on('local-access-submitted', function local_access_submitted(form_data) {

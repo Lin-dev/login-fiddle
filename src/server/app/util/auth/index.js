@@ -18,17 +18,17 @@ var logger = logger_module.get('app/util/auth/index');
 /**
  * Returns the facebook auth callback URL (assembled from server and user configs)
  */
-function get_facebook_auth_callback_url() {
+function get_fb_auth_callback_url() {
   return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
-    user_config.facebook.auth_callback_url;
+    user_config.fb.auth_callback_url;
 }
 
 /**
- * Returns the google connect callback URL (assembled from server and user configs)
+ * Returns the facebook connect callback URL (assembled from server and user configs)
  */
-function get_facebook_connect_callback_url() {
+function get_fb_connect_callback_url() {
   return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
-    user_config.facebook.connect_callback_url;
+    user_config.fb.connect_callback_url;
 }
 
 /**
@@ -159,79 +159,79 @@ passport.use('local-login', new LocalStrategy({
   });
 }));
 
-passport.use('facebook-access', new FacebookStrategy({
-  clientID: user_config.facebook.client_id,
-  clientSecret: user_config.facebook.client_secret,
-  callbackURL: get_facebook_auth_callback_url(),
+passport.use('fb-access', new FacebookStrategy({
+  clientID: user_config.fb.client_id,
+  clientSecret: user_config.fb.client_secret,
+  callbackURL: get_fb_auth_callback_url(),
   passReqToCallback: true
-}, function facebook_access_strategy_callback(req, token, refresh_token, profile, done) {
-  var where_object = { facebook_id: profile.id };
+}, function fb_access_strategy_callback(req, token, refresh_token, profile, done) {
+  var where_object = { fb_id: profile.id };
   q(pr.pr.auth.user.find({ where: where_object }))
   .then(function(user) {
     if(user !== null) { // user found - log in
-      logger.debug('facebook-access callback -- Found existing user, logging in: ' + JSON.stringify(user));
+      logger.debug('fb-access callback -- Found existing user, logging in: ' + JSON.stringify(user));
       return done(null, user);
     }
     else { // user not found - create account
-      logger.debug('facebook-access callback -- user not found, creating from: ' + JSON.stringify(profile));
-      q(pr.pr.auth.user.create_from_facebook_and_save(profile, token))
+      logger.debug('fb-access callback -- user not found, creating from: ' + JSON.stringify(profile));
+      q(pr.pr.auth.user.create_from_fb_and_save(profile, token))
       .then(function(user) {
-        logger.info('facebook-access user created: ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
+        logger.info('fb-access user created: ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
           profile.name.familyName);
         return done(null, user);
       })
       .fail(function(err) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
-        logger.warn('facebook-access callback for ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
+        logger.warn('fb-access callback for ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
           profile.name.familyName + ' failed user creation, error: ' + err);
         return done(err, undefined, req.flash('message', 'Account creation failed'));
       });
     }
   })
   .fail(function(err) {
-    logger.error('facebook-access callback for token ' + token + ' failed while querying for user, error: ' + err);
+    logger.error('fb-access callback for token ' + token + ' failed while querying for user, error: ' + err);
     return done(err, undefined, req.flash('message', 'System error'));
   });
 }));
 
-passport.use('facebook-connect', new FacebookStrategy({
-  clientID: user_config.facebook.client_id,
-  clientSecret: user_config.facebook.client_secret,
-  callbackURL: get_facebook_connect_callback_url(),
+passport.use('fb-connect', new FacebookStrategy({
+  clientID: user_config.fb.client_id,
+  clientSecret: user_config.fb.client_secret,
+  callbackURL: get_fb_connect_callback_url(),
   passReqToCallback: true
-}, function facebook_connect_strategy_callback(req, token, token_secret, profile, done) {
+}, function fb_connect_strategy_callback(req, token, token_secret, profile, done) {
   if(req.user) {
-    var facebook_where_object = { facebook_id: profile.id };
-    q(pr.pr.auth.user.find({ where: facebook_where_object }))
-    .then(function(facebook_user) {
-      if(facebook_user === null) { // no account for this facebook id, update user and send back to client or error
-        q(req.user.connect_facebook_and_save(profile, token))
+    var fb_where_object = { fb_id: profile.id };
+    q(pr.pr.auth.user.find({ where: fb_where_object }))
+    .then(function(fb_user) {
+      if(fb_user === null) { // no account for this fb id, update user and send back to client or error
+        q(req.user.connect_fb_and_save(profile, token))
         .then(function(updated_user) {
-          logger.debug('facebook-connect callback -- user updated, redirecting to profile');
-          req.session.redirect_to = '/profile?message_code=facebook_connected';
+          logger.debug('fb-connect callback -- user updated, redirecting to profile');
+          req.session.redirect_to = '/profile?message_code=fb_connected';
           done(null, updated_user);
         })
         .fail(function(err) {
-          logger.error('facebook-connect callback -- failed to save updated user object to DB, error: ' + err);
+          logger.error('fb-connect callback -- failed to save updated user object to DB, error: ' + err);
           req.session.redirect_to = '/profile?message_code=server_error';
           done(null, req.user);
         });
       }
       else { // this google id already has an account
-        logger.warn('facebook-connect callback -- facebook id  ' + facebook_user.facebook_id + ' already in use');
-        req.session.redirect_to = '/profile?message_code=facebook_inuse';
+        logger.warn('fb-connect callback -- fb id  ' + fb_user.fb_id + ' already in use');
+        req.session.redirect_to = '/profile?message_code=fb_inuse';
         done(null, req.user);
       }
     })
     .fail(function(err) {
-      logger.error('facebook-connect callback -- query for facebook id ' + profile.id + ' failed w/ server error: ' +
+      logger.error('fb-connect callback -- query for fb id ' + profile.id + ' failed w/ server error: ' +
         err);
       req.session.redirect_to = '/profile?message_code=server_error';
       done(null, req.user);
     });
   }
   else {
-    logger.error('facebook-connect callback -- failed for google id ' + profile.id + ' - no user on req');
+    logger.error('fb-connect callback -- failed for google id ' + profile.id + ' - no user on req');
     req.session.redirect_to = '/profile?message_code=server_error';
     return done(null, undefined);
   }

@@ -23,9 +23,9 @@ module.exports = {
     var result = {
       local_email: req.user.local_email,
       signup_date: req.user.sq_created_at,
-      facebook_id: req.user.facebook_id,
-      facebook_email: req.user.facebook_email,
-      facebook_name: req.user.facebook_name,
+      fb_id: req.user.fb_id,
+      fb_email: req.user.fb_email,
+      fb_name: req.user.fb_name,
       twitter_id: req.user.twitter_id,
       twitter_username: req.user.twitter_username,
       twitter_name: req.user.twitter_name,
@@ -113,10 +113,10 @@ module.exports = {
    * be access directly by the browser, not via AJAX
    * @type {Function}
    */
-  access_facebook_auth: function access_facebook_auth(req, res, next) {
-    logger.debug('exports.access_facebook_auth -- redir request to FB (display mode: ' + req.query.display + ')');
-    (auth.passport.authenticate('facebook-access', {
-      scope: user_config.facebook.scope,
+  access_fb_auth: function access_fb_auth(req, res, next) {
+    logger.debug('exports.access_fb_auth -- redir request to FB (display mode: ' + req.query.display + ')');
+    (auth.passport.authenticate('fb-access', {
+      scope: user_config.fb.scope,
       display: req.query.display
     }))(req, res, next);
   },
@@ -125,7 +125,7 @@ module.exports = {
    * Completes requests for Facebook authentication for account signup
    * @type {Function}
    */
-  access_facebook_callback: auth.passport.authenticate('facebook-access', {
+  access_fb_callback: auth.passport.authenticate('fb-access', {
     successRedirect: '/profile',
     failureRedirect: '/access?message_code=fb_declined',
     failureFlash: true
@@ -136,33 +136,33 @@ module.exports = {
    * API endpoint should be accessed directly by the browser, not via AJAX
    * @type {Function}
    */
-  connect_facebook_auth: function connect_facebook_auth(req, res, next) {
-    (auth.passport.authorize('facebook-connect', {
-      scope: user_config.facebook.scope,
+  connect_fb_auth: function connect_fb_auth(req, res, next) {
+    (auth.passport.authorize('fb-connect', {
+      scope: user_config.fb.scope,
       display: req.query.display
     }))(req, res, next);
   },
 
   /**
-   * Completes request for facebook authentication for account connection
+   * Completes request for fb authentication for account connection
    * @type {Function}
    */
-  connect_facebook_callback: auth.passport.authorize('facebook-connect', {
+  connect_fb_callback: auth.passport.authorize('fb-connect', {
     successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
-    failureRedirect: '/profile?message_code=facebook_declined',
+    failureRedirect: '/profile?message_code=fb_declined',
     failureFlash: true
   }),
 
   /**
-   * Disconnects user account from facebook, removing facebook-sourced fields from profile but does not deauth at FB
+   * Disconnects user account from fb, removing fb-sourced fields from profile but does not deauth at FB
    */
-  connect_facebook_disconnect: function connect_facebook_disconnect(req, res, next) {
-    q(req.user.disconnect_facebook_and_save())
+  connect_fb_disconnect: function connect_fb_disconnect(req, res, next) {
+    q(req.user.disconnect_fb_and_save())
     .then(function(updated_user) {
       res.redirect(server_config.util_route_success);
     })
     .fail(function(err) {
-      logger.error('exports.connect_facebook_disconnect -- error during disconnect: ' + err);
+      logger.error('exports.connect_fb_disconnect -- error during disconnect: ' + err);
       res.redirect(server_config.util_route_failure);
     });
   },

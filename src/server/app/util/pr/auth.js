@@ -36,21 +36,21 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
       // Facebook
-      facebook_id: {
+      fb_id: {
         type: DataTypes.STRING(256),
         allowNull: true,
         unique: true
       },
-      facebook_token: {
+      fb_token: {
         type: DataTypes.STRING(512),
         allowNull: true,
         unique: true
       },
-      facebook_name: {
+      fb_name: {
         type: DataTypes.STRING(256),
         allowNull: true
       },
-      facebook_email: {
+      fb_email: {
         type: DataTypes.STRING(254), // max length of email is 254
         allowNull: true,
         validate: {
@@ -103,7 +103,7 @@ module.exports = function(sequelize, DataTypes) {
       validate: {
         has_valid_account_source: function has_valid_account_source() {
           if(this.local_email && this.local_password) { return; } // local source
-          else if(this.facebook_id && this.facebook_token) { return; } // facebook source
+          else if(this.fb_id && this.fb_token) { return; } // fb source
           else if(this.twitter_id && this.twitter_token) { return; } // twitter source
           else if(this.google_id && this.google_token) { return; } // google source
           else { Error('No valid account source'); }
@@ -123,16 +123,16 @@ module.exports = function(sequelize, DataTypes) {
         /**
          * Creates a user instance from a Facebook oauth profile object (from passport) and returns a promise for their
          * successful save to the DB
-         * @param  {Object} facebook_profile The profile sent by facebook oauth
-         * @param  {String} token            The string token sent by facebook oauth
+         * @param  {Object} fb_profile The profile sent by fb oauth
+         * @param  {String} token            The string token sent by fb oauth
          * @return {Object}                  A promise for the new user's success persistence to the DB
          */
-        create_from_facebook_and_save: function create_from_facebook_and_save(facebook_profile, token) {
+        create_from_fb_and_save: function create_from_fb_and_save(fb_profile, token) {
           var user_attrs = {
-            facebook_id: facebook_profile.id,
-            facebook_token: token,
-            facebook_name: facebook_profile.displayName,
-            facebook_email: facebook_profile.emails ? facebook_profile.emails[0].value : undefined
+            fb_id: fb_profile.id,
+            fb_token: token,
+            fb_name: fb_profile.displayName,
+            fb_email: fb_profile.emails ? fb_profile.emails[0].value : undefined
           };
           return this.create(user_attrs);
         },
@@ -184,17 +184,17 @@ module.exports = function(sequelize, DataTypes) {
 
         /**
          * Updates this user instance with connected Facebook account info and saves it
-         * @param  {Object} facebook_profile The raw Facebook profile as returned by oauth (passport)
+         * @param  {Object} fb_profile The raw Facebook profile as returned by oauth (passport)
          * @param  {String} token            The oauth token sent by FB
          * @return {Object}                  A promise for completion of the user instance save
          */
-        connect_facebook_and_save: function connect_facebook_and_save(facebook_profile, token) {
-          logger.trace('exports.connect_facebook_and_save -- connecting: ' + JSON.stringify(facebook_profile));
+        connect_fb_and_save: function connect_fb_and_save(fb_profile, token) {
+          logger.trace('exports.connect_fb_and_save -- connecting: ' + JSON.stringify(fb_profile));
           this.set({
-            facebook_id: facebook_profile.id,
-            facebook_token: token,
-            facebook_name: facebook_profile.displayName,
-            facebook_email: facebook_profile.emails ? facebook_profile.emails[0].value : undefined
+            fb_id: fb_profile.id,
+            fb_token: token,
+            fb_name: fb_profile.displayName,
+            fb_email: fb_profile.emails ? fb_profile.emails[0].value : undefined
           });
           return this.save();
         },
@@ -204,13 +204,13 @@ module.exports = function(sequelize, DataTypes) {
          * status on FB
          * @return {Object} A promise for completion of the user instance save
          */
-        disconnect_facebook_and_save: function disconnect_facebook_and_save() {
-          logger.trace('exports.disconnect_facebook_and_save -- disconnecting: ' + this.facebook_id);
+        disconnect_fb_and_save: function disconnect_fb_and_save() {
+          logger.trace('exports.disconnect_fb_and_save -- disconnecting: ' + this.fb_id);
           this.set({
-            facebook_id: null,
-            facebook_token: null,
-            facebook_name: null,
-            facebook_email: null
+            fb_id: null,
+            fb_token: null,
+            fb_name: null,
+            fb_email: null
           });
           return this.save();
         },

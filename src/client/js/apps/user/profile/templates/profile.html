@@ -23,11 +23,11 @@
           </tr>
           <tr>
             <td>Facebook email</td>
-            <td><%= data.facebook_email %></td>
+            <td><%= data.fb_email %></td>
           </tr>
           <tr>
             <td>Facebook name</td>
-            <td><%= data.facebook_name %></td>
+            <td><%= data.fb_name %></td>
           </tr>
           <tr>
             <td>Twitter username</td>
@@ -54,21 +54,21 @@
           <a class="btn btn-warning js-email-connect" href="<%= data.connect_email_url %>">Email</a>
         <% } %>
 
-        <% if(!data.facebook_id) { %>
-          <a class="btn btn-warning js-facebook-connect" href="<%= data.connect_facebook_url %>">Facebook</a>
-        <% } else if(data.facebook_id  && (data.local_email || data.google_id || data.twitter_id)) { %>
-          <a class="btn btn-warning js-facebook-disconnect">Disconnect Facebook</a>
+        <% if(!data.fb_id) { %>
+          <a class="btn btn-warning js-fb-connect" href="<%= data.connect_fb_url %>">Facebook</a>
+        <% } else if(data.fb_id  && (data.local_email || data.google_id || data.twitter_id)) { %>
+          <a class="btn btn-warning js-fb-disconnect">Disconnect Facebook</a>
         <% } %>
 
         <% if(!data.google_id) { %>
           <a class="btn btn-warning js-google-connect" href="<%= data.connect_google_url %>">Google</a>
-        <% } else if(data.google_id  && (data.local_email || data.facebook_id || data.twitter_id)) { %>
+        <% } else if(data.google_id  && (data.local_email || data.fb_id || data.twitter_id)) { %>
           <a class="btn btn-warning js-google-disconnect">Disconnect Google</a>
         <% } %>
 
         <% if(!data.twitter_id) { %>
           <a class="btn btn-warning js-twitter-connect" href="<%= data.connect_twitter_url %>">Twitter</a>
-        <% } else if(data.twitter_id  && (data.local_email || data.facebook_id || data.google_id)) { %>
+        <% } else if(data.twitter_id  && (data.local_email || data.fb_id || data.google_id)) { %>
           <a class="btn btn-warning js-twitter-disconnect">Disconnect Twitter</a>
         <% } %>
       </div>

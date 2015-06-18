@@ -12,9 +12,9 @@ var user_config = require('app/config/user');
 
 describe('app/config', function() {
   describe('app/config/user', function() {
-    // NB: don't check facebook.auth_client_id or facebook.auth_client_secret as those are set at install, not build
-    it('facebook.auth_callback_url should be /api/user/access/facebook/callback', function() {
-      user_config.facebook.auth_callback_url.should.equal('/api/user/access/facebook/callback');
+    // NB: don't check fb.auth_client_id or fb.auth_client_secret as those are set at install, not build
+    it('fb.auth_callback_url should be /api/user/access/fb/callback', function() {
+      user_config.fb.auth_callback_url.should.equal('/api/user/access/fb/callback');
     });
     it('google.auth_callback_url should be /api/user/access/google/callback', function() {
       user_config.google.auth_callback_url.should.equal('/api/user/access/google/callback');

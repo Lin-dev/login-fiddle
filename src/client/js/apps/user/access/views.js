@@ -23,7 +23,7 @@ define(function(require) {
           preventDefault: false,
           stopPropogation: false
         },
-        'click button.js-facebook': 'facebook-access-clicked',
+        'click button.js-fb': 'fb-access-clicked',
         'click button.js-google': 'google-access-clicked',
         'click button.js-twitter': 'twitter-access-clicked'
       },

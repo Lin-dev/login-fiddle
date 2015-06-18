@@ -35,19 +35,19 @@ define(function(require) {
     }
 
     /**
-     * Gets the facebook display mode string to use based on the client window size
+     * Gets the fb display mode string to use based on the client window size
      * TODO: Duplicated in user/access and user/profile controllers - de-duplicate on next edit
      * @param  {String} ui_scale The UI scale as returned by `Marionette.get_ui_scale()`
-     * @return {String}          The facebook display mode to render the auth request in
+     * @return {String}          The fb display mode to render the auth request in
      */
-    function get_facebook_google_display_mode_from_ui_scale(ui_scale) {
+    function get_fb_google_display_mode_from_ui_scale(ui_scale) {
       switch(ui_scale) {
         case 'mobile': return 'touch';
         case 'tablet': return 'touch';
         case 'smalldesk': return 'page';
         case 'bigdesk': return 'page';
         default:
-          logger.error('private.get_facebook_google_display_mode_from_ui_scale -- unknown UI scale: ' + ui_scale);
+          logger.error('private.get_fb_google_display_mode_from_ui_scale -- unknown UI scale: ' + ui_scale);
           return 'touch';
       }
     }
@@ -56,9 +56,9 @@ define(function(require) {
      * Returns the string to set the client browser location to, to request account connect from Facebook. Is the
      * server API endpoint, which in turn generates and redirects to Facebook
      */
-    function get_facebook_connect_url() {
-      return AppObj.config.apps.user.facebook_connect_url + '?display=' +
-        get_facebook_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
+    function get_fb_connect_url() {
+      return AppObj.config.apps.user.fb_connect_url + '?display=' +
+        get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
     }
 
     /**
@@ -67,7 +67,7 @@ define(function(require) {
      */
     function get_google_connect_url() {
       return AppObj.config.apps.user.google_connect_url + '?display=' +
-        get_facebook_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
+        get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
     }
 
     /**
@@ -79,10 +79,10 @@ define(function(require) {
     }
 
     /**
-     * Connect user account to facebook account
+     * Connect user account to fb account
      */
-    function proc_connect_facebook() {
-      window.location.href = get_facebook_connect_url();
+    function proc_connect_fb() {
+      window.location.href = get_fb_connect_url();
     }
 
     /**
@@ -110,20 +110,20 @@ define(function(require) {
      * Disconnect Facebook account from user account
      * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
      */
-    function proc_disconnect_facebook(profile_view) {
-      $.post(AppObj.config.apps.user.facebook_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+    function proc_disconnect_fb(profile_view) {
+      $.post(AppObj.config.apps.user.fb_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
-          logger.debug('private.proc_disconnect_facebook - server response -- success, re-rendering profile');
+          logger.debug('private.proc_disconnect_fb - server response -- success, re-rendering profile');
           profile_view.model.set({ message: resp_data.message });
           AppObj.trigger('profile:show');
         }
         else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disconnect_facebook - server response -- success, re-rendering profile');
+          logger.debug('private.proc_disconnect_fb - server response -- success, re-rendering profile');
           profile_view.model.set({ message: resp_data.message });
           AppObj.trigger('profile:show');
         }
         else {
-          logger.error('private.proc_disconnect_facebook - server response -- unknown status: ' + resp_data.status +
+          logger.error('private.proc_disconnect_fb - server response -- unknown status: ' + resp_data.status +
             ' (message: ' + resp_data.message + ')');
           profile_view.model.set({ message: 'Unknown server status: ' + resp_data.status });
           AppObj.trigger('profile:show');
@@ -204,17 +204,17 @@ define(function(require) {
             logger.debug('AppObj.UserApp.Profile.contoller.show_user_profile -- showing: ' + JSON.stringify(up));
             up.set('message', get_message_from_code(query_string));
             // TODO - up.set('email_connect_url', ...);
-            up.set('connect_facebook_url', get_facebook_connect_url());
+            up.set('connect_fb_url', get_fb_connect_url());
             up.set('connect_google_url', get_google_connect_url());
             up.set('connect_twitter_url', get_twitter_connect_url());
             var Views = require('js/apps/user/profile/views');
             var view = new Views.UserProfile({ model: up });
             view.on('logout-clicked', proc_logout);
             view.on('email-connect-clicked', proc_connect_email);
-            view.on('facebook-connect-clicked', proc_connect_facebook);
+            view.on('fb-connect-clicked', proc_connect_fb);
             view.on('google-connect-clicked', proc_connect_google);
             view.on('twitter-connect-clicked', proc_connect_twitter);
-            view.on('facebook-disconnect-clicked', function() { proc_disconnect_facebook(view); });
+            view.on('fb-disconnect-clicked', function() { proc_disconnect_fb(view); });
             view.on('google-disconnect-clicked', function() { proc_disconnect_google(view); });
             view.on('twitter-disconnect-clicked', function() { proc_disconnect_twitter(view); });
             AppObj.region_main.show(view);

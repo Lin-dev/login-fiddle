@@ -56,9 +56,9 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.access_local_signup.should.be.a.function;
     num_funcs[name]++;
-    module.access_facebook_auth.should.be.a.function;
+    module.access_fb_auth.should.be.a.function;
     num_funcs[name]++;
-    module.access_facebook_callback.should.be.a.function;
+    module.access_fb_callback.should.be.a.function;
     num_funcs[name]++;
     module.access_google_auth.should.be.a.function;
     num_funcs[name]++;
@@ -74,11 +74,11 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.connect_google_disconnect.should.be.a.function;
     num_funcs[name]++;
-    module.connect_facebook_auth.should.be.a.function;
+    module.connect_fb_auth.should.be.a.function;
     num_funcs[name]++;
-    module.connect_facebook_callback.should.be.a.function;
+    module.connect_fb_callback.should.be.a.function;
     num_funcs[name]++;
-    module.connect_facebook_disconnect.should.be.a.function;
+    module.connect_fb_disconnect.should.be.a.function;
     num_funcs[name]++;
     module.connect_twitter_auth.should.be.a.function;
     num_funcs[name]++;

@@ -14,10 +14,10 @@ define(function(require) {
       triggers: {
         'click a.js-logout': 'logout-clicked',
         'click a.js-email-connect': 'email-connect-clicked',
-        'click a.js-facebook-connect': 'facebook-connect-clicked',
+        'click a.js-fb-connect': 'fb-connect-clicked',
         'click a.js-google-connect': 'google-connect-clicked',
         'click a.js-twitter-connect': 'twitter-connect-clicked',
-        'click a.js-facebook-disconnect': 'facebook-disconnect-clicked',
+        'click a.js-fb-disconnect': 'fb-disconnect-clicked',
         'click a.js-google-disconnect': 'google-disconnect-clicked',
         'click a.js-twitter-disconnect': 'twitter-disconnect-clicked'
       }
