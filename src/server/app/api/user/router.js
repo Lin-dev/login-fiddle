@@ -25,13 +25,14 @@ router.get('/access/twitter/callback', auth.mw.ensure_unauth, router_impl.access
 
 
 router.get('/connect/facebook/auth', auth.mw.ensure_auth, router_impl.connect_facebook_auth);
-router.get('/connect/facebook/callback', auth.mw.ensure_auth, router_impl.connect_facebook_callback);
+router.get('/connect/facebook/callback', auth.mw.ensure_auth, router_impl.connect_facebook_callback,
+  auth.mw.redirect_to);
 router.post('/connect/facebook/disconnect', auth.mw.ensure_auth, router_impl.connect_facebook_disconnect);
 router.get('/connect/google/auth', auth.mw.ensure_auth, router_impl.connect_google_auth);
-router.get('/connect/google/callback', auth.mw.ensure_auth, router_impl.connect_google_callback);
+router.get('/connect/google/callback', auth.mw.ensure_auth, router_impl.connect_google_callback, auth.mw.redirect_to);
 router.post('/connect/google/disconnect', auth.mw.ensure_auth, router_impl.connect_google_disconnect);
 router.get('/connect/twitter/auth', auth.mw.ensure_auth, router_impl.connect_twitter_auth);
-router.get('/connect/twitter/callback', auth.mw.ensure_auth, router_impl.connect_twitter_callback);
+router.get('/connect/twitter/callback', auth.mw.ensure_auth, router_impl.connect_twitter_callback, auth.mw.redirect_to);
 router.post('/connect/twitter/disconnect', auth.mw.ensure_auth, router_impl.connect_twitter_disconnect);
 
 module.exports = router;
