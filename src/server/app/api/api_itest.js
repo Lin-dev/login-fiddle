@@ -96,6 +96,8 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.failure.should.be.a.function;
     num_funcs[name]++;
+    module.flash_message.should.be.a.function;
+    num_funcs[name]++;
   });
 
   // This test must be last in its suite

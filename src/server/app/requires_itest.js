@@ -86,6 +86,12 @@ describe('requires', function() {
   describe('config', function() {
     var tests_executed = 0;
 
+    it('app/config/api_util', function() {
+      tests_executed++;
+      var result = require('app/config/api_util');
+      result.should.not.be.undefined;
+    });
+
     it('app/config/database', function() {
       tests_executed++;
       var result = require('app/config/database');

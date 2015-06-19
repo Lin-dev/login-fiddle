@@ -51,6 +51,14 @@ define(function(require) {
         _.each(val_errs, mark_err);
       }
     });
+
+    /**
+     * A view component that can be used in many layouts to display a flash message
+     */
+    Views.FlashMessageView = Views.AppObjItemView.extend({
+      __name: 'FlashMessageView',
+      template: _.template(require('text!js/common/templates/flash_message.html'), { variable: 'data' })
+    });
     logger.trace('AppObj.module -- exit');
   });
   logger.trace('require:lambda -- exit');
