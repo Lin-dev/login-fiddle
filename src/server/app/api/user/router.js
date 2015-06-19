@@ -5,6 +5,7 @@ var pr = require('app/util/pr');
 var auth = require('app/util/auth');
 
 var router_impl = require('app/api/user/router_impl');
+var util_router_impl = require('app/api/util/router_impl');
 
 var express = require('express');
 var router = new express.Router();
@@ -26,13 +27,15 @@ router.get('/access/twitter/callback', auth.mw.ensure_unauth, router_impl.access
 
 router.get('/connect/fb/auth', auth.mw.ensure_auth, router_impl.connect_fb_auth);
 router.get('/connect/fb/callback', auth.mw.ensure_auth, router_impl.connect_fb_callback,
-  auth.mw.redirect_to);
+  util_router_impl.redirect_to_profile);
 router.post('/connect/fb/disconnect', auth.mw.ensure_auth, router_impl.connect_fb_disconnect);
 router.get('/connect/google/auth', auth.mw.ensure_auth, router_impl.connect_google_auth);
-router.get('/connect/google/callback', auth.mw.ensure_auth, router_impl.connect_google_callback, auth.mw.redirect_to);
+router.get('/connect/google/callback', auth.mw.ensure_auth, router_impl.connect_google_callback,
+  util_router_impl.redirect_to_profile);
 router.post('/connect/google/disconnect', auth.mw.ensure_auth, router_impl.connect_google_disconnect);
 router.get('/connect/twitter/auth', auth.mw.ensure_auth, router_impl.connect_twitter_auth);
-router.get('/connect/twitter/callback', auth.mw.ensure_auth, router_impl.connect_twitter_callback, auth.mw.redirect_to);
+router.get('/connect/twitter/callback', auth.mw.ensure_auth, router_impl.connect_twitter_callback,
+  util_router_impl.redirect_to_profile);
 router.post('/connect/twitter/disconnect', auth.mw.ensure_auth, router_impl.connect_twitter_disconnect);
 
 module.exports = router;

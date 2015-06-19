@@ -4,6 +4,7 @@ var _ = require('underscore');
 var q = require('q');
 
 var auth = require('app/util/auth');
+var api_util_config = require('app/config/api_util');
 var user_config = require('app/config/user');
 var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
@@ -89,7 +90,6 @@ module.exports = {
    * @type {Function}
    */
   connect_google_callback: auth.passport.authorize('google-connect', {
-    successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
     failureRedirect: '/profile?message_code=google_declined',
     failureFlash: true
   }),
@@ -100,10 +100,12 @@ module.exports = {
   connect_google_disconnect: function connect_google_disconnect(req, res, next) {
     q(req.user.disconnect_google_and_save())
     .then(function(updated_user) {
+      req.flash(api_util_config.flash_message_key, 'Google disconnected');
       res.redirect(server_config.util_route_success);
     })
     .fail(function(err) {
       logger.error('exports.connect_google_disconnect -- error during disconnect: ' + err);
+      req.flash(api_util_config.flash_message_key, 'Error disconnecting Google');
       res.redirect(server_config.util_route_failure);
     });
   },
@@ -148,7 +150,6 @@ module.exports = {
    * @type {Function}
    */
   connect_fb_callback: auth.passport.authorize('fb-connect', {
-    successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
     failureRedirect: '/profile?message_code=fb_declined',
     failureFlash: true
   }),
@@ -159,10 +160,12 @@ module.exports = {
   connect_fb_disconnect: function connect_fb_disconnect(req, res, next) {
     q(req.user.disconnect_fb_and_save())
     .then(function(updated_user) {
+      req.flash(api_util_config.flash_message_key, 'Facebook disconnected');
       res.redirect(server_config.util_route_success);
     })
     .fail(function(err) {
       logger.error('exports.connect_fb_disconnect -- error during disconnect: ' + err);
+      req.flash(api_util_config.flash_message_key, 'Error disconnecting Facebook');
       res.redirect(server_config.util_route_failure);
     });
   },
@@ -228,7 +231,6 @@ module.exports = {
    * @type {Function}
    */
   connect_twitter_callback: auth.passport.authorize('twitter-connect', {
-    successReturnToOrRedirect: 'strategy-callback-should-specify-redirectTo-in-all-cases',
     failureRedirect: '/profile?message_code=twitter_declined',
     failureFlash: true
   }),
@@ -239,10 +241,12 @@ module.exports = {
   connect_twitter_disconnect: function connect_twitter_disconnect(req, res, next) {
     q(req.user.disconnect_twitter_and_save())
     .then(function(updated_user) {
+      req.flash(api_util_config.flash_message_key, 'Twitter disconnected');
       res.redirect(server_config.util_route_success);
     })
     .fail(function(err) {
       logger.error('exports.connect_twitter_disconnect -- error during disconnect: ' + err);
+      req.flash(api_util_config.flash_message_key, 'Error disconnecting Twitter');
       res.redirect(server_config.util_route_failure);
     });
   }
