@@ -1,6 +1,8 @@
 define(function(require) {
   'use strict';
 
+  var q = require('q');
+
   var AppObj = require('js/app/obj');
   var logger = AppObj.logger.get('root/js/apps/user/profile/controller');
 
@@ -16,18 +18,9 @@ define(function(require) {
       var parsed_query = Marionette.parse_query_string(query_string);
       switch(parsed_query && parsed_query.message_code) {
         case undefined: return undefined;
-        case 'server_error': return 'Server error';
-        case 'email_inuse': return 'Email address already used in another profile';
-        case 'email_connected': return 'Email address connected';
         case 'fb_declined': return 'Facebook login cancelled';
-        case 'fb_inuse': return 'Facebook account already connected to another profile';
-        case 'fb_connected': return 'Facebook account connected';
         case 'twitter_declined': return 'Twitter login cancelled';
-        case 'twitter_inuse': return 'Twitter account already connected to another profile';
-        case 'twitter_connected': return 'Twitter account connected';
         case 'google_declined': return 'Google login cancelled';
-        case 'google_inuse': return 'Google account already connected to another profile';
-        case 'google_connected': return 'Google account connected';
         default:
           logger.error('private.get_message_from_code -- unknown code: ' + parsed_query.message_code);
           return 'Unknown code: ' + parsed_query.message_code;
@@ -108,75 +101,63 @@ define(function(require) {
 
     /**
      * Disconnect Facebook account from user account
-     * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
      */
-    function proc_disconnect_fb(profile_view) {
+    function proc_disc_fb() {
       $.post(AppObj.config.apps.user.fb_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
-          logger.debug('private.proc_disconnect_fb - server response -- success, re-rendering profile');
-          profile_view.model.set({ message: resp_data.message });
-          AppObj.trigger('profile:show');
+          logger.debug('private.proc_disc_fb - server response -- success, re-rendering profile');
+          AppObj.trigger('user:profile');
         }
         else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disconnect_fb - server response -- success, re-rendering profile');
-          profile_view.model.set({ message: resp_data.message });
-          AppObj.trigger('profile:show');
+          logger.debug('private.proc_disc_fb - server response -- success, re-rendering profile');
+          AppObj.trigger('user:profile');
         }
         else {
-          logger.error('private.proc_disconnect_fb - server response -- unknown status: ' + resp_data.status +
+          logger.error('private.proc_disc_fb - server response -- unknown status: ' + resp_data.status +
             ' (message: ' + resp_data.message + ')');
-          profile_view.model.set({ message: 'Unknown server status: ' + resp_data.status });
-          AppObj.trigger('profile:show');
+          AppObj.trigger('user:profile');
         }
       });
     }
 
     /**
      * Disconnect Google account from user account
-     * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
      */
-    function proc_disconnect_google(profile_view) {
+    function proc_disc_google(profile_view) {
       $.post(AppObj.config.apps.user.google_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
-          logger.debug('private.proc_disconnect_google - server response -- success, re-rendering profile');
-          profile_view.model.set({ message: resp_data.message });
-          AppObj.trigger('profile:show');
+          logger.debug('private.proc_disc_google - server response -- success, re-rendering profile');
+          AppObj.trigger('user:profile');
         }
         else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disconnect_google - server response -- success, re-rendering profile');
-          profile_view.model.set({ message: resp_data.message });
-          AppObj.trigger('profile:show');
+          logger.debug('private.proc_disc_google - server response -- success, re-rendering profile');
+          AppObj.trigger('user:profile');
         }
         else {
-          logger.error('private.proc_disconnect_google - server response -- unknown status: ' + resp_data.status +
+          logger.error('private.proc_disc_google - server response -- unknown status: ' + resp_data.status +
             ' (message: ' + resp_data.message + ')');
-          profile_view.model.set({ message: 'Unknown server status: ' + resp_data.status });
-          AppObj.trigger('profile:show');
+          AppObj.trigger('user:profile');
         }
       });
     }
 
     /**
      * Disconnect Twitter account from user account
-     * @param  {Object} profile_view The profile view whose model should be updated with disconnect flash messages
      */
-    function proc_disconnect_twitter(profile_view) {
+    function proc_disc_twitter() {
       $.post(AppObj.config.apps.user.twitter_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
-          logger.debug('private.proc_disconnect_twitter - server response -- success, re-rendering profile');
-          profile_view.model.set({ message: resp_data.message });
-          AppObj.trigger('profile:show');
+          logger.debug('private.proc_disc_twitter - server response -- success, re-rendering profile');
+          AppObj.trigger('user:profile');
         }
         else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disconnect_twitter - server response -- success, re-rendering profile');
-          profile_view.model.set({ message: resp_data.message });
-          AppObj.trigger('profile:show');
+          logger.debug('private.proc_disc_twitter - server response -- success, re-rendering profile');
+          AppObj.trigger('user:profile');
         }
         else {
-          logger.error('private.proc_disconnect_twitter - server response -- unknown status: ' + resp_data.status +
+          logger.error('private.proc_disc_twitter - server response -- unknown status: ' + resp_data.status +
             ' (message: ' + resp_data.message + ')');
-          profile_view.model.set({ message: 'Unknown server status: ' + resp_data.status });
-          AppObj.trigger('profile:show');
+          AppObj.trigger('user:profile');
         }
       });
     }
@@ -199,25 +180,50 @@ define(function(require) {
       show_user_profile: function show_user_profile(query_string) {
         logger.trace('show_user_profile -- query_string: ' + query_string);
         if(AppObj.is_logged_in()) {
-          var up_promise = AppObj.request('userapp:entities:userprofile');
-          up_promise.then(function(up) {
-            logger.debug('AppObj.UserApp.Profile.contoller.show_user_profile -- showing: ' + JSON.stringify(up));
-            up.set('message', get_message_from_code(query_string));
-            // TODO - up.set('email_connect_url', ...);
-            up.set('connect_fb_url', get_fb_connect_url());
-            up.set('connect_google_url', get_google_connect_url());
-            up.set('connect_twitter_url', get_twitter_connect_url());
-            var Views = require('js/apps/user/profile/views');
-            var view = new Views.UserProfile({ model: up });
-            view.on('logout-clicked', proc_logout);
-            view.on('email-connect-clicked', proc_connect_email);
-            view.on('fb-connect-clicked', proc_connect_fb);
-            view.on('google-connect-clicked', proc_connect_google);
-            view.on('twitter-connect-clicked', proc_connect_twitter);
-            view.on('fb-disconnect-clicked', function() { proc_disconnect_fb(view); });
-            view.on('google-disconnect-clicked', function() { proc_disconnect_google(view); });
-            view.on('twitter-disconnect-clicked', function() { proc_disconnect_twitter(view); });
-            AppObj.region_main.show(view);
+          var upd_promise = AppObj.request('userapp:entities:userprofiledata');
+          var upa_promise = AppObj.request('userapp:entities:userprofileadmin');
+          var msg_promise = AppObj.request('common:entities:flashmessage');
+          q.all([upd_promise, upa_promise, msg_promise])
+          .spread(function(up_data, up_admin, msg) {
+            require('js/apps/user/entities');
+            require('js/common/entities');
+
+            if(query_string) {
+              var new_msg_str = get_message_from_code(query_string);
+              logger.debug('show_user_profile -- received flash message: ' + msg + ', override to: ' + new_msg_str);
+              msg.set('flash_message', new_msg_str);
+            }
+            up_admin.set('email_connected', up_data.is_email_connected());
+            up_admin.set('fb_connected', up_data.is_fb_connected());
+            up_admin.set('google_connected', up_data.is_google_connected());
+            up_admin.set('twitter_connected', up_data.is_twitter_connected());
+            logger.debug('show_user_profile -- up_data data: ' + JSON.stringify(up_data));
+            logger.debug('show_user_profile -- up_admin data: ' + JSON.stringify(up_admin));
+            logger.debug('show_user_profile -- msg data: ' + JSON.stringify(msg));
+
+            var CommonViews = require('js/common/views');
+            var ProfileViews = require('js/apps/user/profile/views');
+            var msg_view = new CommonViews.FlashMessageView({ model: msg });
+            var profile_view = new ProfileViews.UserProfileLayout();
+            var p_data_view = new ProfileViews.UserProfileData({ model: up_data });
+            var p_admin_view = new ProfileViews.UserProfileAdmin({ model: up_admin });
+            p_admin_view.on('logout-clicked', proc_logout);
+            p_admin_view.on('email-connect-clicked', proc_connect_email);
+            p_admin_view.on('fb-connect-clicked', proc_connect_fb);
+            p_admin_view.on('google-connect-clicked', proc_connect_google);
+            p_admin_view.on('twitter-connect-clicked', proc_connect_twitter);
+            p_admin_view.on('fb-disconnect-clicked', proc_disc_fb);
+            p_admin_view.on('google-disconnect-clicked', proc_disc_google);
+            p_admin_view.on('twitter-disconnect-clicked', proc_disc_twitter);
+            profile_view.on('render', function() {
+              profile_view.region_message.show(msg_view);
+              profile_view.region_profile_data.show(p_data_view);
+              profile_view.region_profile_admin.show(p_admin_view);
+            });
+            AppObj.region_main.show(profile_view);
+          })
+          .fail(function(err) {
+            logger.error('show_user_profile -- error in resolving promises: ' + err);
           });
         }
         else {

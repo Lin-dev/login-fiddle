@@ -1,80 +1,10 @@
 <div class="container">
   <div class="col-sm-6 col-sm-offset-3">
-
-      <div>
-        <h1>User Profile</h1>
-        <!-- show any messages that come back with authentication -->
-        <% if(data.message !== undefined && data.message.length > 0) { %>
-            <div class="alert alert-danger"><%= data.message %></div>
-        <% } %>
-
-        <table class="table">
-          <tr>
-            <th>Profile field</th>
-            <th>Value</th>
-          </tr>
-          <tr>
-            <td>Local email</td>
-            <td><%= data.local_email %></td>
-          </tr>
-          <tr>
-            <td>Signup date</td>
-            <td><%= data.signup_date %></td>
-          </tr>
-          <tr>
-            <td>Facebook email</td>
-            <td><%= data.fb_email %></td>
-          </tr>
-          <tr>
-            <td>Facebook name</td>
-            <td><%= data.fb_name %></td>
-          </tr>
-          <tr>
-            <td>Twitter username</td>
-            <td><%= data.twitter_username %></td>
-          </tr>
-          <tr>
-            <td>Twitter name</td>
-            <td><%= data.twitter_name %></td>
-          </tr>
-          <tr>
-            <td>Google name</td>
-            <td><%= data.google_name %></td>
-          </tr>
-          <tr>
-            <td>Google email</td>
-            <td><%= data.google_email %></td>
-          </tr>
-        </table>
-      </div>
-      <hr>
-      <div>
-        <h1>Connect...</h1>
-        <% if(!data.local_email) { %>
-          <a class="btn btn-warning js-email-connect" href="<%= data.connect_email_url %>">Email</a>
-        <% } %>
-
-        <% if(!data.fb_id) { %>
-          <a class="btn btn-warning js-fb-connect" href="<%= data.connect_fb_url %>">Facebook</a>
-        <% } else if(data.fb_id  && (data.local_email || data.google_id || data.twitter_id)) { %>
-          <a class="btn btn-warning js-fb-disconnect">Disconnect Facebook</a>
-        <% } %>
-
-        <% if(!data.google_id) { %>
-          <a class="btn btn-warning js-google-connect" href="<%= data.connect_google_url %>">Google</a>
-        <% } else if(data.google_id  && (data.local_email || data.fb_id || data.twitter_id)) { %>
-          <a class="btn btn-warning js-google-disconnect">Disconnect Google</a>
-        <% } %>
-
-        <% if(!data.twitter_id) { %>
-          <a class="btn btn-warning js-twitter-connect" href="<%= data.connect_twitter_url %>">Twitter</a>
-        <% } else if(data.twitter_id  && (data.local_email || data.fb_id || data.google_id)) { %>
-          <a class="btn btn-warning js-twitter-disconnect">Disconnect Twitter</a>
-        <% } %>
-      </div>
-      <hr>
-      <div>
-        <p><a href="/logout" class="js-logout">Logout</a></p>
-      </div>
+    <h1>User Profile</h1>
+    <div class="js-flash-message"></div>
+    <hr>
+    <div class="js-profile-data"></div>
+    <hr>
+    <div class="js-profile-admin"></div>
   </div>
 </div>

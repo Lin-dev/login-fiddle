@@ -88,8 +88,8 @@ define(function(require) {
      * Represents the information on a user profile - used for reading, updating and deleting the user profile but
      * not for creation
      */
-    Entities.UserProfile = AppObj.Entities.ServerModel.extend({
-      __name: 'UserProfile',
+    Entities.UserProfileData = AppObj.Entities.ServerModel.extend({
+      __name: 'UserProfileData',
       urlRoot: '/api/user/user',
       sync: function sync(method, model, options) {
         if(method === 'read' || method === 'update' || method === 'delete') {
@@ -98,24 +98,87 @@ define(function(require) {
         else {
           logger.error('Entities.UserProfile.sync - invalid method, sync not executed: ' + method);
         }
+      },
+
+      /**
+       * Returns boolean true if this user profile is connected to their email address (and therefore has a password)
+       */
+      is_email_connected: function is_connected_to_email() {
+        return this.get('local_email') != undefined; // to be true if column is null
+      },
+
+      /**
+       * Returns boolean true if this user profile is connected to facebook account
+       */
+      is_fb_connected: function is_connected_to_fb() {
+        return this.get('fb_id') != undefined; // to be true if column is null
+      },
+
+      /**
+       * Returns boolean true if this user profile is connected to google account
+       */
+      is_google_connected: function is_connected_to_google() {
+        return this.get('google_id') != undefined; // to be true if column is null
+      },
+
+      /**
+       * Returns boolean true if this user profile is connected to twitter account
+       */
+      is_twitter_connected: function is_connected_to_twitter() {
+        return this.get('twitter_id') != undefined; // to be true if column is null
+      }
+    });
+
+    Entities.UserProfileAdmin = AppObj.Entities.ClientModel.extend({
+      __name: 'UserProfileAdmin',
+      defaults: {
+        browser_logout_url: 'NYI',
+        browser_connect_email_url: 'NYI',
+        connect_email_url: 'NYI',
+        connect_fb_url: AppObj.config.apps.user.fb_connect_url + '?display=' +
+          'get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale())',
+        connect_google_url: AppObj.config.apps.user.google_connect_url + '?display=' +
+          'get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale())',
+        connect_twitter_url: AppObj.config.apps.user.twitter_connect_url
       }
     });
 
     var API = {
-      get_user_profile_promise: function get_user_profile_promise(user_id) {
+      /**
+       * Returns a promise for the currently logged in user
+       */
+      get_user_profile_data_promise: function get_user_profile_data_promise() {
         logger.trace('API.get_promise -- enter');
         var deferred = q.defer();
-        var user_profile = new Entities.UserProfile();
+        var user_profile = new Entities.UserProfileData();
         user_profile.fetch({
           success: function success(user_profile_model) { deferred.resolve(user_profile_model); },
           error: function error() { deferred.resolve(undefined); }
         });
         return deferred.promise;
+      },
+
+      /**
+       * Returns a promise (immediately resolved) for the URL's used to admin a user account (logout, delete,
+       * connect and disconnect to oauth provider)
+       */
+      get_user_profile_admin_promise: function get_user_profile_admin_promise() {
+        logger.trace('API.get_user_profile_admin_promise -- enter');
+        var deferred = q.defer();
+        if(Entities.get_user_profile_admin === undefined) {
+          Entities.get_user_profile_admin = new Entities.UserProfileAdmin();
+        }
+        deferred.resolve(Entities.get_user_profile_admin);
+        return deferred.promise;
       }
     };
 
-    AppObj.reqres.setHandler('userapp:entities:userprofile', function() {
-      return API.get_user_profile_promise();
+    AppObj.reqres.setHandler('userapp:entities:userprofiledata', function() {
+      return API.get_user_profile_data_promise();
+    });
+
+    AppObj.reqres.setHandler('userapp:entities:userprofileadmin', function() {
+      return API.get_user_profile_admin_promise();
     });
   });
 

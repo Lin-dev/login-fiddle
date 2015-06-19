@@ -7,9 +7,24 @@ define(function(require) {
   AppObj.module('UserApp.Profile.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     require('js/common/views');
 
-    Views.UserProfile = AppObj.Common.Views.AppObjItemView.extend({
-      __name: 'UserProfile',
+    Views.UserProfileLayout = AppObj.Common.Views.AppObjLayout.extend({
+      __name: 'UserProfileLayout',
       template: _.template(require('text!js/apps/user/profile/templates/profile.html'), { variable: 'data' }),
+      regions: {
+        region_message: 'div.js-flash-message',
+        region_profile_data: 'div.js-profile-data',
+        region_profile_admin: 'div.js-profile-admin'
+      }
+    });
+
+    Views.UserProfileData = AppObj.Common.Views.AppObjItemView.extend({
+      __name: 'UserProfileData',
+      template: _.template(require('text!js/apps/user/profile/templates/profile_data.html'), { variable: 'data' })
+    });
+
+    Views.UserProfileAdmin = AppObj.Common.Views.AppObjItemView.extend({
+      __name: 'UserProfileAdmin',
+      template: _.template(require('text!js/apps/user/profile/templates/profile_admin.html'), { variable: 'data' }),
 
       triggers: {
         'click a.js-logout': 'logout-clicked',

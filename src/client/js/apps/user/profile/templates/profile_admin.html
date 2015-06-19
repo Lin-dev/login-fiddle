@@ -1,0 +1,34 @@
+<h1>Connect...</h1>
+<% if(!data.email_connected) { %>
+  <a class="btn btn-warning js-email-connect" href="<%= data.connect_email_url %>">Email</a>
+<% } else { %>
+  <a class="btn btn-warning js-email-connect" href="<%= data.connect_email_url %>" disabled>Email</a>
+<% } %>
+
+<% if(!data.fb_connected) { %>
+  <a class="btn btn-warning js-fb-connect" href="<%= data.connect_fb_url %>">Facebook</a>
+<% } else if(data.fb_connected  && (data.email_connected || data.google_connected || data.twitter_connected)) { %>
+  <a class="btn btn-warning js-fb-disconnect">Disconnect Facebook</a>
+<% } else { %>
+  <a class="btn btn-warning js-fb-disconnect" disabled>Disconnect Facebook</a>
+<% } %>
+
+<% if(!data.google_connected) { %>
+  <a class="btn btn-warning js-google-connect" href="<%= data.connect_google_url %>">Google</a>
+<% } else if(data.google_connected  && (data.email_connected || data.fb_connected || data.twitter_connected)) { %>
+  <a class="btn btn-warning js-google-disconnect">Disconnect Google</a>
+<% } else { %>
+  <a class="btn btn-warning js-google-disconnect" disabled>Disconnect Google</a>
+<% } %>
+
+<% if(!data.twitter_connected) { %>
+  <a class="btn btn-warning js-twitter-connect" href="<%= data.connect_twitter_url %>">Twitter</a>
+<% } else if(data.twitter_connected  && (data.email_connected || data.fb_connected || data.google_connected)) { %>
+  <a class="btn btn-warning js-twitter-disconnect">Disconnect Twitter</a>
+<% } else { %>
+  <a class="btn btn-warning js-twitter-disconnect" disabled>Disconnect Twitter</a>
+<% } %>
+<hr>
+<div>
+  <p><a href="/logout" class="js-logout">Logout</a></p>
+</div>
