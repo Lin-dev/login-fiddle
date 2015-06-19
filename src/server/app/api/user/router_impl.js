@@ -90,8 +90,8 @@ module.exports = {
    * @type {Function}
    */
   connect_google_callback: auth.passport.authorize('google-connect', {
-    failureRedirect: '/profile?message_code=google_declined',
-    failureFlash: true
+    failureRedirect: '/profile',
+    failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Google' }
   }),
 
   /**
@@ -150,8 +150,8 @@ module.exports = {
    * @type {Function}
    */
   connect_fb_callback: auth.passport.authorize('fb-connect', {
-    failureRedirect: '/profile?message_code=fb_declined',
-    failureFlash: true
+    failureRedirect: '/profile',
+    failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Facebook' }
   }),
 
   /**
@@ -231,8 +231,8 @@ module.exports = {
    * @type {Function}
    */
   connect_twitter_callback: auth.passport.authorize('twitter-connect', {
-    failureRedirect: '/profile?message_code=twitter_declined',
-    failureFlash: true
+    failureRedirect: '/profile',
+    failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Twitter' }
   }),
 
   /**

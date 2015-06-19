@@ -102,28 +102,28 @@ define(function(require) {
        * Returns boolean true if this user profile is connected to their email address (and therefore has a password)
        */
       is_email_connected: function is_connected_to_email() {
-        return this.get('local_email') != undefined; // to be true if column is null
+        return this.get('local_email') ? true : false;
       },
 
       /**
        * Returns boolean true if this user profile is connected to facebook account
        */
       is_fb_connected: function is_connected_to_fb() {
-        return this.get('fb_id') != undefined; // to be true if column is null
+        return this.get('fb_id') ? true : false;
       },
 
       /**
        * Returns boolean true if this user profile is connected to google account
        */
       is_google_connected: function is_connected_to_google() {
-        return this.get('google_id') != undefined; // to be true if column is null
+        return this.get('google_id') ? true : false;
       },
 
       /**
        * Returns boolean true if this user profile is connected to twitter account
        */
       is_twitter_connected: function is_connected_to_twitter() {
-        return this.get('twitter_id') != undefined; // to be true if column is null
+        return this.get('twitter_id') ? true : false;
       }
     });
 

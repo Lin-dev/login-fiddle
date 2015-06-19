@@ -8,26 +8,6 @@ define(function(require) {
 
   AppObj.module('UserApp.Profile', function(Profile, AppObj, Backbone, Marionette, $, _) {
     /**
-     * Returns a user-displayable explanation of why the profile connect failed (e.g. refused permission at provider or
-     * account at provider is already connected to another account on this site)
-     * TODO - this method almost duplicated in client/js/apps/user/access/controller.js and .../profile/controller.js
-     * @param  {String} query_string The query string code included in the URL query string the server redirects to
-     * @return {String}              A user-displayable explanation of why the connect failed
-     */
-    function get_message_from_code(query_string) {
-      var parsed_query = Marionette.parse_query_string(query_string);
-      switch(parsed_query && parsed_query.message_code) {
-        case undefined: return undefined;
-        case 'fb_declined': return 'Facebook login cancelled';
-        case 'twitter_declined': return 'Twitter login cancelled';
-        case 'google_declined': return 'Google login cancelled';
-        default:
-          logger.error('private.get_message_from_code -- unknown code: ' + parsed_query.message_code);
-          return 'Unknown code: ' + parsed_query.message_code;
-      }
-    }
-
-    /**
      * Gets the fb display mode string to use based on the client window size
      * TODO: Duplicated in user/access and user/profile controllers - de-duplicate on next edit
      * @param  {String} ui_scale The UI scale as returned by `Marionette.get_ui_scale()`
@@ -188,11 +168,6 @@ define(function(require) {
             require('js/apps/user/entities');
             require('js/common/entities');
 
-            if(query_string) {
-              var new_msg_str = get_message_from_code(query_string);
-              logger.debug('show_user_profile -- received flash message: ' + msg + ', override to: ' + new_msg_str);
-              msg.set('flash_message', new_msg_str);
-            }
             up_admin.set('email_connected', up_data.is_email_connected());
             up_admin.set('fb_connected', up_data.is_fb_connected());
             up_admin.set('google_connected', up_data.is_google_connected());

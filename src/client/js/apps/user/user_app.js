@@ -8,7 +8,7 @@ define(function(require) {
     UserApp.Router = Marionette.AppRouter.extend({
       appRoutes: {
         'access(?*query_string)': 'show_access_form',
-        'profile(?*query_string)': 'show_user_profile'
+        'profile': 'show_user_profile'
       }
     });
 
