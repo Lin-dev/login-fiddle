@@ -11,7 +11,7 @@ define(function(require) {
      * @param {Object} options.collection The original backbone collection to filter
      * @param {Function} options.filter_generator A function that takes a criterion and returns a filtering function
      */
-    Entities.FilteringWrapperCollection = function  FilteringWrapperCollection(options) {
+    Entities.FilteringWrapperCollection = function FilteringWrapperCollection(options) {
       var original = options.collection;
       var filtered = new original.constructor();
       var current_criterion; // used to cache the current criterion ,for use on original:reset or :add

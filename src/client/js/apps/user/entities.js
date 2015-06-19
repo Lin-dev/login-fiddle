@@ -51,7 +51,6 @@ define(function(require) {
      */
     Entities.UserLocalAccess = AppObj.Entities.ClientModel.extend({
       __name: 'UserLocalAccess',
-
       validate: function validate(attrs, options) {
         var errs = {};
         errs['local-email'] = val_checks.email(attrs.local_email);
@@ -69,7 +68,6 @@ define(function(require) {
      */
     Entities.UserLocalSignup = AppObj.Entities.ClientModel.extend({
       __name: 'UserLocalSignup',
-
       validate: function validate(attrs, options) {
         var errs = {};
         errs['local-email'] = val_checks.email(attrs.local_email);
@@ -148,7 +146,7 @@ define(function(require) {
        * Returns a promise for the currently logged in user
        */
       get_user_profile_data_promise: function get_user_profile_data_promise() {
-        logger.trace('API.get_promise -- enter');
+        logger.trace('API.get_user_profile_data_promise -- enter');
         var deferred = q.defer();
         var user_profile = new Entities.UserProfileData();
         user_profile.fetch({

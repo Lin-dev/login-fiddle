@@ -13,6 +13,9 @@ define(function(require) {
     Views.AppObjLayout = Marionette.LayoutView.extend({ __name: 'AppObjLayout' });
     Views.AppObjRegion = Marionette.Region.extend({ __name: 'AppObjRegion' });
 
+    /**
+     * A base view for any view containing a form whose values need to be validated
+     */
     Views.AppObjFormItemView = Views.AppObjItemView.extend({
       __name: 'AppObjFormItemView',
 

@@ -109,7 +109,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         }
         else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disc_fb - server response -- success, re-rendering profile');
+          logger.debug('private.proc_disc_fb - server response -- failure, re-rendering profile');
           AppObj.trigger('user:profile');
         }
         else {
@@ -130,7 +130,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         }
         else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disc_google - server response -- success, re-rendering profile');
+          logger.debug('private.proc_disc_google - server response -- failure, re-rendering profile');
           AppObj.trigger('user:profile');
         }
         else {
@@ -151,7 +151,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         }
         else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disc_twitter - server response -- success, re-rendering profile');
+          logger.debug('private.proc_disc_twitter - server response -- failure, re-rendering profile');
           AppObj.trigger('user:profile');
         }
         else {

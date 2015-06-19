@@ -160,6 +160,9 @@ passport.use('local-login', new LocalStrategy({
   });
 }));
 
+/**
+ * passport.js Facebook access strategy
+ */
 passport.use('fb-access', new FacebookStrategy({
   clientID: user_config.fb.client_id,
   clientSecret: user_config.fb.client_secret,
@@ -195,6 +198,9 @@ passport.use('fb-access', new FacebookStrategy({
   });
 }));
 
+/**
+ * passport.js Facebook connect strategy
+ */
 passport.use('fb-connect', new FacebookStrategy({
   clientID: user_config.fb.client_id,
   clientSecret: user_config.fb.client_secret,
@@ -234,6 +240,9 @@ passport.use('fb-connect', new FacebookStrategy({
   }
 }));
 
+/**
+ * passport.js Google access strategy
+ */
 passport.use('google-access', new GoogleStrategy({
   clientID: user_config.google.client_id,
   clientSecret: user_config.google.client_secret,
@@ -268,6 +277,9 @@ passport.use('google-access', new GoogleStrategy({
   });
 }));
 
+/**
+ * passport.js Google connect strategy
+ */
 passport.use('google-connect', new GoogleStrategy({
   clientID: user_config.google.client_id,
   clientSecret: user_config.google.client_secret,
@@ -306,6 +318,9 @@ passport.use('google-connect', new GoogleStrategy({
   }
 }));
 
+/**
+ * passport.js Twitter access strategy
+ */
 passport.use('twitter-access', new TwitterStrategy({
   consumerKey: user_config.twitter.consumer_key,
   consumerSecret: user_config.twitter.consumer_secret,
@@ -340,6 +355,9 @@ passport.use('twitter-access', new TwitterStrategy({
   });
 }));
 
+/**
+ * passport.js Twitter connect strategy
+ */
 passport.use('twitter-connect', new TwitterStrategy({
   consumerKey: user_config.twitter.consumer_key,
   consumerSecret: user_config.twitter.consumer_secret,

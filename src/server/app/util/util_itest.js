@@ -15,6 +15,7 @@ describe('app/util - exported methods', function() {
   var num_funcs = {};
 
   it('app/util/auth/index - expected methods found', function() {
+    // Nested methods checked in exported properties tests
     var name = 'app/util/auth/index';
     //var module = require(name);
     num_funcs[name] = 0;

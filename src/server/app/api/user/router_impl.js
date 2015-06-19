@@ -8,7 +8,7 @@ var api_util_config = require('app/config/api_util');
 var user_config = require('app/config/user');
 var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
-var logger = logger_module.get('app/api/session/router_impl');
+var logger = logger_module.get('app/api/user/router_impl');
 
 //var keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
 var keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
@@ -86,7 +86,7 @@ module.exports = {
   },
 
   /**
-   * Completes request for google authentication for account connection
+   * Completes request for google authentication for account connection, on success passes control to next middleware
    * @type {Function}
    */
   connect_google_callback: auth.passport.authorize('google-connect', {
@@ -146,7 +146,7 @@ module.exports = {
   },
 
   /**
-   * Completes request for fb authentication for account connection
+   * Completes request for fb authentication for account connection, on success passes control to next middleware
    * @type {Function}
    */
   connect_fb_callback: auth.passport.authorize('fb-connect', {
@@ -227,7 +227,7 @@ module.exports = {
   connect_twitter_auth: auth.passport.authorize('twitter-connect'),
 
   /**
-   * Completes request for Twitter authentication for account connection
+   * Completes request for Twitter authentication for account connection, on success passes control to next middleware
    * @type {Function}
    */
   connect_twitter_callback: auth.passport.authorize('twitter-connect', {
