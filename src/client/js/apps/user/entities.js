@@ -70,12 +70,12 @@ define(function(require) {
       __name: 'UserLocalSignup',
       validate: function validate(attrs, options) {
         var errs = {};
-        errs['local-email'] = val_checks.email(attrs.local_email);
-        errs['local-password'] = val_checks.password(attrs.local_password);
-        if(errs['local-email'] === undefined && attrs.local_email !== attrs.local_email_check) {
+        errs['email-check'] = val_checks.email(attrs.local_email);
+        errs['password-check'] = val_checks.password(attrs.local_password);
+        if(errs['email-check'] === undefined && attrs.local_email !== attrs.local_email_check) {
           errs['email-check'] = 'Email addresses must match';
         }
-        if(errs['local-password'] === undefined && attrs.local_password !== attrs.local_password_check) {
+        if(errs['password-check'] === undefined && attrs.local_password !== attrs.local_password_check) {
           errs['password-check'] = 'Passwords must match';
         }
         return _.pick(errs, _.identity); // remove undefined keys
