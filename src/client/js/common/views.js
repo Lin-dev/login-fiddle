@@ -62,6 +62,14 @@ define(function(require) {
       __name: 'FlashMessageView',
       template: _.template(require('text!js/common/templates/flash_message.html'), { variable: 'data' })
     });
+
+    /**
+     * Display a simple, static text header in an h1 element
+     */
+    Views.H1Header = AppObj.Common.Views.AppObjItemView.extend({
+      __name: 'H1Header',
+      template: _.template(require('text!js/common/templates/h1_header.html'), { variable: 'data' })
+    });
     logger.trace('AppObj.module -- exit');
   });
   logger.trace('require:lambda -- exit');

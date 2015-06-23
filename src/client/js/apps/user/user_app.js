@@ -7,16 +7,16 @@ define(function(require) {
   AppObj.module('UserApp', function(UserApp, AppObj, Backbone, Marionette, $, _) {
     UserApp.Router = Marionette.AppRouter.extend({
       appRoutes: {
-        'access(?*query_string)': 'show_access_form',
+        'access': 'show_access_form',
         'profile': 'show_user_profile'
       }
     });
 
     var API = {
-      show_access_form: function show_access_form(query_string, trigger_after_login) {
+      show_access_form: function show_access_form(trigger_after_login) {
         logger.trace('API.show_access_form -- enter');
         var controller = require('js/apps/user/access/controller');
-        controller.show_access_form(query_string, trigger_after_login);
+        controller.show_access_form(trigger_after_login);
         AppObj.execute('headerapp:set_active_navitem', 'user');
       },
 
@@ -30,7 +30,7 @@ define(function(require) {
 
     AppObj.on('user:access', function(trigger_after_login) {
       AppObj.navigate('access');
-      API.show_access_form(undefined, trigger_after_login);
+      API.show_access_form(trigger_after_login);
     });
 
     AppObj.on('user:profile', function() {

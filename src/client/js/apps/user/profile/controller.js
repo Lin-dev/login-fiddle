@@ -179,7 +179,6 @@ define(function(require) {
             var CommonViews = require('js/common/views');
             var ProfileViews = require('js/apps/user/profile/views');
             var msg_view = new CommonViews.FlashMessageView({ model: msg });
-            var profile_view = new ProfileViews.UserProfileLayout();
             var p_data_view = new ProfileViews.UserProfileData({ model: up_data });
             var p_admin_view = new ProfileViews.UserProfileAdmin({ model: up_admin });
             p_admin_view.on('logout-clicked', proc_logout);
@@ -190,6 +189,7 @@ define(function(require) {
             p_admin_view.on('fb-disconnect-clicked', proc_disc_fb);
             p_admin_view.on('google-disconnect-clicked', proc_disc_google);
             p_admin_view.on('twitter-disconnect-clicked', proc_disc_twitter);
+            var profile_view = new ProfileViews.UserProfileLayout();
             profile_view.on('render', function() {
               profile_view.region_message.show(msg_view);
               profile_view.region_profile_data.show(p_data_view);

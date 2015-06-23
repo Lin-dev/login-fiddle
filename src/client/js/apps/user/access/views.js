@@ -7,11 +7,21 @@ define(function(require) {
   AppObj.module('UserApp.Access.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     require('js/common/views');
 
+    Views.AccessLayout = AppObj.Common.Views.AppObjLayout.extend({
+      __name: 'AccessLayout',
+      template: _.template(require('text!js/apps/user/access/templates/access.html'), { variable: 'data' }),
+      regions: {
+        region_header: 'div.js-access-header',
+        region_message: 'div.js-flash-message',
+        region_form: 'div.js-access-form'
+      }
+    });
+
     /** @type {Object} View for a single form supporting account login or creation (user selected) */
     Views.AccessForm = AppObj.Common.Views.AppObjFormItemView.extend({
       __name: 'AccessForm',
       __form_element_id_prefix: 'user-access-',
-      template: _.template(require('text!js/apps/user/access/templates/access.html'), { variable: 'data' }),
+      template: _.template(require('text!js/apps/user/access/templates/access_form.html'), { variable: 'data' }),
 
       triggers: {
         'click a.js-home': 'home-clicked',

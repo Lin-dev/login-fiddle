@@ -107,22 +107,23 @@ passport.use('local-signup', new LocalStrategy({
         q(pr.pr.auth.user.create(user_attrs))
         .then(function(user) {
           logger.info('local-signup user created: ' + email);
-          return done(null, user);
+          return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
         })
         .fail(function(err) {
           // DB or validation error - do not distinguish validation or set flash because that is also done client side
           logger.warn('local-signup callback for ' + email + ' failed user creation, error: ' + err);
-          return done(err, undefined, req.flash('message', 'Account creation failed'));
+          return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
         });
       }
       else {
         logger.warn('local-signup account creation requested for existing account: ' + email);
-        return done(null, false, req.flash('message', 'An account with that email address already exists'));
+        return done(null, false,
+          req.flash(api_util_config.flash_message_key, 'An account with that email address already exists'));
       }
     })
     .fail(function(err) {
       logger.error('local-signup callback for ' + email + ' failed while checking if email already used: ' + err);
-      return done(err, undefined, req.flash('message', 'System error'));
+      return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
     });
   });
 }));
@@ -142,21 +143,21 @@ passport.use('local-login', new LocalStrategy({
     if(user !== null) {
       if(user.check_password(password)) {
         logger.debug('local-login logged in: ' + email);
-        return done(null, user);
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
       }
       else {
         logger.debug('local-login incorrect password: ' + email);
-        return done(null, false, req.flash('message', 'Incorrect password'));
+        return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
       }
     }
     else {
       logger.debug('local-login unknown email: ' + email);
-      return done(null, false, req.flash('message', 'No user with that email address found'));
+      return done(null, false, req.flash(api_util_config.flash_message_key, 'No user with that email address found'));
     }
   })
   .fail(function(err) {
     logger.error('local-login callback for ' + email + ' failed while querying for user: ' + err);
-    return done(err, undefined, req.flash('message', 'System error'));
+    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
   });
 }));
 
@@ -174,7 +175,7 @@ passport.use('fb-access', new FacebookStrategy({
   .then(function(user) {
     if(user !== null) { // user found - log in
       logger.debug('fb-access callback -- Found existing user, logging in: ' + JSON.stringify(user));
-      return done(null, user);
+      return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Facebook'));
     }
     else { // user not found - create account
       logger.debug('fb-access callback -- user not found, creating from: ' + JSON.stringify(profile));
@@ -182,19 +183,19 @@ passport.use('fb-access', new FacebookStrategy({
       .then(function(user) {
         logger.info('fb-access user created: ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
           profile.name.familyName);
-        return done(null, user);
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
       })
       .fail(function(err) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
         logger.warn('fb-access callback for ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
           profile.name.familyName + ' failed user creation, error: ' + err);
-        return done(err, undefined, req.flash('message', 'Account creation failed'));
+        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
       });
     }
   })
   .fail(function(err) {
     logger.error('fb-access callback for token ' + token + ' failed while querying for user, error: ' + err);
-    return done(err, undefined, req.flash('message', 'System error'));
+    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
   });
 }));
 
@@ -254,26 +255,26 @@ passport.use('google-access', new GoogleStrategy({
   .then(function(user) {
     if(user !== null) { // user found - log in
       logger.debug('google-access callback -- Found existing user, logging in: ' + JSON.stringify(user));
-      return done(null, user);
+      return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Google'));
     }
     else { // user not found - create account
       logger.debug('google-access callback -- user not found, creating from: ' + JSON.stringify(profile));
       q(pr.pr.auth.user.create_from_google_and_save(profile, token))
       .then(function(user) {
         logger.info('google-access user created: ' + profile.id + ' / ' + profile.display_name);
-        return done(null, user);
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
       })
       .fail(function(err) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
         logger.warn('google-access callback for ' + profile.id + ' / ' + profile.display_name +
           ' failed user creation, error: ' + err);
-        return done(err, undefined, req.flash('message', 'Account creation failed'));
+        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
       });
     }
   })
   .fail(function(err) {
     logger.error('google-access callback for token ' + token + ' failed while querying for user, error: ' + err);
-    return done(err, undefined, req.flash('message', 'System error'));
+    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
   });
 }));
 
@@ -332,26 +333,26 @@ passport.use('twitter-access', new TwitterStrategy({
   .then(function(user) {
     if(user !== null) { // user found - log in
       logger.debug('twitter-access callback -- Found existing user, logging in: ' + JSON.stringify(user));
-      return done(null, user);
+      return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Twitter'));
     }
     else { // user not found - create account
       logger.debug('twitter-access callback -- user not found, creating from: ' + JSON.stringify(profile));
       q(pr.pr.auth.user.create_from_twitter_and_save(profile, token))
       .then(function(user) {
         logger.info('twitter-access user created: ' + profile.id  + ' / ' + profile.username);
-        return done(null, user);
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
       })
       .fail(function(err) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
         logger.warn('twitter-access callback for ' + profile.id + ' / ' + profile.username +
           ' failed user creation, error: ' + err);
-        return done(err, undefined, req.flash('message', 'Account creation failed'));
+        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Account creation failed'));
       });
     }
   })
   .fail(function(err) {
     logger.error('twitter-access callback for token ' + token + ' failed while querying for user, error: ' + err);
-    return done(err, undefined, req.flash('message', 'System error'));
+    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
   });
 }));
 

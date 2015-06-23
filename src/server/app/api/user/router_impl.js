@@ -69,8 +69,8 @@ module.exports = {
    */
   access_google_callback: auth.passport.authenticate('google-access', {
     successRedirect: '/profile',
-    failureRedirect: '/access?message_code=google_declined',
-    failureFlash: true
+    failureRedirect: '/access',
+    failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Google' }
   }),
 
   /**
@@ -129,8 +129,8 @@ module.exports = {
    */
   access_fb_callback: auth.passport.authenticate('fb-access', {
     successRedirect: '/profile',
-    failureRedirect: '/access?message_code=fb_declined',
-    failureFlash: true
+    failureRedirect: '/access',
+    failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Facebook' }
   }),
 
   /**
@@ -215,8 +215,8 @@ module.exports = {
    */
   access_twitter_callback: auth.passport.authenticate('twitter-access', {
     successRedirect: '/profile',
-    failureRedirect: '/access?message_code=twitter_declined',
-    failureFlash: true
+    failureRedirect: '/access',
+    failureFlash:  { type: api_util_config.flash_message_key, message: 'Login cancelled on Twitter' }
   }),
 
   /**

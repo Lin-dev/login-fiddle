@@ -1,54 +1,7 @@
 <div class="container">
   <div class="col-sm-6 col-sm-offset-3">
-
-      <h1>Sign in</h1>
-
-      <!-- show any messages that come back with authentication -->
-      <% if(data.message !== undefined && data.message.length > 0) { %>
-          <div class="alert alert-danger"><%= data.message %></div>
-      <% } %>
-
-      <!-- LOGIN FORM -->
-      <form>
-          <div class="form-group">
-            <label class="control-label">Sign in with...</label>
-            <a class="btn btn-warning js-fb" href="<%= data.fb_url %>">Facebook</a>
-            <a class="btn btn-warning js-google" href="<%= data.google_url %>">Google</a>
-            <a class="btn btn-warning js-twitter" href="<%= data.twitter_url %>">Twitter</a>
-          </div>
-          <div class="form-group">
-            <label class="control-label">Or use your email address:</label>
-            <input type="text" class="form-control" name="local_email" id="user-access-local-email"
-              value="<%= data.local_email %>">
-          </div>
-          <div class="form-group">
-            <label class="control-label">
-              Do you have a password?
-            </label>
-            <div class="radio js-has-password">
-              <label class="normal-weight">
-                <input type="radio" name="has_pw_flag" value="false"> No, help me sign in
-              </label>
-            </div>
-            <div class="radio js-has-password">
-              <label class="normal-weight">
-                <input type="radio" name="has_pw_flag" value="true" checked> Yes, here it is:
-              </label>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">Password:</label>
-            <input type="password" class="form-control" name="local_password" id="user-access-local-password"
-              value="<%= data.local_password %>">
-          </div>
-
-          <button class="btn btn-warning btn-lg js-submit">Sign in</button>
-      </form>
-
-      <hr>
-
-      <p>Already have an account? <a href="/login" class="js-login">Login</a></p>
-      <p>Or go <a href="/home" class="js-home">home</a>.</p>
-
+    <div class='js-access-header'></div>
+    <div class="js-flash-message"></div>
+    <div class="js-access-form"></div>
   </div>
 </div>

@@ -1,30 +1,12 @@
 define(function(require) {
   'use strict';
 
+  var q = require('q');
+
   var AppObj = require('js/app/obj');
   var logger = AppObj.logger.get('root/js/apps/user/access/controller');
 
   AppObj.module('UserApp.Access', function(Access, AppObj, Backbone, Marionette, $, _) {
-    /**
-     * Returns a user-displayable explanation of why the access form is being displayed again (i.e. they refused
-     * permission at same oauth provider)
-     * TODO - this method almost duplicated in client/js/apps/user/access/controller.js and .../profile/controller.js
-     * @param  {String} query_string The query string code included in the URL query string the server redirects to
-     * @return {String}              A user-displayable explanation of why the access form is being displayed again
-     */
-    function get_message_from_code(query_string) {
-      var parsed_query = Marionette.parse_query_string(query_string);
-      switch(parsed_query && parsed_query.message_code) {
-        case undefined: return undefined;
-        case 'fb_declined': return 'Facebook login cancelled';
-        case 'twitter_declined': return 'Twitter login cancelled';
-        case 'google_declined': return 'Google login cancelled';
-        default:
-          logger.error('private.get_message_from_code -- unknown code: ' + parsed_query.message_code);
-          return 'Unknown code: ' + parsed_query.message_code;
-      }
-    }
-
     /**
      * Gets the fb display mode string to use based on the client window size
      * TODO: Duplicated in user/access and user/profile controllers - de-duplicate on next edit
@@ -94,9 +76,56 @@ define(function(require) {
     }
 
     /**
+     * Respond to the local access form submission (either for signup or login)
+     * @param  {Object} form_data           The submitted form data serialised as an object using syphon
+     * @param  {Object} access_view         The instance of AccessViews.AccessLayout that is rendered already
+     * @param  {String} trigger_after_login The event trigger to fire after a succesful login
+     */
+    function proc_local_access_submitted(form_data, access_view, trigger_after_login) {
+      if(form_data.has_pw_flag === 'true') { // attempt a login using email / password
+        proc_local_login(form_data, access_view, trigger_after_login);
+      }
+      else if(form_data.has_pw_flag === 'false') { // show the signup form if email address valid
+        require('js/apps/user/entities');
+        var email_validation = new AppObj.UserApp.Entities.UserLocalAccess();
+        var val_errs = email_validation.validate(form_data);
+        if(_.isEmpty(val_errs)) {
+          var CommonViews = require('js/common/views');
+          var AccessViews = require('js/apps/user/access/views');
+          var signup_header = new CommonViews.H1Header({ model: new AppObj.Entities.ClientModel({
+            header_text: 'Sign up'
+          })});
+          var signup_view = new AccessViews.SignupForm({
+            model: new AppObj.UserApp.Entities.UserLocalSignup({ local_email: form_data.local_email })
+          });
+          signup_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
+          signup_view.on('login-clicked', function() { AppObj.trigger('user:access'); });
+          signup_view.on('local-signup-submitted', function(form_data) {
+            proc_local_signup(form_data, signup_view, trigger_after_login);
+          });
+          signup_view.on('signup_form:show_val_errs', function(val_errs) {
+            signup_view.show_val_errs.call(signup_view, val_errs);
+          });
+          access_view.region_header.show(signup_header);
+          // no message to show in region_message
+          access_view.region_form.show(signup_view);
+        }
+        else {
+          logger.debug('show_access_form -- user form validation failed: invalid email address for signup' +
+            JSON.stringify(val_errs));
+          access_view.trigger('access_form:show_val_errs', val_errs);
+        }
+      }
+      else {
+        logger.error('show_access_form - local-access-submitted callback -- ' + 'unknown has_pw_flag: ' +
+          form_data.has_pw_flag);
+      }
+    }
+
+    /**
      * Process a local login request
      * @param  {Object} form_data           An object with a key for each form data field
-     * @param  {Object} signup_view         The view (whose model should be updated with any validation errors)
+     * @param  {Object} access_view         The layout view (whose access_form in region_main should show val errors)
      * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
      */
     function proc_local_login(form_data, access_view, trigger_after_login) {
@@ -116,30 +145,39 @@ define(function(require) {
             AppObj.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
-            logger.debug('private.proc_local_login - /api/user/access/local/login response -- ' +
-              'login failure: ' + resp_data.message);
-            access_view.model.set({ message: resp_data.message });
+            logger.debug('private.proc_local_login - /api/user/access/local/login response -- login failure');
+            q(AppObj.request('common:entities:flashmessage'))
+            .then(function(flash_message_model) {
+              var CommonViews = require('js/common/views');
+              var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+              access_view.region_message.show(msg_view);
+            });
           }
           else {
             logger.error('private.proc_local_login - /api/user/access/local/login response -- ' +
               'unknown status: ' + resp_data.status + ' (message: ' + resp_data.message + ')');
-            access_view.model.set({ message: resp_data.message });
+            q(AppObj.request('common:entities:flashmessage'))
+            .then(function(flash_message_model) {
+              var CommonViews = require('js/common/views');
+              var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+              access_view.region_message.show(msg_view);
+            });
           }
         });
       }
       else {
         logger.debug('private.proc_local_login -- user form validation failed: ' + JSON.stringify(val_errs));
-        access_view.show_val_errs(val_errs);
+        access_view.trigger('access_form:show_val_errs', val_errs);
       }
     }
 
     /**
      * Process a local signup request, validating it and synchronising to the DB
      * @param  {Object} form_data           An object with a key for each form data field
-     * @param  {Object} signup_view         The view (whose model should be updated with any validation errors)
+     * @param  {Object} access_view         The layout view (whose access_form in region_main should show val errors)
      * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
      */
-    function proc_local_signup(form_data, signup_view, trigger_after_login) {
+    function proc_local_signup(form_data, access_view, trigger_after_login) {
       var uls = new AppObj.UserApp.Entities.UserLocalSignup({
         local_email: form_data.local_email,
         local_email_check: form_data.local_email_check,
@@ -158,76 +196,70 @@ define(function(require) {
           else if(resp_data.status === 'failure') {
             logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
               'login failure: ' + resp_data.message);
-            signup_view.model.set({ message: resp_data.message });
+            q(AppObj.request('common:entities:flashmessage'))
+            .then(function(flash_message_model) {
+              var CommonViews = require('js/common/views');
+              var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+              access_view.region_message.show(msg_view);
+            });
           }
           else {
             logger.error('private.proc_local_signup - /api/user/access/local/signup response -- ' +
               'unknown status: ' + resp_data.status + ' (message: ' + resp_data.message + ')');
-            signup_view.model.set({ message: resp_data.message });
+            q(AppObj.request('common:entities:flashmessage'))
+            .then(function(flash_message_model) {
+              var CommonViews = require('js/common/views');
+              var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+              access_view.region_message.show(msg_view);
+            });
           }
         });
       }
       else {
         logger.debug('private.proc_local_signup -- user form validation failed: ' + JSON.stringify(val_errs));
-        signup_view.show_val_errs(val_errs);
+        access_view.trigger('signup_form:show_val_errs', val_errs);
       }
     }
 
     Access.controller = {
       /**
        * Display the access form, allowing users to sign up and login
-       * @param  {String} query_string        Used so the server can send a message code to trigger a message display
        * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
        */
-      show_access_form: function show_access_form(query_string, trigger_after_login) {
-        logger.trace('show_access_form -- query_string: ' + query_string + ', trigger_after_login: ' +
-          trigger_after_login);
-        if(!trigger_after_login) { // not strict === because might be null
-          trigger_after_login = 'user:profile';
-        }
-        var Views = require('js/apps/user/access/views');
-        // Model is needed in view so that view can be updated following if the post response is a failure
-        var access_view = new Views.AccessForm({ model: new AppObj.Entities.ClientModel({
-          fb_url: get_fb_auth_url(),
-          google_url: get_google_auth_url(),
-          twitter_url: get_twitter_auth_url(),
-          message: get_message_from_code(query_string)
-        })});
-        access_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
-        access_view.on('fb-access-clicked', function fb_access_clicked() { proc_fb_login(); });
-        access_view.on('google-access-clicked', function google_access_clicked() { proc_google_login(); });
-        access_view.on('twitter-access-clicked', function twitter_access_clicked() { proc_twitter_login(); });
-        access_view.on('local-access-submitted', function local_access_submitted(form_data) {
-          require('js/apps/user/entities');
-
-          if(form_data.has_pw_flag === 'true') { // attempt a login using email / password
-            proc_local_login(form_data, access_view, trigger_after_login);
-          }
-          else if(form_data.has_pw_flag === 'false') { // show the signup form if email address valid
-            var email_validation = new AppObj.UserApp.Entities.UserLocalAccess();
-            var val_errs = email_validation.validate(form_data);
-            if(_.isEmpty(val_errs)) {
-              var uls = new AppObj.UserApp.Entities.UserLocalSignup({ local_email: form_data.local_email });
-              var signup_view = new Views.SignupForm({ model: uls });
-              signup_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
-              signup_view.on('login-clicked', function() { AppObj.trigger('user:login'); });
-              signup_view.on('local-signup-submitted', function(form_data) {
-                proc_local_signup(form_data, signup_view, trigger_after_login);
-              });
-              AppObj.region_main.show(signup_view);
-            }
-            else {
-              logger.debug('show_access_form -- user form validation failed: invalid email address for signup' +
-                JSON.stringify(val_errs));
-              access_view.show_val_errs(val_errs);
-            }
-          }
-          else {
-            logger.error('show_access_form - local-access-submitted callback -- ' + 'unknown has_pw_flag: ' +
-              form_data.has_pw_flag);
-          }
+      show_access_form: function show_access_form(trigger_after_login) {
+        logger.trace('show_access_form -- trigger_after_login: ' + trigger_after_login);
+        if(!trigger_after_login) { trigger_after_login = 'user:profile'; }
+        q(AppObj.request('common:entities:flashmessage'))
+        .then(function(flash_message_model) {
+          var AccessViews = require('js/apps/user/access/views');
+          var CommonViews = require('js/common/views');
+          var access_view = new AccessViews.AccessLayout();
+          var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Entities.ClientModel({
+            header_text: 'Sign in'
+          })});
+          var access_form = new AccessViews.AccessForm({ model: new AppObj.Entities.ClientModel({
+            fb_url: get_fb_auth_url(),
+            google_url: get_google_auth_url(),
+            twitter_url: get_twitter_auth_url(),
+          })});
+          access_form.on('home-clicked', function() { AppObj.trigger('home:show'); });
+          access_form.on('fb-access-clicked', proc_fb_login);
+          access_form.on('google-access-clicked', proc_google_login);
+          access_form.on('twitter-access-clicked', proc_twitter_login);
+          access_form.on('local-access-submitted', function(form_data) {
+            proc_local_access_submitted(form_data, access_view, trigger_after_login);
+          });
+          access_view.on('access_form:show_val_errs', function(val_errs) {
+            access_form.show_val_errs.call(access_form, val_errs);
+          });
+          access_view.on('render', function() {
+            access_view.region_header.show(header_view);
+            access_view.region_message.show(msg_view);
+            access_view.region_form.show(access_form);
+          });
+          AppObj.region_main.show(access_view);
         });
-        AppObj.region_main.show(access_view);
       }
     };
   });
