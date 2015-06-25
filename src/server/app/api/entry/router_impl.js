@@ -21,12 +21,20 @@ module.exports = {
           return entry.get({ plain: true});
         }));
       })
+      .fail(function(err) {
+        logger.error('exports.get_entries -- promise fail: ' + err);
+        res.status(500).end();
+      })
       .done();
     }
     else {
       pr.pr.entry.entry.findAll({ include: [{model: pr.pr.entry.tag }]})
       .then(function(entry_instances) {
         res.status(200).send(_.map(entry_instances, function(entry) { return entry.get({ plain: true }); }));
+      })
+      .fail(function(err) {
+        logger.error('exports.get_entries -- promise fail: ' + err);
+        res.status(500).end();
       })
       .done();
     }
@@ -40,6 +48,10 @@ module.exports = {
     pr.pr.entry.tag.findAll()
     .then(function(tag_instances) {
       res.status(200).send(_.map(tag_instances, function(tag) { return tag.get({ plain: true}); }));
+    })
+    .fail(function(err) {
+      logger.error('exports.get_tags -- promise fail: ' + err);
+      res.status(500).end();
     });
   }
 };
