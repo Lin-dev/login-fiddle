@@ -151,7 +151,8 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-            });
+            })
+            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_login'));
           }
           else {
             q(AppObj.request('common:entities:flashmessage'))
@@ -161,7 +162,8 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-            });
+            })
+            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
           }
         });
       }
@@ -201,7 +203,8 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-            });
+            })
+            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
           }
           else {
             q(AppObj.request('common:entities:flashmessage'))
@@ -211,7 +214,8 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-            });
+            })
+            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
           }
         });
       }
@@ -259,7 +263,8 @@ define(function(require) {
             access_view.region_form.show(access_form);
           });
           AppObj.region_main.show(access_view);
-        });
+        })
+        .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_access_form'));
       }
     };
   });

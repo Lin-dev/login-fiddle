@@ -45,7 +45,8 @@ define(function(require) {
           });
 
           AppObj.region_main.show(view);
-        });
+        })
+        .fail(AppObj.on_promise_fail_gen('EntryApp.List.controller.show_list'));
 
         logger.trace('show_list -- exit');
       }

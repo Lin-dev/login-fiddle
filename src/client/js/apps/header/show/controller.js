@@ -29,7 +29,8 @@ define(function(require) {
           });
 
           AppObj.region_navbar.show(view);
-        });
+        })
+        .fail(AppObj.on_promise_fail_gen('HeaderApp.Show.controller.show_header'));
         logger.trace('show_header -- exit');
       },
 
@@ -38,7 +39,8 @@ define(function(require) {
         require('backbone_picky');
         require('js/apps/header/entities');
         var navitem_collection_promise = AppObj.request('headerapp:entities:navitems');
-        navitem_collection_promise.then(function(navitem_collection) {
+        navitem_collection_promise
+        .then(function(navitem_collection) {
           var navitem_to_select = navitem_collection.find(function(navitem) {
             return navitem.get('url') === url;
           });
@@ -53,7 +55,8 @@ define(function(require) {
             });
             navitem_collection.trigger('reset');
           }
-        });
+        })
+        .fail(AppObj.on_promise_fail_gen('HeaderApp.Show.controller.set_active_navitem'));
         logger.trace('set_active_navitem -- exit');
       }
     };

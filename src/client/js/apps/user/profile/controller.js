@@ -194,9 +194,7 @@ define(function(require) {
             });
             AppObj.region_main.show(profile_view);
           })
-          .fail(function(err) {
-            logger.error('show_user_profile -- error in resolving promises: ' + err);
-          });
+          .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.show_user_profile'));
         }
         else {
           AppObj.trigger('user:access', 'user:profile');
