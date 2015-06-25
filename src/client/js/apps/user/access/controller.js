@@ -101,9 +101,9 @@ define(function(require) {
           signup_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
           signup_view.on('login-clicked', function() { AppObj.trigger('user:access'); });
           signup_view.on('local-signup-submitted', function(form_data) {
-            proc_local_signup(form_data, signup_view, trigger_after_login);
+            proc_local_signup(form_data, access_view, trigger_after_login);
           });
-          signup_view.on('signup_form:show_val_errs', function(val_errs) {
+          access_view.on('signup_form:show_val_errs', function(val_errs) {
             signup_view.show_val_errs.call(signup_view, val_errs);
           });
           access_view.region_header.show(signup_header);
@@ -113,7 +113,7 @@ define(function(require) {
         else {
           logger.debug('show_access_form -- user form validation failed: invalid email address for signup' +
             JSON.stringify(val_errs));
-          access_view.trigger('access_form:show_val_errs', val_errs);
+          access_view.trigger('signup_form:show_val_errs', val_errs);
         }
       }
       else {
@@ -154,10 +154,10 @@ define(function(require) {
             });
           }
           else {
-            logger.error('private.proc_local_login - /api/user/access/local/login response -- ' +
-              'unknown status: ' + resp_data.status + ' (message: ' + resp_data.message + ')');
             q(AppObj.request('common:entities:flashmessage'))
             .then(function(flash_message_model) {
+              logger.error('private.proc_local_signup - /api/user/access/local/signup response -- ' +
+                'unknown status: ' + resp_data.status + ' (flash message: ' + flash_message_model + ')');
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
@@ -194,20 +194,20 @@ define(function(require) {
             AppObj.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
-            logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
-              'login failure: ' + resp_data.message);
             q(AppObj.request('common:entities:flashmessage'))
             .then(function(flash_message_model) {
+              logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
+                'signup failure: ' + flash_message_model);
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
             });
           }
           else {
-            logger.error('private.proc_local_signup - /api/user/access/local/signup response -- ' +
-              'unknown status: ' + resp_data.status + ' (message: ' + resp_data.message + ')');
             q(AppObj.request('common:entities:flashmessage'))
             .then(function(flash_message_model) {
+              logger.error('private.proc_local_signup - /api/user/access/local/signup response -- ' +
+                'unknown status: ' + resp_data.status + ' (flash message: ' + flash_message_model + ')');
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);

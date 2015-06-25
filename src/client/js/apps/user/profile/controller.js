@@ -93,8 +93,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         }
         else {
-          logger.error('private.proc_disc_fb - server response -- unknown status: ' + resp_data.status +
-            ' (message: ' + resp_data.message + ')');
+          logger.error('private.proc_disc_fb - server response -- unknown status: ' + resp_data.status);
           AppObj.trigger('user:profile');
         }
       });
@@ -114,8 +113,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         }
         else {
-          logger.error('private.proc_disc_google - server response -- unknown status: ' + resp_data.status +
-            ' (message: ' + resp_data.message + ')');
+          logger.error('private.proc_disc_google - server response -- unknown status: ' + resp_data.status);
           AppObj.trigger('user:profile');
         }
       });
@@ -135,8 +133,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         }
         else {
-          logger.error('private.proc_disc_twitter - server response -- unknown status: ' + resp_data.status +
-            ' (message: ' + resp_data.message + ')');
+          logger.error('private.proc_disc_twitter - server response -- unknown status: ' + resp_data.status);
           AppObj.trigger('user:profile');
         }
       });

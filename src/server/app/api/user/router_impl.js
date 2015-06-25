@@ -45,7 +45,8 @@ module.exports = {
     req.logout();
     res.clearCookie(user_config.logged_in_cookie_name);
     req.session.destroy(function() {
-      // No req.flash message because we just destroyed the session: req.flash('message', 'Logged out');
+      // No flash msg because we just destroyed the session: req.flash(api_util_config.flash_message_key, 'Logged out');
+      // TODO: Can we create a new session immediately? No reason why not...
       res.redirect(server_config.util_route_success);
     });
   },
