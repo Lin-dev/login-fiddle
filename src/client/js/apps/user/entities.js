@@ -62,12 +62,12 @@ define(function(require) {
     });
 
     /**
-     * Represents a local signup form submission (email, email_check, password, password_check). They are client side
-     * only because they are used for client-side validation only. There is no reqres handler because they're so simple
-     * and should be referenced directly via the AppObj object.
+     * Represents a local signup or connect form submission (email, email_check, password, password_check). This entity
+     * is client side only because they are used for client-side validation only. There is no reqres handler because
+     * they're so simple and should be referenced directly via the AppObj object.
      */
-    Entities.UserLocalSignup = AppObj.Entities.ClientModel.extend({
-      __name: 'UserLocalSignup',
+    Entities.LocalDataForValidation = AppObj.Entities.ClientModel.extend({
+      __name: 'LocalDataForValidation',
       validate: function validate(attrs, options) {
         var errs = {};
         errs['email-check'] = val_checks.email(attrs.local_email);
@@ -80,6 +80,27 @@ define(function(require) {
         }
         return _.pick(errs, _.identity); // remove undefined keys
       }
+    });
+
+    /**
+     * Represents a local signup form submission (email, email_check, password, password_check). They are client side
+     * only because they are used for client-side validation only. There is no reqres handler because they're so simple
+     * and should be referenced directly via the AppObj object. To avoid validation code dupe, Entities.LocalConnect
+     * and Entities.UserLocalSignup both use the same 'super class', Entities.LocalDataForValidation. In future if
+     * requirements diverge child classes can implement their specific requirements
+     */
+    Entities.UserLocalSignup = Entities.LocalDataForValidation.extend({
+      __name: 'UserLocalSignup'
+    });
+
+    /**
+     * Represents a local connect form submission (email, email_check, password, password_check). To avoid validation
+     * code dupe Entities.UserLocalConnect and Entities.UserLocalSignup both use the same 'super class',
+     * Entities.LocalDataForValidation. In future if requirements diverge child classes can implement their specific
+     * requirements
+     */
+    Entities.UserLocalConnect = Entities.LocalDataForValidation.extend({
+      __name: 'LocalConnect'
     });
 
     /**

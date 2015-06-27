@@ -15,6 +15,9 @@ var keys_required_for_login = [user_config.local.username_field, user_config.loc
 var keys_required_for_signup = keys_required_for_login.concat(
   _.map(keys_required_for_login, function(field) { return field + '_check'; })
 );
+var keys_required_for_connect = keys_required_for_login.concat(
+  _.map(keys_required_for_login, function(field) { return field + '_check'; })
+);
 
 module.exports = {
   /**
@@ -184,6 +187,12 @@ module.exports = {
   local_check_signup: auth.mw_gen.check_post_has_req_fields(keys_required_for_signup),
 
   /**
+   * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
+   * fields expected by the authentication strategy for local connect are present - log if not
+   */
+  local_check_connect: auth.mw_gen.check_post_has_req_fields(keys_required_for_connect),
+
+  /**
    * Handles requests for local access account login
    * @type {Function}
    */
@@ -202,6 +211,32 @@ module.exports = {
     failureRedirect: server_config.util_route_failure,
     failureFlash: true
   }),
+
+  /**
+   * Handles requests for local access account connecting
+   * @type {Function}
+   */
+  connect_local_connect: auth.passport.authorize('local-connect', {
+    successRedirect: server_config.util_route_success,
+    failureRedirect: server_config.util_route_failure,
+    failureFlash: true
+  }),
+
+  /**
+   * Disconnects user account from local email, removing local email and password fields from profile
+   */
+  connect_local_disconnect: function connect_twitter_disconnect(req, res, next) {
+    q(req.user.disconnect_local_and_save())
+    .then(function(updated_user) {
+      req.flash(api_util_config.flash_message_key, 'Email and password removed');
+      res.redirect(server_config.util_route_success);
+    })
+    .fail(function(err) {
+      logger.error('exports.connect_local_disconnect -- error during disconnect: ' + err);
+      req.flash(api_util_config.flash_message_key, 'Error disconnecting local email and password');
+      res.redirect(server_config.util_route_failure);
+    });
+  },
 
   /**
    * Initiates requests for Twitter authentication, using passport to redirect to Twitter - this API endpoint should

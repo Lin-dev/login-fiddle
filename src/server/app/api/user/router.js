@@ -16,6 +16,10 @@ router.post('/access/local/login', auth.mw.ensure_unauth, router_impl.local_chec
   router_impl.access_local_login);
 router.post('/access/local/signup', auth.mw.ensure_unauth, router_impl.local_check_signup,
   router_impl.access_local_signup);
+router.post('/connect/local/connect', auth.mw.ensure_auth, router_impl.local_check_connect,
+  router_impl.connect_local_connect);
+router.post('/connect/local/disconnect', auth.mw.ensure_auth, router_impl.local_check_connect,
+  router_impl.connect_local_disconnect);
 
 router.get('/access/fb/auth', auth.mw.ensure_unauth, router_impl.access_fb_auth);
 router.get('/access/fb/callback', auth.mw.ensure_unauth, router_impl.access_fb_callback);

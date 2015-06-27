@@ -183,6 +183,29 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         /**
+         * Updates this user instance with connected email and password and saves it
+         * @param  {Object} local_profile The user's email address and hashed password
+         * @return {Object}               A promise for completion of the user instance save
+         */
+        connect_local_and_save: function connect_local_and_save(local_profile) {
+          logger.trace('exports.connect_local_and_save -- connecting: ' + JSON.stringify(local_profile));
+          this.set(user_config.local.username_field, local_profile[user_config.local.username_field]);
+          this.set(user_config.local.password_field, local_profile[user_config.local.password_field]);
+          return this.save();
+        },
+
+        /**
+         * Updates this user instance by removing disconnected local account info and saves it
+         * @return {Object} A promise for completion of the user instance save
+         */
+        disconnect_local_and_save: function disconnect_local_and_save() {
+          logger.trace('exports.disconnect_local_and_save -- disconnecting');
+          this.set(user_config.local.username_field, null);
+          this.set(user_config.local.password_field, null);
+          return this.save();
+        },
+
+        /**
          * Updates this user instance with connected Facebook account info and saves it
          * @param  {Object} fb_profile The raw Facebook profile as returned by oauth (passport)
          * @param  {String} token      The oauth token sent by FB

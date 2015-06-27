@@ -14,6 +14,8 @@ define(function(require) {
         local_password_max_length: 256,
         local_login_path: '/api/user/access/local/login',
         local_signup_path: '/api/user/access/local/signup',
+        local_connect_path: '/api/user/connect/local/connect',
+        local_disconnect_path: '/api/user/connect/local/disconnect',
         fb_auth_url: 'https://127.0.0.1:27974/api/user/access/fb/auth',
         fb_connect_url: 'https://127.0.0.1:27974/api/user/connect/fb/auth',
         fb_disconnect_url: 'https://127.0.0.1:27974/api/user/connect/fb/disconnect',

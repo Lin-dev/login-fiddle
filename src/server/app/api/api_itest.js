@@ -52,9 +52,15 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.local_check_signup.should.be.a.function;
     num_funcs[name]++;
+    module.local_check_connect.should.be.a.function;
+    num_funcs[name]++;
     module.access_local_login.should.be.a.function;
     num_funcs[name]++;
     module.access_local_signup.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_local_connect.should.be.a.function;
+    num_funcs[name]++;
+    module.connect_local_disconnect.should.be.a.function;
     num_funcs[name]++;
     module.access_fb_auth.should.be.a.function;
     num_funcs[name]++;

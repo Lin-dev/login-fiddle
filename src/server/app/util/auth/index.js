@@ -142,21 +142,59 @@ passport.use('local-login', new LocalStrategy({
   .then(function(user) {
     if(user !== null) {
       if(user.check_password(password)) {
-        logger.debug('local-login logged in: ' + email);
+        logger.debug('local-login -- logged in: ' + email);
         return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
       }
       else {
-        logger.debug('local-login incorrect password: ' + email);
+        logger.debug('local-login -- incorrect password: ' + email);
         return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
       }
     }
     else {
-      logger.debug('local-login unknown email: ' + email);
+      logger.debug('local-login -- unknown email: ' + email);
       return done(null, false, req.flash(api_util_config.flash_message_key, 'No user with that email address found'));
     }
   })
   .fail(function(err) {
-    logger.error('local-login callback for ' + email + ' failed while querying for user: ' + err);
+    logger.error('local-login -- callback for ' + email + ' failed while querying for user: ' + err);
+    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
+  });
+}));
+
+/**
+ * passport.js local-connect strategy
+ */
+passport.use('local-connect', new LocalStrategy({
+  usernameField: user_config.local.username_field,
+  passwordField: user_config.local.password_field,
+  passReqToCallback: true
+}, function local_connect_strategy_callback(req, email, password, done) {
+  var where_object = {};
+  where_object[user_config.local.username_field] = email;
+  q(pr.pr.auth.user.find({ where: where_object }))
+  .then(function(user_with_email) {
+    if(user_with_email === null) { // that email address is not used - add it to logged in a/c along with the password
+      var user_attrs = {};
+      user_attrs[user_config.local.username_field] = email;
+      user_attrs[user_config.local.password_field] = pr.pr.auth.user.hash_password(password);
+      req.user.connect_local_and_save(user_attrs)
+      .then(function(updated_user) {
+        logger.debug('local-connect -- email added to user: ' + JSON.stringify(updated_user));
+        done(null, updated_user, req.flash(api_util_config.flash_message_key, 'Email address added'));
+      })
+      .fail(function(err) {
+        logger.warn('local-connect -- callback for ' + JSON.stringify(req.user) + ' failed to save updated user to DB');
+        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
+      });
+    }
+    else {
+      logger.debug('local-connect -- email already in use by user: ' + JSON.stringify(user_with_email));
+      return done(null, false, req.flash(api_util_config.flash_message_key,
+        'Email address already in use by another profile'));
+    }
+  })
+  .fail(function(err) {
+    logger.error('local-connect -- callback for ' + email + ' failed while query\'ing for user: ' + err);
     return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
   });
 }));
