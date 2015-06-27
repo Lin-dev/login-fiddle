@@ -130,6 +130,7 @@ define(function(require) {
      */
     function proc_local_login(form_data, access_view, trigger_after_login) {
       // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
+      require('js/apps/user/entities');
       var ula = new AppObj.UserApp.Entities.UserLocalAccess({
         local_email: form_data.local_email,
         has_pw_flag: form_data.has_pw_flag,
@@ -138,14 +139,14 @@ define(function(require) {
       var val_errs = ula.validate(ula.attributes);
       if(_.isEmpty(val_errs)) {
         logger.debug('private.proc_local_login -- access form validation passed: ' + JSON.stringify(form_data));
-        $.post('/api/user/access/local/login', form_data, function(resp_data, textStatus, jqXhr) {
+        $.post(AppObj.config.apps.user.local_login_path, form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
-            logger.debug('private.proc_local_login - /api/user/access/local/login response -- ' +
-              'succeess, redirecting to: ' + trigger_after_login);
+            logger.debug('private.proc_local_login - server API call response -- succeess, redirecting to: ' +
+              trigger_after_login);
             AppObj.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
-            logger.debug('private.proc_local_login - /api/user/access/local/login response -- login failure');
+            logger.debug('private.proc_local_login - server API call response -- login failure');
             q(AppObj.request('common:entities:flashmessage'))
             .then(function(flash_message_model) {
               var CommonViews = require('js/common/views');
@@ -157,8 +158,8 @@ define(function(require) {
           else {
             q(AppObj.request('common:entities:flashmessage'))
             .then(function(flash_message_model) {
-              logger.error('private.proc_local_signup - /api/user/access/local/signup response -- ' +
-                'unknown status: ' + resp_data.status + ' (flash message: ' + flash_message_model + ')');
+              logger.error('private.proc_local_signup - server API call response -- unknown status: ' +
+                resp_data.status + ' (flash message: ' + flash_message_model + ')');
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
@@ -175,11 +176,13 @@ define(function(require) {
 
     /**
      * Process a local signup request, validating it and synchronising to the DB
-     * @param  {Object} form_data           An object with a key for each form data field
+     * @param  {Object} form_data           An object with a key for each submitted form data field
      * @param  {Object} access_view         The layout view (whose access_form in region_main should show val errors)
      * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
      */
     function proc_local_signup(form_data, access_view, trigger_after_login) {
+      // UserLocalSignup just for validation (passport redirect mucks up Backbone model sync)
+      require('js/apps/user/entities');
       var uls = new AppObj.UserApp.Entities.UserLocalSignup({
         local_email: form_data.local_email,
         local_email_check: form_data.local_email_check,
@@ -189,16 +192,16 @@ define(function(require) {
       var val_errs = uls.validate(uls.attributes);
       if(_.isEmpty(val_errs)) {
         logger.debug('private.proc_local_signup -- user form validation passed: ' + JSON.stringify(form_data));
-        $.post('/api/user/access/local/signup', form_data, function(resp_data, textStatus, jqXhr) {
+        $.post(AppObj.config.apps.user.local_signup_path, form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
-            logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
-              'succeess, redirecting to: ' + trigger_after_login);
+            logger.debug('private.proc_local_signup - server API call response -- succeess, redirecting to: ' +
+              trigger_after_login);
             AppObj.trigger(trigger_after_login);
           }
           else if(resp_data.status === 'failure') {
             q(AppObj.request('common:entities:flashmessage'))
             .then(function(flash_message_model) {
-              logger.debug('private.proc_local_signup - /api/user/access/local/signup response -- ' +
+              logger.debug('private.proc_local_signup - server API call response -- ' +
                 'signup failure: ' + flash_message_model);
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
@@ -209,7 +212,7 @@ define(function(require) {
           else {
             q(AppObj.request('common:entities:flashmessage'))
             .then(function(flash_message_model) {
-              logger.error('private.proc_local_signup - /api/user/access/local/signup response -- ' +
+              logger.error('private.proc_local_signup - server API call response -- ' +
                 'unknown status: ' + resp_data.status + ' (flash message: ' + flash_message_model + ')');
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });

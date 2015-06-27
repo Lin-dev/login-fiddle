@@ -185,8 +185,8 @@ module.exports = function(sequelize, DataTypes) {
         /**
          * Updates this user instance with connected Facebook account info and saves it
          * @param  {Object} fb_profile The raw Facebook profile as returned by oauth (passport)
-         * @param  {String} token            The oauth token sent by FB
-         * @return {Object}                  A promise for completion of the user instance save
+         * @param  {String} token      The oauth token sent by FB
+         * @return {Object}            A promise for completion of the user instance save
          */
         connect_fb_and_save: function connect_fb_and_save(fb_profile, token) {
           logger.trace('exports.connect_fb_and_save -- connecting: ' + JSON.stringify(fb_profile));

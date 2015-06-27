@@ -48,11 +48,11 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.logout.should.be.a.function;
     num_funcs[name]++;
+    module.local_check_login.should.be.a.function;
+    num_funcs[name]++;
+    module.local_check_signup.should.be.a.function;
+    num_funcs[name]++;
     module.access_local_login.should.be.a.function;
-    num_funcs[name]++;
-    module.access_local_check_login_post.should.be.a.function;
-    num_funcs[name]++;
-    module.access_local_check_login_signup.should.be.a.function;
     num_funcs[name]++;
     module.access_local_signup.should.be.a.function;
     num_funcs[name]++;

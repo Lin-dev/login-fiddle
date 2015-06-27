@@ -12,9 +12,9 @@ var router = new express.Router();
 router.get('/user', auth.mw.ensure_auth, helpers.inject_pr_into_router_impl(router_impl.get_user, pr));
 router.get('/logout', auth.mw.ensure_auth, router_impl.logout);
 
-router.post('/access/local/login', auth.mw.ensure_unauth, router_impl.access_local_check_login_post,
+router.post('/access/local/login', auth.mw.ensure_unauth, router_impl.local_check_login,
   router_impl.access_local_login);
-router.post('/access/local/signup', auth.mw.ensure_unauth, router_impl.access_local_check_login_signup,
+router.post('/access/local/signup', auth.mw.ensure_unauth, router_impl.local_check_signup,
   router_impl.access_local_signup);
 
 router.get('/access/fb/auth', auth.mw.ensure_unauth, router_impl.access_fb_auth);

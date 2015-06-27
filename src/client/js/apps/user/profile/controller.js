@@ -102,7 +102,7 @@ define(function(require) {
     /**
      * Disconnect Google account from user account
      */
-    function proc_disc_google(profile_view) {
+    function proc_disc_google() {
       $.post(AppObj.config.apps.user.google_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
         if(resp_data.status === 'success') {
           logger.debug('private.proc_disc_google - server response -- success, re-rendering profile');
@@ -152,7 +152,7 @@ define(function(require) {
     Profile.controller = {
       /**
        * Display the user profile, allowing users to connect other providers and logout
-       * @param  {String} query_string        Used so the server can send a message code to trigger a message display
+       * @param {String} query_string        Used so the server can send a message code to trigger a message display
        */
       show_user_profile: function show_user_profile(query_string) {
         logger.trace('show_user_profile -- query_string: ' + query_string);
@@ -165,16 +165,21 @@ define(function(require) {
             require('js/apps/user/entities');
             require('js/common/entities');
 
+            logger.debug('show_user_profile -- msg data: ' + JSON.stringify(msg));
+            logger.debug('show_user_profile -- up_data data: ' + JSON.stringify(up_data));
+            logger.debug('show_user_profile -- up_admin data: ' + JSON.stringify(up_admin));
+
             up_admin.set('email_connected', up_data.is_email_connected());
             up_admin.set('fb_connected', up_data.is_fb_connected());
             up_admin.set('google_connected', up_data.is_google_connected());
             up_admin.set('twitter_connected', up_data.is_twitter_connected());
-            logger.debug('show_user_profile -- up_data data: ' + JSON.stringify(up_data));
-            logger.debug('show_user_profile -- up_admin data: ' + JSON.stringify(up_admin));
-            logger.debug('show_user_profile -- msg data: ' + JSON.stringify(msg));
 
             var CommonViews = require('js/common/views');
             var ProfileViews = require('js/apps/user/profile/views');
+            var profile_view = new ProfileViews.UserProfileLayout();
+            var header_view = new CommonViews.H1Header({ model: new AppObj.Entities.ClientModel({
+              header_text: 'User profile'
+            })});
             var msg_view = new CommonViews.FlashMessageView({ model: msg });
             var p_data_view = new ProfileViews.UserProfileData({ model: up_data });
             var p_admin_view = new ProfileViews.UserProfileAdmin({ model: up_admin });
@@ -186,8 +191,8 @@ define(function(require) {
             p_admin_view.on('fb-disconnect-clicked', proc_disc_fb);
             p_admin_view.on('google-disconnect-clicked', proc_disc_google);
             p_admin_view.on('twitter-disconnect-clicked', proc_disc_twitter);
-            var profile_view = new ProfileViews.UserProfileLayout();
             profile_view.on('render', function() {
+              profile_view.region_header.show(header_view);
               profile_view.region_message.show(msg_view);
               profile_view.region_profile_data.show(p_data_view);
               profile_view.region_profile_admin.show(p_admin_view);

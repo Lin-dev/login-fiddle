@@ -175,13 +175,13 @@ module.exports = {
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local login are present - log if not
    */
-  access_local_check_login_post: auth.mw_gen.check_post_has_req_fields(keys_required_for_login),
+  local_check_login: auth.mw_gen.check_post_has_req_fields(keys_required_for_login),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local signup are present - log if not
    */
-  access_local_check_login_signup: auth.mw_gen.check_post_has_req_fields(keys_required_for_signup),
+  local_check_signup: auth.mw_gen.check_post_has_req_fields(keys_required_for_signup),
 
   /**
    * Handles requests for local access account login

@@ -93,8 +93,8 @@ define(function(require) {
       template: _.template(require('text!js/apps/user/access/templates/signup.html'), { variable: 'data' }),
 
       triggers: {
-        'click a.js-home': 'home-clicked',
-        'click a.js-login': 'login-clicked', // LISTEN TO THIS IN CONTROLLER, trigger user:login
+        'click a.js-home': 'home-clicked', // trigger home:show in controller
+        'click a.js-login': 'login-clicked', // trigger user:access in controller
       },
 
       events: {
@@ -113,7 +113,7 @@ define(function(require) {
         this.model.set(data, { silent: true });
         logger.debug('Local signup submitted with: ' + JSON.stringify(data));
         this.trigger('local-signup-submitted', data);
-      },
+      }
     });
   });
 

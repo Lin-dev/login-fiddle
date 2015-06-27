@@ -12,6 +12,8 @@ define(function(require) {
         // TODO: Is it worth config'ing local_username_field = local_email and local_password_field = local_password?
         local_password_min_length: 8,
         local_password_max_length: 256,
+        local_login_path: '/api/user/access/local/login',
+        local_signup_path: '/api/user/access/local/signup',
         fb_auth_url: 'https://127.0.0.1:27974/api/user/access/fb/auth',
         fb_connect_url: 'https://127.0.0.1:27974/api/user/connect/fb/auth',
         fb_disconnect_url: 'https://127.0.0.1:27974/api/user/connect/fb/disconnect',
