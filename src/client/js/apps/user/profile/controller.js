@@ -225,13 +225,34 @@ define(function(require) {
     }
 
     /**
-     * Log out logged in user, redirect to home:show
+     * Log out logged in user after prompting for confirmation, redirect to home:show
+     * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
      */
-    function proc_logout() {
+    function proc_logout(profile_view) {
       logger.trace('proc_logout');
-      $.get('/api/user/logout', function(resp_data, textStatus, jqXhr) {
-        AppObj.trigger('home:show');
-      });
+      q(AppObj.request('common:entities:flashmessage'))
+      .then(function(flash_message_model) {
+        var CommonViews = require('js/common/views');
+        var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+        var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
+          header: 'Logout?',
+          detail: 'Are you sure you want to logout?',
+          prompt_url: '',
+          confirm_text: 'Yes',
+          reject_text: 'No'
+        })});
+        confirm_view.on('confirm-clicked', function() {
+          $.get('/api/user/logout', function(resp_data, textStatus, jqXhr) {
+            AppObj.trigger('home:show');
+          });
+        });
+        confirm_view.on('reject-clicked', function() {
+          AppObj.trigger('user:profile');
+        });
+        profile_view.region_message.show(msg_view);
+        profile_view.region_profile_data.show(confirm_view);
+      })
+      .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_logout'));
     }
 
     Profile.controller = {
@@ -268,7 +289,7 @@ define(function(require) {
             var msg_view = new CommonViews.FlashMessageView({ model: msg });
             var p_data_view = new ProfileViews.UserProfileData({ model: up_data });
             var p_admin_view = new ProfileViews.UserProfileAdmin({ model: up_admin });
-            p_admin_view.on('logout-clicked', proc_logout);
+            p_admin_view.on('logout-clicked', function() { proc_logout(profile_view); });
             p_admin_view.on('local-connect-clicked', function() { proc_connect_local(profile_view); });
             p_admin_view.on('fb-connect-clicked', proc_connect_fb);
             p_admin_view.on('google-connect-clicked', proc_connect_google);
