@@ -16,8 +16,8 @@ define(function(require) {
       regions: {
         region_header: 'div.js-profile-header',
         region_message: 'div.js-flash-message',
-        region_profile_data: 'div.js-profile-data',
-        region_profile_admin: 'div.js-profile-admin'
+        region_profile_main: 'div.js-profile-main',
+        region_profile_control_panel: 'div.js-profile-control-panel'
       }
     });
 

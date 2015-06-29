@@ -108,7 +108,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         });
         profile_view.region_message.show(msg_view);
-        profile_view.region_profile_data.show(confirm_view);
+        profile_view.region_profile_main.show(confirm_view);
       })
       .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_disc_fb'));
     }
@@ -149,7 +149,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         });
         profile_view.region_message.show(msg_view);
-        profile_view.region_profile_data.show(confirm_view);
+        profile_view.region_profile_main.show(confirm_view);
       })
       .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_disc_google'));
     }
@@ -190,7 +190,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         });
         profile_view.region_message.show(msg_view);
-        profile_view.region_profile_data.show(confirm_view);
+        profile_view.region_profile_main.show(confirm_view);
       })
       .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_disc_twitter'));
     }
@@ -217,8 +217,8 @@ define(function(require) {
       });
       profile_view.region_header.show(header_view);
       profile_view.region_message.empty(); // clear any flash message already shown when displaying local connect view
-      profile_view.region_profile_data.show(connect_form_view);
-      profile_view.region_profile_admin.empty();
+      profile_view.region_profile_main.show(connect_form_view);
+      profile_view.region_profile_control_panel.empty();
     }
 
     /**
@@ -304,7 +304,7 @@ define(function(require) {
           AppObj.trigger('user:profile');
         });
         profile_view.region_message.show(msg_view);
-        profile_view.region_profile_data.show(confirm_view);
+        profile_view.region_profile_main.show(confirm_view);
       })
       .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_disc_local'));
     }
@@ -352,8 +352,8 @@ define(function(require) {
             profile_view.on('render', function() {
               profile_view.region_header.show(header_view);
               profile_view.region_message.show(msg_view);
-              profile_view.region_profile_data.show(p_data_view);
-              profile_view.region_profile_admin.show(p_admin_view);
+              profile_view.region_profile_main.show(p_data_view);
+              profile_view.region_profile_control_panel.show(p_admin_view);
             });
             AppObj.region_main.show(profile_view);
           })
@@ -398,7 +398,7 @@ define(function(require) {
           profile_view.on('render', function() {
             profile_view.region_header.show(header_view);
             profile_view.region_message.show(msg_view);
-            profile_view.region_profile_data.show(confirm_view);
+            profile_view.region_profile_main.show(confirm_view);
           });
           AppObj.region_main.show(profile_view);
         })
