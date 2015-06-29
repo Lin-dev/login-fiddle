@@ -309,37 +309,6 @@ define(function(require) {
       .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_disc_local'));
     }
 
-    /**
-     * Log out logged in user after prompting for confirmation, redirect to home:show
-     * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
-     */
-    function proc_logout(profile_view) {
-      logger.trace('proc_logout');
-      q(AppObj.request('common:entities:flashmessage'))
-      .then(function(flash_message_model) {
-        var CommonViews = require('js/common/views');
-        var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-        var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
-          header: 'Logout?',
-          detail: 'Are you sure you want to logout?',
-          prompt_url: '',
-          confirm_text: 'Yes',
-          reject_text: 'No'
-        })});
-        confirm_view.on('confirm-clicked', function() {
-          $.get('/api/user/logout', function(resp_data, textStatus, jqXhr) {
-            AppObj.trigger('home:show');
-          });
-        });
-        confirm_view.on('reject-clicked', function() {
-          AppObj.trigger('user:profile');
-        });
-        profile_view.region_message.show(msg_view);
-        profile_view.region_profile_data.show(confirm_view);
-      })
-      .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_logout'));
-    }
-
     Profile.controller = {
       /**
        * Display the user profile, allowing users to connect other providers and logout
@@ -371,7 +340,7 @@ define(function(require) {
             var msg_view = new CommonViews.FlashMessageView({ model: msg });
             var p_data_view = new ProfileViews.UserProfileData({ model: up_data });
             var p_admin_view = new ProfileViews.UserProfileAdmin({ model: up_admin });
-            p_admin_view.on('logout-clicked', function() { proc_logout(profile_view); });
+            p_admin_view.on('logout-clicked', function() { AppObj.trigger('user:profile:logout'); });
             p_admin_view.on('local-connect-clicked', function() { proc_connect_local(profile_view); });
             p_admin_view.on('fb-connect-clicked', proc_connect_fb);
             p_admin_view.on('google-connect-clicked', proc_connect_google);
@@ -393,6 +362,47 @@ define(function(require) {
         else {
           AppObj.trigger('user:access', 'user:profile');
         }
+      },
+
+      /**
+       * Log out logged in user after prompting for confirmation, redirect to home:show
+       */
+      proc_logout: function proc_logout() {
+        logger.trace('controller.proc_logout');
+        require('js/common/entities');
+        q(AppObj.request('common:entities:flashmessage'))
+        .then(function(flash_message_model) {
+          var CommonViews = require('js/common/views');
+          var ProfileViews = require('js/apps/user/profile/views');
+          var profile_view = new ProfileViews.UserProfileLayout();
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+            header_text: 'User profile'
+          })});
+          var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+          var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
+            header: 'Logout?',
+            detail: 'Are you sure you want to logout?',
+            prompt_url: '',
+            confirm_text: 'Yes',
+            reject_text: 'No'
+          })});
+          // no profile control panel
+          confirm_view.on('confirm-clicked', function() {
+            $.get('/api/user/logout', function(resp_data, textStatus, jqXhr) {
+              AppObj.trigger('home:show');
+            });
+          });
+          confirm_view.on('reject-clicked', function() {
+            AppObj.trigger('user:profile');
+          });
+          profile_view.on('render', function() {
+            profile_view.region_header.show(header_view);
+            profile_view.region_message.show(msg_view);
+            profile_view.region_profile_data.show(confirm_view);
+          });
+          AppObj.region_main.show(profile_view);
+        })
+        .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_logout'));
       }
     };
   });

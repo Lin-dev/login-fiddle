@@ -8,7 +8,8 @@ define(function(require) {
     UserApp.Router = Marionette.AppRouter.extend({
       appRoutes: {
         'access': 'show_access_form',
-        'profile': 'show_user_profile'
+        'profile': 'show_user_profile',
+        'profile/logout': 'proc_logout'
       }
     });
 
@@ -25,6 +26,13 @@ define(function(require) {
         var controller = require('js/apps/user/profile/controller');
         controller.show_user_profile(query_string);
         AppObj.execute('headerapp:set_active_navitem', 'user');
+      },
+
+      proc_logout: function proc_logout() {
+        logger.trace('API.proc_logout -- enter');
+        var controller = require('js/apps/user/profile/controller');
+        controller.proc_logout();
+        AppObj.execute('headerapp:set_active_navitem', 'user');
       }
     };
 
@@ -37,6 +45,11 @@ define(function(require) {
       AppObj.navigate('profile');
       API.show_user_profile(undefined);
     });
+
+    AppObj.on('user:profile:logout', function() {
+      AppObj.navigate('profile/logout');
+      API.proc_logout();
+    })
 
     AppObj.addInitializer(function(){
       logger.trace('AppObj.addInitializer -- enter');
