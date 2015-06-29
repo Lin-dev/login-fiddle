@@ -74,62 +74,125 @@ define(function(require) {
 
     /**
      * Disconnect Facebook account from user account
+     * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
      */
-    function proc_disc_fb() {
-      $.post(AppObj.config.apps.user.fb_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
-        if(resp_data.status === 'success') {
-          logger.debug('private.proc_disc_fb - server response -- success, re-rendering profile');
+    function proc_disc_fb(profile_view) {
+      q(AppObj.request('common:entities:flashmessage'))
+      .then(function(flash_message_model) {
+        var CommonViews = require('js/common/views');
+        var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+        var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
+          header: 'Disconnect Facebook?',
+          detail: 'If you disconnect your Facebook account you will not be able to use it to login. Are you sure?',
+          prompt_url: '',
+          confirm_text: 'Yes',
+          reject_text: 'No'
+        })});
+        confirm_view.on('confirm-clicked', function() {
+          $.post(AppObj.config.apps.user.fb_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+            if(resp_data.status === 'success') {
+              logger.debug('private.proc_disc_fb - server response -- success, re-rendering profile');
+              AppObj.trigger('user:profile');
+            }
+            else if(resp_data.status === 'failure') {
+              logger.debug('private.proc_disc_fb - server response -- failure, re-rendering profile');
+              AppObj.trigger('user:profile');
+            }
+            else {
+              logger.error('private.proc_disc_fb - server response -- unknown status: ' + resp_data.status);
+              AppObj.trigger('user:profile');
+            }
+          });
+        });
+        confirm_view.on('reject-clicked', function() {
           AppObj.trigger('user:profile');
-        }
-        else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disc_fb - server response -- failure, re-rendering profile');
-          AppObj.trigger('user:profile');
-        }
-        else {
-          logger.error('private.proc_disc_fb - server response -- unknown status: ' + resp_data.status);
-          AppObj.trigger('user:profile');
-        }
-      });
+        });
+        profile_view.region_message.show(msg_view);
+        profile_view.region_profile_data.show(confirm_view);
+      })
+      .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_disc_fb'));
     }
 
     /**
      * Disconnect Google account from user account
+     * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
      */
-    function proc_disc_google() {
-      $.post(AppObj.config.apps.user.google_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
-        if(resp_data.status === 'success') {
-          logger.debug('private.proc_disc_google - server response -- success, re-rendering profile');
+    function proc_disc_google(profile_view) {
+      q(AppObj.request('common:entities:flashmessage'))
+      .then(function(flash_message_model) {
+        var CommonViews = require('js/common/views');
+        var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+        var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
+          header: 'Disconnect Google?',
+          detail: 'If you disconnect your Google account you will not be able to use it to login. Are you sure?',
+          prompt_url: '',
+          confirm_text: 'Yes',
+          reject_text: 'No'
+        })});
+        confirm_view.on('confirm-clicked', function() {
+          $.post(AppObj.config.apps.user.google_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+            if(resp_data.status === 'success') {
+              logger.debug('private.proc_disc_google - server response -- success, re-rendering profile');
+              AppObj.trigger('user:profile');
+            }
+            else if(resp_data.status === 'failure') {
+              logger.debug('private.proc_disc_google - server response -- failure, re-rendering profile');
+              AppObj.trigger('user:profile');
+            }
+            else {
+              logger.error('private.proc_disc_google - server response -- unknown status: ' + resp_data.status);
+              AppObj.trigger('user:profile');
+            }
+          });
+        });
+        confirm_view.on('reject-clicked', function() {
           AppObj.trigger('user:profile');
-        }
-        else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disc_google - server response -- failure, re-rendering profile');
-          AppObj.trigger('user:profile');
-        }
-        else {
-          logger.error('private.proc_disc_google - server response -- unknown status: ' + resp_data.status);
-          AppObj.trigger('user:profile');
-        }
-      });
+        });
+        profile_view.region_message.show(msg_view);
+        profile_view.region_profile_data.show(confirm_view);
+      })
+      .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_disc_google'));
     }
 
     /**
      * Disconnect Twitter account from user account
+     * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
      */
-    function proc_disc_twitter() {
-      $.post(AppObj.config.apps.user.twitter_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
-        if(resp_data.status === 'success') {
-          logger.debug('private.proc_disc_twitter - server response -- success, re-rendering profile');
+    function proc_disc_twitter(profile_view) {
+      q(AppObj.request('common:entities:flashmessage'))
+      .then(function(flash_message_model) {
+        var CommonViews = require('js/common/views');
+        var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+        var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
+          header: 'Disconnect Twitter?',
+          detail: 'If you disconnect your Twitter account you will not be able to use it to login. Are you sure?',
+          prompt_url: '',
+          confirm_text: 'Yes',
+          reject_text: 'No'
+        })});
+        confirm_view.on('confirm-clicked', function() {
+          $.post(AppObj.config.apps.user.twitter_disconnect_url, {}, function(resp_data, textStatus, jqXhr) {
+            if(resp_data.status === 'success') {
+              logger.debug('private.proc_disc_twitter - server response -- success, re-rendering profile');
+              AppObj.trigger('user:profile');
+            }
+            else if(resp_data.status === 'failure') {
+              logger.debug('private.proc_disc_twitter - server response -- failure, re-rendering profile');
+              AppObj.trigger('user:profile');
+            }
+            else {
+              logger.error('private.proc_disc_twitter - server response -- unknown status: ' + resp_data.status);
+              AppObj.trigger('user:profile');
+            }
+          });
+        });
+        confirm_view.on('reject-clicked', function() {
           AppObj.trigger('user:profile');
-        }
-        else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disc_twitter - server response -- failure, re-rendering profile');
-          AppObj.trigger('user:profile');
-        }
-        else {
-          logger.error('private.proc_disc_twitter - server response -- unknown status: ' + resp_data.status);
-          AppObj.trigger('user:profile');
-        }
-      });
+        });
+        profile_view.region_message.show(msg_view);
+        profile_view.region_profile_data.show(confirm_view);
+      })
+      .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_disc_twitter'));
     }
 
     /**
@@ -206,22 +269,44 @@ define(function(require) {
 
     /**
      * Disconnect email address from user account
+     * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
      */
-    function proc_disc_local() {
-      $.post(AppObj.config.apps.user.local_disconnect_path, {}, function(resp_data, textStatus, jqXhr) {
-        if(resp_data.status === 'success') {
-          logger.debug('private.proc_disc_local - server response -- success, re-rendering profile');
+    function proc_disc_local(profile_view) {
+      q(AppObj.request('common:entities:flashmessage'))
+      .then(function(flash_message_model) {
+        var CommonViews = require('js/common/views');
+        var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+        var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
+          header: 'Remove email address?',
+          detail: 'If you remove your email address you will not be able to login using your email and password. ' +
+            'Are you sure?',
+          prompt_url: '',
+          confirm_text: 'Yes',
+          reject_text: 'No'
+        })});
+        confirm_view.on('confirm-clicked', function() {
+          $.post(AppObj.config.apps.user.local_disconnect_path, {}, function(resp_data, textStatus, jqXhr) {
+            if(resp_data.status === 'success') {
+              logger.debug('private.proc_disc_local - server response -- success, re-rendering profile');
+              AppObj.trigger('user:profile');
+            }
+            else if(resp_data.status === 'failure') {
+              logger.debug('private.proc_disc_local - server response -- failure, re-rendering profile');
+              AppObj.trigger('user:profile');
+            }
+            else {
+              logger.error('private.proc_disc_loal - server response -- unknown status: ' + resp_data.status);
+              AppObj.trigger('user:profile');
+            }
+          });
+        });
+        confirm_view.on('reject-clicked', function() {
           AppObj.trigger('user:profile');
-        }
-        else if(resp_data.status === 'failure') {
-          logger.debug('private.proc_disc_local - server response -- failure, re-rendering profile');
-          AppObj.trigger('user:profile');
-        }
-        else {
-          logger.error('private.proc_disc_loal - server response -- unknown status: ' + resp_data.status);
-          AppObj.trigger('user:profile');
-        }
-      });
+        });
+        profile_view.region_message.show(msg_view);
+        profile_view.region_profile_data.show(confirm_view);
+      })
+      .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_disc_local'));
     }
 
     /**
@@ -294,10 +379,10 @@ define(function(require) {
             p_admin_view.on('fb-connect-clicked', proc_connect_fb);
             p_admin_view.on('google-connect-clicked', proc_connect_google);
             p_admin_view.on('twitter-connect-clicked', proc_connect_twitter);
-            p_admin_view.on('local-disconnect-clicked', proc_disc_local);
-            p_admin_view.on('fb-disconnect-clicked', proc_disc_fb);
-            p_admin_view.on('google-disconnect-clicked', proc_disc_google);
-            p_admin_view.on('twitter-disconnect-clicked', proc_disc_twitter);
+            p_admin_view.on('local-disconnect-clicked', function() { proc_disc_local(profile_view); });
+            p_admin_view.on('fb-disconnect-clicked', function() { proc_disc_fb(profile_view); });
+            p_admin_view.on('google-disconnect-clicked', function() { proc_disc_google(profile_view); });
+            p_admin_view.on('twitter-disconnect-clicked', function() { proc_disc_twitter(profile_view); });
             profile_view.on('render', function() {
               profile_view.region_header.show(header_view);
               profile_view.region_message.show(msg_view);
