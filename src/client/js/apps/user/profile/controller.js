@@ -346,27 +346,24 @@ define(function(require) {
        * @param {String} query_string        Used so the server can send a message code to trigger a message display
        */
       show_user_profile: function show_user_profile(query_string) {
-        logger.trace('show_user_profile -- query_string: ' + query_string);
+        logger.trace('controller.show_user_profile -- query_string: ' + query_string);
+        require('js/apps/user/entities');
+        require('js/common/entities');
         if(AppObj.is_logged_in()) {
           var upd_promise = AppObj.request('userapp:entities:userprofiledata');
           var upa_promise = AppObj.request('userapp:entities:userprofileadmin');
           var msg_promise = AppObj.request('common:entities:flashmessage');
           q.all([upd_promise, upa_promise, msg_promise])
           .spread(function(up_data, up_admin, msg) {
-            require('js/apps/user/entities');
-            require('js/common/entities');
-
+            var CommonViews = require('js/common/views');
+            var ProfileViews = require('js/apps/user/profile/views');
             logger.debug('show_user_profile -- msg data: ' + JSON.stringify(msg));
             logger.debug('show_user_profile -- up_data data: ' + JSON.stringify(up_data));
             logger.debug('show_user_profile -- up_admin data: ' + JSON.stringify(up_admin));
-
             up_admin.set('email_connected', up_data.is_email_connected());
             up_admin.set('fb_connected', up_data.is_fb_connected());
             up_admin.set('google_connected', up_data.is_google_connected());
             up_admin.set('twitter_connected', up_data.is_twitter_connected());
-
-            var CommonViews = require('js/common/views');
-            var ProfileViews = require('js/apps/user/profile/views');
             var profile_view = new ProfileViews.UserProfileLayout();
             var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
               header_text: 'User profile'
