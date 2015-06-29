@@ -70,6 +70,18 @@ define(function(require) {
       __name: 'H1Header',
       template: _.template(require('text!js/common/templates/h1_header.html'), { variable: 'data' })
     });
+
+    /**
+     * A confirmation prompt (can be used modelessly)
+     */
+    Views.ConfirmationPrompt = AppObj.Common.Views.AppObjItemView.extend({
+      __name: 'ConfirmationPrompt',
+      template: _.template(require('text!js/common/templates/confirmation_prompt.html'), { variable: 'data' }),
+      triggers: {
+        'click a.js-confirm': 'confirm-clicked',
+        'click a.js-reject': 'reject-clicked'
+      }
+    });
     logger.trace('AppObj.module -- exit');
   });
   logger.trace('require:lambda -- exit');

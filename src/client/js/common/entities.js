@@ -27,6 +27,20 @@ define(function(require) {
       },
     });
 
+    /**
+     * A client only model for instantiating an. No API or event requesters as it is a simple, client only model
+     */
+    Entities.ConfirmationPrompt = AppObj.Common.Entities.ClientModel.extend({
+      __name: 'ConfirmationPrompt',
+      defaults: {
+        header: 'Please confirm',
+        detail: 'Are you sure you want to do this?',
+        prompt_url: undefined, // this should be the client URL that generates the prompt
+        confirm_text: 'Yes',
+        reject_text: 'No'
+      }
+    });
+
     var API = {
       /**
        * Returns a promise for the flash message possibly available at /api/util/flash_message
