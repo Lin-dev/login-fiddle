@@ -6,13 +6,13 @@ define(function(require) {
   var AppObj = require('js/app/obj');
   var logger = AppObj.logger.get('root/js/common/flash_message');
 
-  AppObj.module('Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
+  AppObj.module('Common.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
     /**
      * Used to access a flash message stored on the server api_util_config.flash_message_key ('flash_message')
      */
-    Entities.FlashMessage = AppObj.Entities.ServerModel.extend({
+    Entities.FlashMessage = AppObj.Common.Entities.ServerModel.extend({
       __name: 'FlashMessage',
       urlRoot: '/api/util/flash_message',
 
@@ -51,5 +51,5 @@ define(function(require) {
     });
   });
 
-  return AppObj.Entities;
+  return AppObj.Common.Entities;
 });

@@ -92,7 +92,7 @@ define(function(require) {
         if(_.isEmpty(val_errs)) {
           var CommonViews = require('js/common/views');
           var AccessViews = require('js/apps/user/access/views');
-          var signup_header = new CommonViews.H1Header({ model: new AppObj.Entities.ClientModel({
+          var signup_header = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
             header_text: 'Sign up'
           })});
           var signup_view = new AccessViews.SignupForm({
@@ -242,10 +242,10 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var access_view = new AccessViews.AccessLayout();
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
             header_text: 'Sign in'
           })});
-          var access_form = new AccessViews.AccessForm({ model: new AppObj.Entities.ClientModel({
+          var access_form = new AccessViews.AccessForm({ model: new AppObj.Common.Entities.ClientModel({
             fb_url: get_fb_auth_url(),
             google_url: get_google_auth_url(),
             twitter_url: get_twitter_auth_url(),

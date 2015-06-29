@@ -4,7 +4,7 @@ define(function(require) {
   var AppObj = require('js/app/obj');
   var logger = AppObj.logger.get('root/js/common/filtering_wrapper_collection');
 
-  AppObj.module('Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
+  AppObj.module('Common.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     /**
      * Returns a collection decorated with filtering functionality, does not need to be called with 'new'
      *
@@ -141,5 +141,5 @@ define(function(require) {
     };
   });
 
-  return AppObj.Entities;
+  return AppObj.Common.Entities;
 });

@@ -5,7 +5,7 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/common/base_entities');
   logger.trace('require:lambda -- enter');
 
-  AppObj.module('Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
+  AppObj.module('Common.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
     require('js/common/backbone_extensions');
 
@@ -45,5 +45,5 @@ define(function(require) {
   });
 
   logger.trace('require:lambda -- exit');
-  return AppObj.Entities;
+  return AppObj.Common.Entities;
 });

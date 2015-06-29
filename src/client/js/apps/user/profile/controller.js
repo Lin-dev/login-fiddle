@@ -139,7 +139,7 @@ define(function(require) {
     function proc_connect_local(profile_view) {
       var CommonViews = require('js/common/views');
       var ProfileViews = require('js/apps/user/profile/views');
-      var header_view = new CommonViews.H1Header({ model: new AppObj.Entities.ClientModel({
+      var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
         header_text: 'Add email'
       })});
       var connect_form_view = new ProfileViews.LocalConnectForm({
@@ -262,7 +262,7 @@ define(function(require) {
             var CommonViews = require('js/common/views');
             var ProfileViews = require('js/apps/user/profile/views');
             var profile_view = new ProfileViews.UserProfileLayout();
-            var header_view = new CommonViews.H1Header({ model: new AppObj.Entities.ClientModel({
+            var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
               header_text: 'User profile'
             })});
             var msg_view = new CommonViews.FlashMessageView({ model: msg });

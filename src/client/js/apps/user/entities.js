@@ -49,7 +49,7 @@ define(function(require) {
      * because they are used for client-side validation only. There is no reqres handler because they're so simple
      * and should be referenced directly via the AppObj object.
      */
-    Entities.UserLocalAccess = AppObj.Entities.ClientModel.extend({
+    Entities.UserLocalAccess = AppObj.Common.Entities.ClientModel.extend({
       __name: 'UserLocalAccess',
       validate: function validate(attrs, options) {
         var errs = {};
@@ -66,7 +66,7 @@ define(function(require) {
      * is client side only because they are used for client-side validation only. There is no reqres handler because
      * they're so simple and should be referenced directly via the AppObj object.
      */
-    Entities.LocalDataForValidation = AppObj.Entities.ClientModel.extend({
+    Entities.LocalDataForValidation = AppObj.Common.Entities.ClientModel.extend({
       __name: 'LocalDataForValidation',
       validate: function validate(attrs, options) {
         var errs = {};
@@ -107,7 +107,7 @@ define(function(require) {
      * Represents the information on a user profile - used for reading, updating and deleting the user profile but
      * not for creation
      */
-    Entities.UserProfileData = AppObj.Entities.ServerModel.extend({
+    Entities.UserProfileData = AppObj.Common.Entities.ServerModel.extend({
       __name: 'UserProfileData',
       urlRoot: '/api/user/user',
       sync: function sync(method, model, options) {
@@ -148,7 +148,7 @@ define(function(require) {
       }
     });
 
-    Entities.UserProfileAdmin = AppObj.Entities.ClientModel.extend({
+    Entities.UserProfileAdmin = AppObj.Common.Entities.ClientModel.extend({
       __name: 'UserProfileAdmin',
       defaults: {
         browser_logout_url: 'NYI',
