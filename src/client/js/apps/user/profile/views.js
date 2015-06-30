@@ -39,13 +39,13 @@ define(function(require) {
       triggers: {
         'click a.js-logout': 'logout-clicked',
         'click a.js-local-connect': 'local-connect-clicked',
-        'click a.js-local-disconnect': 'local-disconnect-clicked',
+        'click a.js-local-disconnect': 'local-disc-clicked',
         'click a.js-fb-connect': 'fb-connect-clicked',
-        'click a.js-fb-disconnect': 'fb-disconnect-clicked',
+        'click a.js-fb-disconnect': 'fb-disc-clicked',
         'click a.js-google-connect': 'google-connect-clicked',
-        'click a.js-google-disconnect': 'google-disconnect-clicked',
+        'click a.js-google-disconnect': 'google-disc-clicked',
         'click a.js-twitter-connect': 'twitter-connect-clicked',
-        'click a.js-twitter-disconnect': 'twitter-disconnect-clicked'
+        'click a.js-twitter-disconnect': 'twitter-disc-clicked'
       }
     });
 

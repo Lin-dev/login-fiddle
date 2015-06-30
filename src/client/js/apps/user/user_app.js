@@ -9,7 +9,11 @@ define(function(require) {
       appRoutes: {
         'access': 'show_access_form',
         'profile': 'show_user_profile',
-        'profile/logout': 'proc_logout'
+        'profile/logout': 'proc_logout',
+        'profile/disconnect/local': 'proc_disc_local',
+        'profile/disconnect/facebook': 'proc_disc_fb',
+        'profile/disconnect/google': 'proc_disc_google',
+        'profile/disconnect/twitter': 'proc_disc_twitter'
       }
     });
 
@@ -33,6 +37,34 @@ define(function(require) {
         var controller = require('js/apps/user/profile/controller');
         controller.proc_logout();
         AppObj.execute('headerapp:set_active_navitem', 'user');
+      },
+
+      proc_disc_local: function proc_disc_local() {
+        logger.trace('API.proc_disc_local -- enter');
+        var controller = require('js/apps/user/profile/controller');
+        controller.proc_disc_local();
+        AppObj.execute('headerapp:set_active_navitem', 'user');
+      },
+
+      proc_disc_fb: function proc_disc_fb() {
+        logger.trace('API.proc_disc_fb -- enter');
+        var controller = require('js/apps/user/profile/controller');
+        controller.proc_disc_fb();
+        AppObj.execute('headerapp:set_active_navitem', 'user');
+      },
+
+      proc_disc_google: function proc_disc_google() {
+        logger.trace('API.proc_disc_google -- enter');
+        var controller = require('js/apps/user/profile/controller');
+        controller.proc_disc_google();
+        AppObj.execute('headerapp:set_active_navitem', 'user');
+      },
+
+      proc_disc_twitter: function proc_disc_twitter() {
+        logger.trace('API.proc_disc_twitter -- enter');
+        var controller = require('js/apps/user/profile/controller');
+        controller.proc_twitter();
+        AppObj.execute('headerapp:set_active_navitem', 'user');
       }
     };
 
@@ -49,7 +81,27 @@ define(function(require) {
     AppObj.on('user:profile:logout', function() {
       AppObj.navigate('profile/logout');
       API.proc_logout();
-    })
+    });
+
+    AppObj.on('user:profile:disconnect:local', function() {
+      AppObj.navigate('profile/disconnect/local');
+      API.proc_disc_local();
+    });
+
+    AppObj.on('user:profile:disconnect:fb', function() {
+      AppObj.navigate('profile/disconnect/facebook');
+      API.proc_disc_fb();
+    });
+
+    AppObj.on('user:profile:disconnect:google', function() {
+      AppObj.navigate('profile/disconnect/google');
+      API.proc_disc_google();
+    });
+
+    AppObj.on('user:profile:disconnect:twitter', function() {
+      AppObj.navigate('profile/disconnect/twitter');
+      API.proc_disc_twitter();
+    });
 
     AppObj.addInitializer(function(){
       logger.trace('AppObj.addInitializer -- enter');
