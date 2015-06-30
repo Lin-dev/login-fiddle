@@ -17,15 +17,15 @@ define(function(require) {
         local_disconnect_path: '/api/user/connect/local/disconnect',
         fb_auth_url: 'https://127.0.0.1:27974/api/user/access/fb/auth',
         fb_connect_url: 'https://127.0.0.1:27974/api/user/connect/fb/auth',
-        fb_disconnect_url: 'https://127.0.0.1:27974/api/user/connect/fb/disconnect',
+        fb_disconnect_path: '/api/user/connect/fb/disconnect',
         fb_client_id: '',
         google_auth_url: 'https://127.0.0.1:27974/api/user/access/google/auth',
         google_connect_url: 'https://127.0.0.1:27974/api/user/connect/google/auth',
-        google_disconnect_url: 'https://127.0.0.1:27974/api/user/connect/google/disconnect',
+        google_disconnect_path: '/api/user/connect/google/disconnect',
         google_client_id: '',
         twitter_auth_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth',
         twitter_connect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/auth',
-        twitter_disconnect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/disconnect',
+        twitter_disconnect_path: '/api/user/connect/twitter/disconnect',
         twitter_consumer_key: ''
       }
     },

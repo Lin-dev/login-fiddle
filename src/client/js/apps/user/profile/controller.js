@@ -52,53 +52,6 @@ define(function(require) {
     }
 
     /**
-     * Connect user account to fb account
-     */
-    function proc_connect_fb() {
-      window.location.href = get_fb_connect_url();
-    }
-
-    /**
-     * Connect user account to google account
-     */
-    function proc_connect_google() {
-      window.location.href = get_google_connect_url();
-    }
-
-    /**
-     * Connect user account to twitter account
-     */
-    function proc_connect_twitter() {
-      window.location.href = get_twitter_connect_url();
-    }
-
-    /**
-     * Display form to connect user account to their separate email account
-     * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
-     */
-    function proc_connect_local(profile_view) {
-      var CommonViews = require('js/common/views');
-      var ProfileViews = require('js/apps/user/profile/views');
-      var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
-        header_text: 'Add email'
-      })});
-      var connect_form_view = new ProfileViews.LocalConnectForm({
-        model: new AppObj.UserApp.Entities.UserLocalConnect()
-      });
-      connect_form_view.on('profile-clicked', function() { AppObj.trigger('user:profile'); });
-      connect_form_view.on('local-connect-submitted', function(form_data) {
-        proc_connect_local_submitted(form_data, profile_view);
-      });
-      profile_view.on('connect_form:show_val_errs', function(val_errs) {
-        connect_form_view.show_val_errs.call(connect_form_view, val_errs);
-      });
-      profile_view.region_header.show(header_view);
-      profile_view.region_message.empty(); // clear any flash message already shown when displaying local connect view
-      profile_view.region_profile_main.show(connect_form_view);
-      profile_view.region_profile_control_panel.empty();
-    }
-
-    /**
      * Process form submission to connect user to their separate email account
      * @param {Object} form_data    The submitted form data serialised as an object using syphon
      * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
@@ -144,6 +97,42 @@ define(function(require) {
       }
     }
 
+    /**
+     * Process an authorisation provider disconnect according to the parameters
+     * @param  {[type]} confirm_model        The ConfirmationPrompt model to display
+     * @param  {[type]} disconnect_post_path The path to post to, to execute the disconnect
+     * @param  {[type]} disconnect_callback  Callback function to post
+     */
+    function proc_disconnect(confirm_model, disconnect_post_path, disconnect_callback) {
+      logger.debug('private.proc_disconnect - post path: ' + disconnect_post_path);
+      require('js/common/entities');
+      q(AppObj.request('common:entities:flashmessage'))
+      .then(function(flash_message_model) {
+        var CommonViews = require('js/common/views');
+        var ProfileViews = require('js/apps/user/profile/views');
+        var profile_view = new ProfileViews.UserProfileLayout();
+        var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          header_text: 'User profile'
+        })});
+        var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+        var confirm_view = new CommonViews.ConfirmationPrompt({ model: confirm_model });
+        // no profile control panel
+        confirm_view.on('confirm-clicked', function() {
+          $.post(disconnect_post_path, {}, disconnect_callback);
+        });
+        confirm_view.on('reject-clicked', function() {
+          AppObj.trigger('user:profile');
+        });
+        profile_view.on('render', function() {
+          profile_view.region_header.show(header_view);
+          profile_view.region_message.show(msg_view);
+          profile_view.region_profile_main.show(confirm_view);
+        });
+        AppObj.region_main.show(profile_view);
+      })
+      .fail(AppObj.on_promise_fail_gen('UserApp.Profile -- private.proc_disconnect'));
+    }
+
     Profile.controller = {
       /**
        * Display the user profile, allowing users to connect other providers and logout
@@ -176,10 +165,10 @@ define(function(require) {
             var p_data_view = new ProfileViews.UserProfileData({ model: up_data });
             var p_admin_view = new ProfileViews.UserProfileControlPanel({ model: up_admin });
             p_admin_view.on('logout-clicked', function() { AppObj.trigger('user:profile:logout'); });
-            p_admin_view.on('local-connect-clicked', function() { proc_connect_local(profile_view); });
-            p_admin_view.on('fb-connect-clicked', proc_connect_fb);
-            p_admin_view.on('google-connect-clicked', proc_connect_google);
-            p_admin_view.on('twitter-connect-clicked', proc_connect_twitter);
+            p_admin_view.on('local-connect-clicked', function() { AppObj.trigger('user:profile:connect:local'); });
+            p_admin_view.on('fb-connect-clicked', function() { AppObj.trigger('user:profile:connect:fb'); });
+            p_admin_view.on('google-connect-clicked', function() { AppObj.trigger('user:profile:connect:google'); });
+            p_admin_view.on('twitter-connect-clicked', function() { AppObj.trigger('user:profile:connect:twitter'); });
             p_admin_view.on('local-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:local'); });
             p_admin_view.on('fb-disco-clicked', function() { AppObj.trigger('user:profile:disconnect:fb'); });
             p_admin_view.on('google-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:google'); });
@@ -240,56 +229,82 @@ define(function(require) {
       },
 
       /**
+       * Display form to connect user account to their separate email account
+       */
+      proc_conn_local: function proc_conn_local() {
+        logger.trace('controller.proc_conn_local');
+        var CommonViews = require('js/common/views');
+        var ProfileViews = require('js/apps/user/profile/views');
+        var profile_view = new ProfileViews.UserProfileLayout();
+        var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          header_text: 'Add email'
+        })});
+        var connect_form_view = new ProfileViews.LocalConnectForm({
+          model: new AppObj.UserApp.Entities.UserLocalConnect()
+        });
+        connect_form_view.on('profile-clicked', function() { AppObj.trigger('user:profile'); });
+        connect_form_view.on('local-connect-submitted', function(form_data) {
+          proc_connect_local_submitted(form_data, profile_view);
+        });
+        profile_view.on('connect_form:show_val_errs', function(val_errs) {
+          connect_form_view.show_val_errs.call(connect_form_view, val_errs);
+        });
+        profile_view.on('render', function() {
+          profile_view.region_header.show(header_view);
+          profile_view.region_profile_main.show(connect_form_view);
+        });
+        AppObj.region_main.show(profile_view);
+      },
+
+      /**
+       * Connect user account to fb account
+       */
+      proc_conn_fb: function proc_conn_fb() {
+        window.location.href = get_fb_connect_url();
+      },
+
+      /**
+       * Connect user account to google account
+       */
+      proc_conn_google: function proc_conn_google() {
+        window.location.href = get_google_connect_url();
+      },
+
+      /**
+       * Connect user account to twitter account
+       */
+      proc_conn_twitter: function proc_conn_twitter() {
+        window.location.href = get_twitter_connect_url();
+      },
+
+      /**
        * Disconnect email address from user account
        */
       proc_disc_local: function proc_disc_local() {
         logger.trace('controller.proc_disc_local');
         require('js/common/entities');
-        q(AppObj.request('common:entities:flashmessage'))
-        .then(function(flash_message_model) {
-          var CommonViews = require('js/common/views');
-          var ProfileViews = require('js/apps/user/profile/views');
-          var profile_view = new ProfileViews.UserProfileLayout();
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
-            header_text: 'User profile'
-          })});
-          var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-          var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
-            header: 'Remove email address?',
-            detail: 'If you remove your email address you will not be able to login using your email and password. ' +
-              'Are you sure?',
-            prompt_url: '/profile/disconnect/local',
-            confirm_text: 'Yes',
-            reject_text: 'No'
-          })});
-          // no profile control panel
-          confirm_view.on('confirm-clicked', function() {
-            $.post(AppObj.config.apps.user.local_disconnect_path, {}, function(resp_data, textStatus, jqXhr) {
-              if(resp_data.status === 'success') {
-                logger.debug('private.proc_disc_local - server response -- success, re-rendering profile');
-                AppObj.trigger('user:profile');
-              }
-              else if(resp_data.status === 'failure') {
-                logger.debug('private.proc_disc_local - server response -- failure, re-rendering profile');
-                AppObj.trigger('user:profile');
-              }
-              else {
-                logger.error('private.proc_disc_loal - server response -- unknown status: ' + resp_data.status);
-                AppObj.trigger('user:profile');
-              }
-            });
-          });
-          confirm_view.on('reject-clicked', function() {
+        var confirm_model = new AppObj.Common.Entities.ConfirmationPrompt({
+          header: 'Remove email address?',
+          detail: 'If you remove your email address you will not be able to login using your email and password. ' +
+            'Are you sure?',
+          confirm_text: 'Yes',
+          reject_text: 'No'
+        });
+        var disconnect_callback = function proc_disc_local_disconnect_callback(resp_data, textStatus, jqXhr) {
+          if(resp_data.status === 'success') {
+            logger.debug('private.proc_disc_local - server response -- success, re-rendering profile');
             AppObj.trigger('user:profile');
-          });
-          profile_view.on('render', function() {
-            profile_view.region_header.show(header_view);
-            profile_view.region_message.show(msg_view);
-            profile_view.region_profile_main.show(confirm_view);
-          });
-          AppObj.region_main.show(profile_view);
-        })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_disc_local'));
+          }
+          else if(resp_data.status === 'failure') {
+            logger.debug('private.proc_disc_local - server response -- failure, re-rendering profile');
+            AppObj.trigger('user:profile');
+          }
+          else {
+            logger.error('private.proc_disc_loal - server response -- unknown status: ' + resp_data.status);
+            AppObj.trigger('user:profile');
+          }
+        };
+        proc_disconnect(confirm_model, AppObj.config.apps.user.local_disconnect_path, disconnect_callback);
       },
 
       /**
@@ -298,50 +313,27 @@ define(function(require) {
       proc_disc_fb: function proc_disc_fb() {
         logger.trace('controller.proc_disc_fb');
         require('js/common/entities');
-        q(AppObj.request('common:entities:flashmessage'))
-        .then(function(flash_message_model) {
-          var CommonViews = require('js/common/views');
-          var ProfileViews = require('js/apps/user/profile/views');
-          var profile_view = new ProfileViews.UserProfileLayout();
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
-            header_text: 'User profile'
-          })});
-          var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-          var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
-            header: 'Disconnect Facebook?',
-            detail: 'If you disconnect your Facebook account you will not be able to use it to login. Are you sure?',
-            prompt_url: '/profile/disconnect/facebook',
-            confirm_text: 'Yes',
-            reject_text: 'No'
-          })});
-          // no profile control panel
-          confirm_view.on('confirm-clicked', function() {
-            $.post(AppObj.config.apps.user.facebook_disconnect_path, {}, function(resp_data, textStatus, jqXhr) {
-              if(resp_data.status === 'success') {
-                logger.debug('private.proc_disc_fb - server response -- success, re-rendering profile');
-                AppObj.trigger('user:profile');
-              }
-              else if(resp_data.status === 'failure') {
-                logger.debug('private.proc_disc_fb - server response -- failure, re-rendering profile');
-                AppObj.trigger('user:profile');
-              }
-              else {
-                logger.error('private.proc_disc_fb - server response -- unknown status: ' + resp_data.status);
-                AppObj.trigger('user:profile');
-              }
-            });
-          });
-          confirm_view.on('reject-clicked', function() {
+        var confirm_model = new AppObj.Common.Entities.ConfirmationPrompt({
+          header: 'Disconnect Facebook?',
+          detail: 'If you disconnect your Facebook account you will not be able to use it to login. Are you sure?',
+          confirm_text: 'Yes',
+          reject_text: 'No'
+        });
+        var disconnect_callback = function proc_disc_fb_disconnect_callback(resp_data, textStatus, jqXhr) {
+          if(resp_data.status === 'success') {
+            logger.debug('private.proc_disc_fb - server response -- success, re-rendering profile');
             AppObj.trigger('user:profile');
-          });
-          profile_view.on('render', function() {
-            profile_view.region_header.show(header_view);
-            profile_view.region_message.show(msg_view);
-            profile_view.region_profile_main.show(confirm_view);
-          });
-          AppObj.region_main.show(profile_view);
-        })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_disc_google'));
+          }
+          else if(resp_data.status === 'failure') {
+            logger.debug('private.proc_disc_fb - server response -- failure, re-rendering profile');
+            AppObj.trigger('user:profile');
+          }
+          else {
+            logger.error('private.proc_disc_fb - server response -- unknown status: ' + resp_data.status);
+            AppObj.trigger('user:profile');
+          }
+        };
+        proc_disconnect(confirm_model, AppObj.config.apps.user.fb_disconnect_path, disconnect_callback);
       },
 
       /**
@@ -350,50 +342,27 @@ define(function(require) {
       proc_disc_google: function proc_disc_google() {
         logger.trace('controller.proc_disc_google');
         require('js/common/entities');
-        q(AppObj.request('common:entities:flashmessage'))
-        .then(function(flash_message_model) {
-          var CommonViews = require('js/common/views');
-          var ProfileViews = require('js/apps/user/profile/views');
-          var profile_view = new ProfileViews.UserProfileLayout();
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
-            header_text: 'User profile'
-          })});
-          var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-          var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
-            header: 'Disconnect Google?',
-            detail: 'If you disconnect your Google account you will not be able to use it to login. Are you sure?',
-            prompt_url: '/profile/disconnect/google',
-            confirm_text: 'Yes',
-            reject_text: 'No'
-          })});
-          // no profile control panel
-          confirm_view.on('confirm-clicked', function() {
-            $.post(AppObj.config.apps.user.google_disconnect_path, {}, function(resp_data, textStatus, jqXhr) {
-              if(resp_data.status === 'success') {
-                logger.debug('private.proc_disc_google - server response -- success, re-rendering profile');
-                AppObj.trigger('user:profile');
-              }
-              else if(resp_data.status === 'failure') {
-                logger.debug('private.proc_disc_google - server response -- failure, re-rendering profile');
-                AppObj.trigger('user:profile');
-              }
-              else {
-                logger.error('private.proc_disc_google - server response -- unknown status: ' + resp_data.status);
-                AppObj.trigger('user:profile');
-              }
-            });
-          });
-          confirm_view.on('reject-clicked', function() {
+        var confirm_model = new AppObj.Common.Entities.ConfirmationPrompt({
+          header: 'Disconnect Google?',
+          detail: 'If you disconnect your Google account you will not be able to use it to login. Are you sure?',
+          confirm_text: 'Yes',
+          reject_text: 'No'
+        });
+        var disconnect_callback = function proc_disc_google_disconnect_callback(resp_data, textStatus, jqXhr) {
+          if(resp_data.status === 'success') {
+            logger.debug('private.proc_disc_google - server response -- success, re-rendering profile');
             AppObj.trigger('user:profile');
-          });
-          profile_view.on('render', function() {
-            profile_view.region_header.show(header_view);
-            profile_view.region_message.show(msg_view);
-            profile_view.region_profile_main.show(confirm_view);
-          });
-          AppObj.region_main.show(profile_view);
-        })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_disc_google'));
+          }
+          else if(resp_data.status === 'failure') {
+            logger.debug('private.proc_disc_google - server response -- failure, re-rendering profile');
+            AppObj.trigger('user:profile');
+          }
+          else {
+            logger.error('private.proc_disc_google - server response -- unknown status: ' + resp_data.status);
+            AppObj.trigger('user:profile');
+          }
+        };
+        proc_disconnect(confirm_model, AppObj.config.apps.user.google_disconnect_path, disconnect_callback);
       },
 
       /**
@@ -402,50 +371,27 @@ define(function(require) {
       proc_disc_twitter: function proc_disc_twitter() {
         logger.trace('controller.proc_disc_twitter');
         require('js/common/entities');
-        q(AppObj.request('common:entities:flashmessage'))
-        .then(function(flash_message_model) {
-          var CommonViews = require('js/common/views');
-          var ProfileViews = require('js/apps/user/profile/views');
-          var profile_view = new ProfileViews.UserProfileLayout();
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
-            header_text: 'User profile'
-          })});
-          var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-          var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
-            header: 'Disconnect Twitter?',
-            detail: 'If you disconnect your Twitter account you will not be able to use it to login. Are you sure?',
-            prompt_url: '/profile/disconnect/twitter',
-            confirm_text: 'Yes',
-            reject_text: 'No'
-          })});
-          // no profile control panel
-          confirm_view.on('confirm-clicked', function() {
-            $.post(AppObj.config.apps.user.twitter_disconnect_path, {}, function(resp_data, textStatus, jqXhr) {
-              if(resp_data.status === 'success') {
-                logger.debug('private.proc_disc_twitter - server response -- success, re-rendering profile');
-                AppObj.trigger('user:profile');
-              }
-              else if(resp_data.status === 'failure') {
-                logger.debug('private.proc_disc_twitter - server response -- failure, re-rendering profile');
-                AppObj.trigger('user:profile');
-              }
-              else {
-                logger.error('private.proc_disc_twitter - server response -- unknown status: ' + resp_data.status);
-                AppObj.trigger('user:profile');
-              }
-            });
-          });
-          confirm_view.on('reject-clicked', function() {
+        var confirm_model = new AppObj.Common.Entities.ConfirmationPrompt({
+          header: 'Disconnect Twitter?',
+          detail: 'If you disconnect your Twitter account you will not be able to use it to login. Are you sure?',
+          confirm_text: 'Yes',
+          reject_text: 'No'
+        });
+        var disconnect_callback = function proc_disc_twitter_disconnect_callback(resp_data, textStatus, jqXhr) {
+          if(resp_data.status === 'success') {
+            logger.debug('private.proc_disc_twitter - server response -- success, re-rendering profile');
             AppObj.trigger('user:profile');
-          });
-          profile_view.on('render', function() {
-            profile_view.region_header.show(header_view);
-            profile_view.region_message.show(msg_view);
-            profile_view.region_profile_main.show(confirm_view);
-          });
-          AppObj.region_main.show(profile_view);
-        })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_disc_twitter'));
+          }
+          else if(resp_data.status === 'failure') {
+            logger.debug('private.proc_disc_twitter - server response -- failure, re-rendering profile');
+            AppObj.trigger('user:profile');
+          }
+          else {
+            logger.error('private.proc_disc_twitter - server response -- unknown status: ' + resp_data.status);
+            AppObj.trigger('user:profile');
+          }
+        };
+        proc_disconnect(confirm_model, AppObj.config.apps.user.twitter_disconnect_path, disconnect_callback);
       }
     };
   });

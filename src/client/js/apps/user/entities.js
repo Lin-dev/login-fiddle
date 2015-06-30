@@ -154,14 +154,15 @@ define(function(require) {
     Entities.UserProfileControlPanel = AppObj.Common.Entities.ClientModel.extend({
       __name: 'UserProfileControlPanel',
       defaults: {
-        browser_logout_url: 'NYI',
-        browser_connect_email_url: 'NYI',
-        connect_email_url: 'NYI',
-        connect_fb_url: AppObj.config.apps.user.fb_connect_url + '?display=' +
-          'get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale())',
-        connect_google_url: AppObj.config.apps.user.google_connect_url + '?display=' +
-          'get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale())',
-        connect_twitter_url: AppObj.config.apps.user.twitter_connect_url
+        client_conn_local_path: '/profile/connect/local',
+        client_conn_fb_path: '/profile/connect/facebook',
+        client_conn_google_path: '/profile/connect/google',
+        client_conn_twitter_path: '/profile/connect/twitter',
+        client_disc_local_path: '/profile/disconnect/local',
+        client_disc_fb_path: '/profile/disconnect/facebook',
+        client_disc_google_path: '/profile/disconnect/google',
+        client_disc_twitter_path: '/profile/disconnect/twitter',
+        client_logout_path: '/profile/logout',
       }
     });
 
