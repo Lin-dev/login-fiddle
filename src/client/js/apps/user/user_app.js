@@ -63,7 +63,7 @@ define(function(require) {
       proc_disc_twitter: function proc_disc_twitter() {
         logger.trace('API.proc_disc_twitter -- enter');
         var controller = require('js/apps/user/profile/controller');
-        controller.proc_twitter();
+        controller.proc_disc_twitter();
         AppObj.execute('headerapp:set_active_navitem', 'user');
       }
     };

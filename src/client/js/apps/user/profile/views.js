@@ -32,8 +32,8 @@ define(function(require) {
     /**
      * @type {Object} View for displaying user profile connect UI elements
      */
-    Views.UserProfileAdmin = AppObj.Common.Views.AppObjItemView.extend({
-      __name: 'UserProfileAdmin',
+    Views.UserProfileControlPanel = AppObj.Common.Views.AppObjItemView.extend({
+      __name: 'UserProfileControlPanel',
       template: _.template(require('text!js/apps/user/profile/templates/profile_admin.html'), { variable: 'data' }),
 
       triggers: {

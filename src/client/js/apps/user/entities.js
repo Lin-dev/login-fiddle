@@ -148,8 +148,11 @@ define(function(require) {
       }
     });
 
-    Entities.UserProfileAdmin = AppObj.Common.Entities.ClientModel.extend({
-      __name: 'UserProfileAdmin',
+    /**
+     * Stores the client (browser accessible) URL's used in the profile control panel
+     */
+    Entities.UserProfileControlPanel = AppObj.Common.Entities.ClientModel.extend({
+      __name: 'UserProfileControlPanel',
       defaults: {
         browser_logout_url: 'NYI',
         browser_connect_email_url: 'NYI',
@@ -185,7 +188,7 @@ define(function(require) {
         logger.trace('API.get_user_profile_admin_promise -- enter');
         var deferred = q.defer();
         if(Entities.get_user_profile_admin === undefined) {
-          Entities.get_user_profile_admin = new Entities.UserProfileAdmin();
+          Entities.get_user_profile_admin = new Entities.UserProfileControlPanel();
         }
         deferred.resolve(Entities.get_user_profile_admin);
         return deferred.promise;
@@ -196,7 +199,7 @@ define(function(require) {
       return API.get_user_profile_data_promise();
     });
 
-    AppObj.reqres.setHandler('userapp:entities:userprofileadmin', function() {
+    AppObj.reqres.setHandler('userapp:entities:userprofilecontrolpanel', function() {
       return API.get_user_profile_admin_promise();
     });
   });

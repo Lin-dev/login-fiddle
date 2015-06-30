@@ -35,7 +35,6 @@ define(function(require) {
       defaults: {
         header: 'Please confirm',
         detail: 'Are you sure you want to do this?',
-        prompt_url: undefined, // this should be the client URL that generates the prompt
         confirm_text: 'Yes',
         reject_text: 'No'
       }

@@ -155,7 +155,7 @@ define(function(require) {
         require('js/common/entities');
         if(AppObj.is_logged_in()) {
           var upd_promise = AppObj.request('userapp:entities:userprofiledata');
-          var upa_promise = AppObj.request('userapp:entities:userprofileadmin');
+          var upa_promise = AppObj.request('userapp:entities:userprofilecontrolpanel');
           var msg_promise = AppObj.request('common:entities:flashmessage');
           q.all([upd_promise, upa_promise, msg_promise])
           .spread(function(up_data, up_admin, msg) {
@@ -174,7 +174,7 @@ define(function(require) {
             })});
             var msg_view = new CommonViews.FlashMessageView({ model: msg });
             var p_data_view = new ProfileViews.UserProfileData({ model: up_data });
-            var p_admin_view = new ProfileViews.UserProfileAdmin({ model: up_admin });
+            var p_admin_view = new ProfileViews.UserProfileControlPanel({ model: up_admin });
             p_admin_view.on('logout-clicked', function() { AppObj.trigger('user:profile:logout'); });
             p_admin_view.on('local-connect-clicked', function() { proc_connect_local(profile_view); });
             p_admin_view.on('fb-connect-clicked', proc_connect_fb);
@@ -217,7 +217,6 @@ define(function(require) {
           var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
             header: 'Logout?',
             detail: 'Are you sure you want to logout?',
-            prompt_url: '/profile/logout',
             confirm_text: 'Yes',
             reject_text: 'No'
           })});

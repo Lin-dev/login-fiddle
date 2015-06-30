@@ -9,7 +9,6 @@ define(function(require) {
     },
     apps: {
       user: {
-        // TODO: Is it worth config'ing local_username_field = local_email and local_password_field = local_password?
         local_password_min_length: 8,
         local_password_max_length: 256,
         local_login_path: '/api/user/access/local/login',
