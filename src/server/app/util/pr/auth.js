@@ -169,6 +169,44 @@ module.exports = function(sequelize, DataTypes) {
             twitter_name: twitter_profile.displayName
           };
           return this.create(user_attrs);
+        },
+
+        /**
+         * Finds a user with the requested local username field (by default, email)
+         * @param  {[type]} username_value The local username to search for
+         * @return {[type]}                A promise for the result of the Sequelize find call
+         */
+        find_with_local_username: function find_with_local_username(username_value) {
+          var where_object = {};
+          where_object[user_config.local.username_field] = username_value;
+          return this.find({ where: where_object });
+        },
+
+        /**
+         * Finds a user with the requested facebook ID
+         * @param  {[type]} fb_id The facebook ID to search for
+         * @return {[type]}       A promise for the result of the Sequelize find call
+         */
+        find_with_fb_id: function find_with_fb_id(fb_id) {
+          return this.find({ where: { fb_id: fb_id } });
+        },
+
+        /**
+         * Finds a user with the requested google ID
+         * @param  {[type]} google_id The Google ID to find
+         * @return {[type]}           A promise for the result of the Sequelize find call
+         */
+        find_with_google_id: function find_with_google_id(google_id) {
+          return this.find({ where: { google_id: google_id } });
+        },
+
+        /**
+         * Finds a user with the requested twitter ID
+         * @param  {[type]} twitter_id The twitter ID to find
+         * @return {[type]}            A promise for the result of the Sequelize find call
+         */
+        find_with_twitter_id: function find_with_twitter_id(twitter_id) {
+          return this.find({ where: { twitter_id: twitter_id } });
         }
       },
 
