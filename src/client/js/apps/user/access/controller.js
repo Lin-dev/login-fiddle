@@ -90,25 +90,7 @@ define(function(require) {
         var email_validation = new AppObj.UserApp.Entities.UserLocalAccess();
         var val_errs = email_validation.validate(form_data);
         if(_.isEmpty(val_errs)) {
-          var CommonViews = require('js/common/views');
-          var AccessViews = require('js/apps/user/access/views');
-          var signup_header = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
-            header_text: 'Sign up'
-          })});
-          var signup_view = new AccessViews.SignupForm({
-            model: new AppObj.UserApp.Entities.UserLocalSignup({ local_email: form_data.local_email })
-          });
-          signup_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
-          signup_view.on('login-clicked', function() { AppObj.trigger('user:access'); });
-          signup_view.on('local-signup-submitted', function(form_data) {
-            proc_local_signup(form_data, access_view, trigger_after_login);
-          });
-          access_view.on('signup_form:show_val_errs', function(val_errs) {
-            signup_view.show_val_errs.call(signup_view, val_errs);
-          });
-          access_view.region_header.show(signup_header);
-          // no message to show in region_message
-          access_view.region_form.show(signup_view);
+          AppObj.trigger('user:access:signup', trigger_after_access, form_data.local_email);
         }
         else {
           logger.debug('show_access_form -- user form validation failed: invalid email address for signup' +
@@ -235,6 +217,7 @@ define(function(require) {
        */
       show_access_form: function show_access_form(trigger_after_access) {
         logger.trace('show_access_form -- trigger_after_access: ' + trigger_after_access);
+        require('js/common/entities');
         if(!trigger_after_access) { trigger_after_access = 'user:profile'; }
         q(AppObj.request('common:entities:flashmessage'))
         .then(function(flash_message_model) {
@@ -268,6 +251,46 @@ define(function(require) {
           AppObj.region_main.show(access_view);
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_access_form'));
+      },
+
+      /**
+       * Display the access form, allowing users to sign up using an email and password
+       * @param {String} trigger_after_access The navigation event that should be triggered after successful login
+       * @param {String} email_address        Optional, an email address to pre-populate the first email field with
+       */
+      show_signup_form: function show_signup_form(trigger_after_signup, email_address) {
+        logger.trace('show_signup_form -- trigger_after_signup: ' + trigger_after_signup + ', email: ' + email_address);
+        require('js/common/entities');
+        if(!trigger_after_signup) { trigger_after_signup = 'user:profile'; }
+        q(AppObj.request('common:entities:flashmessage'))
+        .then(function(flash_message_model) {
+          require('js/apps/user/entities');
+          var AccessViews = require('js/apps/user/access/views');
+          var CommonViews = require('js/common/views');
+          var access_view = new AccessViews.AccessLayout();
+          var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+            header_text: 'Sign up'
+          })});
+          var signup_form = new AccessViews.SignupForm({
+            model: new AppObj.UserApp.Entities.UserLocalSignup({ local_email: email_address })
+          });
+          signup_form.on('home-clicked', function() { AppObj.trigger('home:show'); });
+          signup_form.on('login-clicked', function() { AppObj.trigger('user:access'); });
+          signup_form.on('local-signup-submitted', function(form_data) {
+            proc_local_signup(form_data, access_view, trigger_after_signup);
+          });
+          access_view.on('signup_form:show_val_errs', function(val_errs) {
+            signup_form.show_val_errs.call(signup_form, val_errs);
+          });
+          access_view.on('render', function() {
+            access_view.region_header.show(header_view);
+            access_view.region_message.show(msg_view);
+            access_view.region_form.show(signup_form);
+          });
+          AppObj.region_main.show(access_view);
+        })
+        .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_signup_form'));
       }
     };
   });

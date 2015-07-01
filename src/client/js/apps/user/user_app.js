@@ -8,6 +8,7 @@ define(function(require) {
     UserApp.Router = Marionette.AppRouter.extend({
       appRoutes: {
         'access': 'show_access_form',
+        'access/signup': 'show_signup_form',
         'profile': 'show_user_profile',
         'profile/logout': 'proc_logout',
         'profile/connect/local': 'proc_conn_local',
@@ -26,6 +27,13 @@ define(function(require) {
         logger.trace('API.show_access_form -- enter');
         var controller = require('js/apps/user/access/controller');
         controller.show_access_form(trigger_after_login);
+        AppObj.execute('headerapp:set_active_navitem', 'user');
+      },
+
+      show_signup_form: function show_signup_form(trigger_after_signup, email_address) {
+        logger.trace('API.show_signup_form -- enter');
+        var controller = require('js/apps/user/access/controller');
+        controller.show_signup_form(trigger_after_signup, email_address);
         AppObj.execute('headerapp:set_active_navitem', 'user');
       },
 
@@ -103,6 +111,11 @@ define(function(require) {
     AppObj.on('user:access', function(trigger_after_login) {
       AppObj.navigate('access');
       API.show_access_form(trigger_after_login);
+    });
+
+    AppObj.on('user:access:signup', function(trigger_after_signup, email_address) {
+      AppObj.navigate('access/signup');
+      API.show_signup_form(trigger_after_signup, email_address);
     });
 
     AppObj.on('user:profile', function() {
