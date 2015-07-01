@@ -178,7 +178,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_local_username: function find_with_local_username(username_value) {
           var where_object = {};
-          where_object[user_config.local.username_field] = username_value;
+          where_object[user_config.local.username_field] = { ilike: username_value };
           return this.find({ where: where_object });
         },
 
