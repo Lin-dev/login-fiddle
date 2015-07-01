@@ -183,6 +183,26 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         /**
+         * Returns an array of connected auth providers (e.g. ['google', 'fb', 'twitter', 'local']) for this user
+         */
+        connected_auth_providers: function connected_auth_providers() {
+          var providers = [];
+          if(this.get('local_email')) {
+            providers.push('local');
+          }
+          if(this.get('fb_id')) {
+            providers.push('fb');
+          }
+          if(this.get('google_id')) {
+            providers.push('google');
+          }
+          if(this.get('twitter_id')) {
+            providers.push('twitter');
+          }
+          return providers;
+        },
+
+        /**
          * Updates this user instance with connected email and password and saves it
          * @param  {Object} local_profile The user's email address and hashed password
          * @return {Object}               A promise for completion of the user instance save
@@ -200,9 +220,15 @@ module.exports = function(sequelize, DataTypes) {
          */
         disconnect_local_and_save: function disconnect_local_and_save() {
           logger.trace('exports.disconnect_local_and_save -- disconnecting');
-          this.set(user_config.local.username_field, null);
-          this.set(user_config.local.password_field, null);
-          return this.save();
+          var auth_providers = this.connected_auth_providers();
+          if(auth_providers.length > 1) {
+            this.set(user_config.local.username_field, null);
+            this.set(user_config.local.password_field, null);
+            return this.save();
+          }
+          else {
+            throw new Error('Cannot disc local - user only has following providers: ' + JSON.stringify(auth_providers));
+          }
         },
 
         /**
@@ -229,13 +255,19 @@ module.exports = function(sequelize, DataTypes) {
          */
         disconnect_fb_and_save: function disconnect_fb_and_save() {
           logger.trace('exports.disconnect_fb_and_save -- disconnecting: ' + this.fb_id);
-          this.set({
-            fb_id: null,
-            fb_token: null,
-            fb_name: null,
-            fb_email: null
-          });
-          return this.save();
+          var auth_providers = this.connected_auth_providers();
+          if(auth_providers.length > 1) {
+            this.set({
+              fb_id: null,
+              fb_token: null,
+              fb_name: null,
+              fb_email: null
+            });
+            return this.save();
+          }
+          else {
+            throw new Error('Cannot disc local - user only has following providers: ' + JSON.stringify(auth_providers));
+          }
         },
 
         /**
@@ -262,13 +294,19 @@ module.exports = function(sequelize, DataTypes) {
          */
         disconnect_google_and_save: function disconnect_google_and_save() {
           logger.trace('exports.disconnect_google_and_save -- disconnecting: ' + this.twitter_id);
-          this.set({
-            google_id: null,
-            google_token: null,
-            google_name: null,
-            google_email: null
-          });
-          return this.save();
+          var auth_providers = this.connected_auth_providers();
+          if(auth_providers.length > 1) {
+            this.set({
+              google_id: null,
+              google_token: null,
+              google_name: null,
+              google_email: null
+            });
+            return this.save();
+          }
+          else {
+            throw new Error('Cannot disc local - user only has following providers: ' + JSON.stringify(auth_providers));
+          }
         },
 
         /**
@@ -295,13 +333,19 @@ module.exports = function(sequelize, DataTypes) {
          */
         disconnect_twitter_and_save: function disconnect_twitter_and_save() {
           logger.trace('exports.disconnect_twitter_and_save -- disconnecting: ' + this.twitter_id);
-          this.set({
-            twitter_id: null,
-            twitter_token: null,
-            twitter_username: null,
-            twitter_name: null
-          });
-          return this.save();
+          var auth_providers = this.connected_auth_providers();
+          if(auth_providers.length > 1) {
+            this.set({
+              twitter_id: null,
+              twitter_token: null,
+              twitter_username: null,
+              twitter_name: null
+            });
+            return this.save();
+          }
+          else {
+            throw new Error('Cannot disc local - user only has following providers: ' + JSON.stringify(auth_providers));
+          }
         }
       }
     })
