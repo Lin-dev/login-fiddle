@@ -134,6 +134,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
+              AppObj.scroll_to_top();
             })
             .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_login'));
           }
@@ -145,6 +146,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
+              AppObj.scroll_to_top();
             })
             .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
           }
@@ -188,6 +190,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
+              AppObj.scroll_to_top();
             })
             .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
           }
@@ -199,6 +202,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
+              AppObj.scroll_to_top();
             })
             .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
           }
@@ -249,6 +253,7 @@ define(function(require) {
             access_view.region_form.show(access_form);
           });
           AppObj.region_main.show(access_view);
+          AppObj.scroll_to_top();
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_access_form'));
       },
@@ -289,6 +294,7 @@ define(function(require) {
             access_view.region_form.show(signup_form);
           });
           AppObj.region_main.show(access_view);
+          AppObj.scroll_to_top();
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_signup_form'));
       }

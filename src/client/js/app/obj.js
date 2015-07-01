@@ -3,6 +3,7 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Marionette = require('marionette');
+  var $ = require('jquery');
   var q = require('q'); // for setting long stack support
 
   // Set up app object
@@ -44,7 +45,6 @@ define(function(require) {
    */
   AppObj.is_logged_in = function is_logged_in() {
     require('jquery_cookie');
-    /* global $: false */
     return $.cookie.get('logged_in') === 'true';
   };
   ////////
@@ -63,6 +63,15 @@ define(function(require) {
   };
 
   q.longStackSupport = AppObj.config.app.q_long_stack_support;
+  ////////
+
+  // Display helpers
+  /**
+   * Scrolls the browser to the top
+   */
+  AppObj.scroll_to_top = function scroll_to_top() {
+    $('html, body').animate({ scrollTop: 0 }, 600);
+  };
   ////////
 
   // Log all events at trace

@@ -81,6 +81,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               profile_view.region_message.show(msg_view);
+              AppObj.scroll_to_top();
             })
             .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_connect_local_submitted'));
           }
@@ -129,6 +130,7 @@ define(function(require) {
           profile_view.region_profile_main.show(confirm_view);
         });
         AppObj.region_main.show(profile_view);
+        AppObj.scroll_to_top();
       })
       .fail(AppObj.on_promise_fail_gen('UserApp.Profile -- private.proc_disconnect'));
     }
@@ -180,6 +182,7 @@ define(function(require) {
               profile_view.region_profile_control_panel.show(p_admin_view);
             });
             AppObj.region_main.show(profile_view);
+            AppObj.scroll_to_top();
           })
           .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.show_user_profile'));
         }
@@ -224,6 +227,7 @@ define(function(require) {
             profile_view.region_profile_main.show(confirm_view);
           });
           AppObj.region_main.show(profile_view);
+          AppObj.scroll_to_top();
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_logout'));
       },
@@ -254,6 +258,7 @@ define(function(require) {
           profile_view.region_profile_main.show(connect_form_view);
         });
         AppObj.region_main.show(profile_view);
+        AppObj.scroll_to_top();
       },
 
       /**

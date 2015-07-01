@@ -13,6 +13,7 @@ define(function(require) {
         var Views = require('js/apps/home/show/views');
         var view = new Views.Home();
         AppObj.region_main.show(view);
+        AppObj.scroll_to_top();
         logger.trace('show_home -- exit');
       }
     };

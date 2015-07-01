@@ -16,6 +16,7 @@ define(function(require) {
           logger.debug('show_session_info -- received: ' + JSON.stringify(session_info));
           var session_info_view = new Views.SessionInfoView({ model: session_info });
           AppObj.region_main.show(session_info_view);
+          AppObj.scroll_to_top();
           logger.debug('show_session_info -- show complete');
         })
         .fail(AppObj.on_promise_fail_gen('SessionApp.Show.controller.show_session_info'));
