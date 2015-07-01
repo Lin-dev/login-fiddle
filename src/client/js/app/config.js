@@ -5,7 +5,8 @@ define(function(require) {
 
   var config = {
     app: {
-      logged_in_cookie_name: 'logged_in'
+      logged_in_cookie_name: 'logged_in',
+      q_long_stack_support: true
     },
     apps: {
       user: {

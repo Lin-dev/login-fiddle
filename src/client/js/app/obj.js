@@ -3,6 +3,7 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Marionette = require('marionette');
+  var q = require('q'); // for setting long stack support
 
   // Set up app object
   var AppObj = new Marionette.Application();
@@ -60,6 +61,8 @@ define(function(require) {
       logger.error(caller + ' -- promise failed, error: ' + err);
     };
   };
+
+  q.longStackSupport = AppObj.config.app.q_long_stack_support;
   ////////
 
   // Log all events at trace
