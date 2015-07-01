@@ -77,15 +77,15 @@ define(function(require) {
 
     /**
      * Respond to the local access form submission (either for signup or login)
-     * @param  {Object} form_data           The submitted form data serialised as an object using syphon
-     * @param  {Object} access_view         The instance of AccessViews.AccessLayout that is rendered already
-     * @param  {String} trigger_after_login The event trigger to fire after a succesful login
+     * @param  {Object} form_data            The submitted form data serialised as an object using syphon
+     * @param  {Object} access_view          The instance of AccessViews.AccessLayout that is rendered already
+     * @param  {String} trigger_after_access The event trigger to fire after a succesful login
      */
-    function proc_local_access_submitted(form_data, access_view, trigger_after_login) {
-      if(form_data.has_pw_flag === 'true') { // attempt a login using email / password
-        proc_local_login(form_data, access_view, trigger_after_login);
+    function proc_local_access_submitted(form_data, access_view, trigger_after_access) {
+      if(form_data.has_pw_flag === 'true') { // then attempt a login using email / password
+        proc_local_login(form_data, access_view, trigger_after_access);
       }
-      else if(form_data.has_pw_flag === 'false') { // show the signup form if email address valid
+      else if(form_data.has_pw_flag === 'false') { // then show the signup form if pw flag is false and email valid
         require('js/apps/user/entities');
         var email_validation = new AppObj.UserApp.Entities.UserLocalAccess();
         var val_errs = email_validation.validate(form_data);
@@ -124,11 +124,11 @@ define(function(require) {
 
     /**
      * Process a local login request
-     * @param  {Object} form_data           An object with a key for each form data field
-     * @param  {Object} access_view         The layout view (whose access_form in region_main should show val errors)
-     * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
+     * @param  {Object} form_data            An object with a key for each form data field
+     * @param  {Object} access_view          The layout view (whose access_form in region_main should show val errors)
+     * @param  {String} trigger_after_access The navigation event that should be triggered after successful login
      */
-    function proc_local_login(form_data, access_view, trigger_after_login) {
+    function proc_local_login(form_data, access_view, trigger_after_access) {
       // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
       require('js/apps/user/entities');
       var ula = new AppObj.UserApp.Entities.UserLocalAccess({
@@ -142,8 +142,8 @@ define(function(require) {
         $.post(AppObj.config.apps.user.local_login_path, form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_local_login - server API call response -- succeess, redirecting to: ' +
-              trigger_after_login);
-            AppObj.trigger(trigger_after_login);
+              trigger_after_access);
+            AppObj.trigger(trigger_after_access);
           }
           else if(resp_data.status === 'failure') {
             logger.debug('private.proc_local_login - server API call response -- login failure');
@@ -176,11 +176,11 @@ define(function(require) {
 
     /**
      * Process a local signup request, validating it and synchronising to the DB
-     * @param  {Object} form_data           An object with a key for each submitted form data field
-     * @param  {Object} access_view         The layout view (whose access_form in region_main should show val errors)
-     * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
+     * @param  {Object} form_data            An object with a key for each submitted form data field
+     * @param  {Object} access_view          The layout view (whose access_form in region_main should show val errors)
+     * @param  {String} trigger_after_access The navigation event that should be triggered after successful login
      */
-    function proc_local_signup(form_data, access_view, trigger_after_login) {
+    function proc_local_signup(form_data, access_view, trigger_after_access) {
       // UserLocalSignup just for validation (passport redirect mucks up Backbone model sync)
       require('js/apps/user/entities');
       var uls = new AppObj.UserApp.Entities.UserLocalSignup({
@@ -195,8 +195,8 @@ define(function(require) {
         $.post(AppObj.config.apps.user.local_signup_path, form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_local_signup - server API call response -- succeess, redirecting to: ' +
-              trigger_after_login);
-            AppObj.trigger(trigger_after_login);
+              trigger_after_access);
+            AppObj.trigger(trigger_after_access);
           }
           else if(resp_data.status === 'failure') {
             q(AppObj.request('common:entities:flashmessage'))
@@ -231,11 +231,11 @@ define(function(require) {
     Access.controller = {
       /**
        * Display the access form, allowing users to sign up and login
-       * @param  {String} trigger_after_login The navigation event that should be triggered after successful login
+       * @param {String} trigger_after_access The navigation event that should be triggered after successful login
        */
-      show_access_form: function show_access_form(trigger_after_login) {
-        logger.trace('show_access_form -- trigger_after_login: ' + trigger_after_login);
-        if(!trigger_after_login) { trigger_after_login = 'user:profile'; }
+      show_access_form: function show_access_form(trigger_after_access) {
+        logger.trace('show_access_form -- trigger_after_access: ' + trigger_after_access);
+        if(!trigger_after_access) { trigger_after_access = 'user:profile'; }
         q(AppObj.request('common:entities:flashmessage'))
         .then(function(flash_message_model) {
           var AccessViews = require('js/apps/user/access/views');
@@ -255,7 +255,7 @@ define(function(require) {
           access_form.on('google-access-clicked', proc_google_login);
           access_form.on('twitter-access-clicked', proc_twitter_login);
           access_form.on('local-access-submitted', function(form_data) {
-            proc_local_access_submitted(form_data, access_view, trigger_after_login);
+            proc_local_access_submitted(form_data, access_view, trigger_after_access);
           });
           access_view.on('access_form:show_val_errs', function(val_errs) {
             access_form.show_val_errs.call(access_form, val_errs);
