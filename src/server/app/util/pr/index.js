@@ -14,9 +14,9 @@ var sq = new Sequelize(database_config.name, database_config.user, database_conf
   port: database_config.port,
   define: {
     paranoid: true,
-    createdAt: 'sq_created_at',
-    updatedAt: 'sq_updated_at',
-    deletedAt: 'sq_deleted_at',
+    createdAt: database_config.object_status.created,
+    updatedAt: database_config.object_status.updated,
+    deletedAt: database_config.object_status.deleted,
     underscored: true,
     schema: database_config.schema,
     freezeTableName: true
