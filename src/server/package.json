@@ -25,7 +25,7 @@
     "pg-hstore": "2.3.x",
     "q": "1.1.x",
     "serve-favicon": "2.2.x",
-    "sequelize": "2.0.x",
+    "sequelize": "3.3.2",
     "ua-parser": "0.3.x",
     "underscore": "1.8.x"
   },

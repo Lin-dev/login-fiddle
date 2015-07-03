@@ -75,7 +75,7 @@ passport.serializeUser(function(user, done) {
  * Read all user information (as a Sequelize instance) from the main database to populate the session info
  */
 passport.deserializeUser(function(id, done) {
-  q(pr.pr.auth.user.find(id))
+  q(pr.pr.auth.user.findById(id))
   .then(function(user) {
     done(undefined, user);
   })
