@@ -75,7 +75,7 @@ passport.serializeUser(function(user, done) {
  * Read all user information (as a Sequelize instance) from the main database to populate the session info
  */
 passport.deserializeUser(function(id, done) {
-  q(pr.pr.auth.user.findById(id))
+  q(pr.pr.auth.user.find_with_id(id, 'all'))
   .then(function(user) {
     done(undefined, user);
   })
@@ -96,7 +96,7 @@ passport.use('local-signup', new LocalStrategy({
   // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
   // Prob: "Quora: What does process.nextTick(callback) actually do in Node.js?" - answer by Aran Mulholland, bullet 3
   process.nextTick(function() {
-    q(pr.pr.auth.user.find_with_local_username(email))
+    q(pr.pr.auth.user.find_with_local_username(email, 'all'))
     .then(function(user) {
       if(user === null) { // email not found, create the user
         var user_attrs = {};
@@ -134,7 +134,7 @@ passport.use('local-login', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_login_strategy_callback(req, email, password, done) {
-  q(pr.pr.auth.user.find_with_local_username(email))
+  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(function(user) {
     if(user !== null) {
       if(user.check_password(password)) {
@@ -165,7 +165,7 @@ passport.use('local-connect', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_connect_strategy_callback(req, email, password, done) {
-  q(pr.pr.auth.user.find_with_local_username(email))
+  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(function(user_with_email) {
     if(user_with_email === null) { // that email address is not used - add it to logged in a/c along with the password
       var user_attrs = {};
@@ -202,7 +202,7 @@ passport.use('fb-access', new FacebookStrategy({
   callbackURL: get_fb_auth_callback_url(),
   passReqToCallback: true
 }, function fb_access_strategy_callback(req, token, refresh_token, profile, done) {
-  q(pr.pr.auth.user.find_with_fb_id(profile.id))
+  q(pr.pr.auth.user.find_with_fb_id(profile.id, 'all'))
   .then(function(user) {
     if(user !== null) { // user found - log in
       logger.debug('fb-access -- callback found existing user, logging in: ' + JSON.stringify(user));
@@ -240,7 +240,7 @@ passport.use('fb-connect', new FacebookStrategy({
   passReqToCallback: true
 }, function fb_connect_strategy_callback(req, token, token_secret, profile, done) {
   if(req.user) {
-    q(pr.pr.auth.user.find_with_fb_id(profile.id))
+    q(pr.pr.auth.user.find_with_fb_id(profile.id, 'all'))
     .then(function(fb_user) {
       if(fb_user === null) { // no account for this fb id, update user and send back to client or error
         q(req.user.connect_fb_and_save(profile, token))
@@ -280,7 +280,7 @@ passport.use('google-access', new GoogleStrategy({
   callbackURL: get_google_auth_callback_url(),
   passReqToCallback: true
 }, function google_access_strategy_callback(req, token, refresh_token, profile, done) {
-  q(pr.pr.auth.user.find_with_google_id(profile.id))
+  q(pr.pr.auth.user.find_with_google_id(profile.id, 'all'))
   .then(function(user) {
     if(user !== null) { // user found - log in
       logger.debug('google-access -- found existing user, logging in: ' + JSON.stringify(user));
@@ -317,7 +317,7 @@ passport.use('google-connect', new GoogleStrategy({
   passReqToCallback: true
 }, function google_connect_strategy_callback(req, token, token_secret, profile, done) {
   if(req.user) {
-    q(pr.pr.auth.user.find_with_google_id(profile.id))
+    q(pr.pr.auth.user.find_with_google_id(profile.id, 'all'))
     .then(function(google_user) {
       if(google_user === null) { // no account for this google id, update user and send back to client or error
         q(req.user.connect_google_and_save(profile, token))
@@ -356,7 +356,7 @@ passport.use('twitter-access', new TwitterStrategy({
   callbackURL: get_twitter_auth_callback_url(),
   passReqToCallback: true
 }, function twitter_access_strategy_callback(req, token, token_secret, profile, done) {
-  q(pr.pr.auth.user.find_with_twitter_id(profile.id))
+  q(pr.pr.auth.user.find_with_twitter_id(profile.id, 'all'))
   .then(function(user) {
     if(user !== null) { // user found - log in
       logger.debug('twitter-access -- found existing user, logging in: ' + JSON.stringify(user));
@@ -393,7 +393,7 @@ passport.use('twitter-connect', new TwitterStrategy({
   passReqToCallback: true
 }, function twitter_connect_strategy_callback(req, token, token_secret, profile, done) {
   if(req.user) {
-    q(pr.pr.auth.user.find_with_twitter_id(profile.id))
+    q(pr.pr.auth.user.find_with_twitter_id(profile.id, 'all'))
     .then(function(twitter_user) {
       if(twitter_user === null) { // no account for this twitter id, update user and send back to client or error
         q(req.user.connect_twitter_and_save(profile, token))

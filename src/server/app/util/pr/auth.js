@@ -3,8 +3,11 @@
 var bcrypt = require('bcrypt');
 
 var user_config = require('app/config/user');
+var database_config = require('app/config/database');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/util/pr/auth');
+
+var user_find_scopes = ['all', 'activated', 'deactivated'];
 
 module.exports = function(sequelize, DataTypes) {
   var models = {
@@ -110,6 +113,35 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
 
+      scopes: {
+        /**
+         * Include activated and deactivated users in the query scope
+         * @type {Object}
+         */
+        all: {
+        },
+        /**
+         * Explicitly include only activated users in the query scope (this is also the default scope)
+         * @type {Object}
+         */
+        activated: {
+          where: {
+            sq_deleted_at: null
+          }
+        },
+        /**
+         * Restrict scope to deactivated users in the query
+         * @type {Object}
+         */
+        deactivated: {
+          where: {
+            sq_deleted_at: {
+              $ne: null
+            }
+          }
+        }
+      },
+
       classMethods: {
         /**
          * Generates a password hash to write to the DB so that the unhashed password is never stored
@@ -172,41 +204,65 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         /**
-         * Finds a user with the requested local username field (by default, email)
-         * @param  {[type]} username_value The local username to search for
-         * @return {[type]}                A promise for the result of the Sequelize find call
+         * Finds a user (whether activated or deactivated) with the requested local username field (by default, email)
+         * @param  {String} primary_id The primary UUID key of the user to find
+         * @param  {String} scope      activated, deactivated or all (default)
+         * @return {Object}            A promise for the result of the Sequelize find call
          */
-        find_with_local_username: function find_with_local_username(username_value) {
+        find_with_id: function find_with_id(primary_id, scope) {
+          scope = scope || 'all';
+          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          return this.scope(scope).find({ where: { id: primary_id }, paranoid: false });
+        },
+
+        /**
+         * Finds a user (whether activated or deactivated) with the requested local username field (by default, email)
+         * @param  {String} username_value The local username to search for
+         * @param  {String} scope          activated, deactivated or all (default)
+         * @return {Object}                A promise for the result of the Sequelize find call
+         */
+        find_with_local_username: function find_with_local_username(username_value, scope) {
+          scope = scope || 'all';
+          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           var where_object = {};
           where_object[user_config.local.username_field] = { ilike: username_value };
-          return this.find({ where: where_object });
+          return this.scope(scope).find({ where: where_object, paranoid: false });
         },
 
         /**
-         * Finds a user with the requested facebook ID
-         * @param  {[type]} fb_id The facebook ID to search for
-         * @return {[type]}       A promise for the result of the Sequelize find call
+         * Finds a user (whether activated or deactivated) with the requested facebook ID
+         * @param  {String} fb_id The facebook ID to search for
+         * @param  {String} scope activated, deactivated or all (default)
+         * @return {Object}       A promise for the result of the Sequelize find call
          */
-        find_with_fb_id: function find_with_fb_id(fb_id) {
-          return this.find({ where: { fb_id: fb_id } });
+        find_with_fb_id: function find_with_fb_id(fb_id, scope) {
+          scope = scope || 'all';
+          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          return this.scope(scope).find({ where: { fb_id: fb_id }, paranoid: false });
         },
 
         /**
-         * Finds a user with the requested google ID
-         * @param  {[type]} google_id The Google ID to find
-         * @return {[type]}           A promise for the result of the Sequelize find call
+         * Finds a user (whether activated or deactivated) with the requested google ID
+         * @param  {String} google_id The Google ID to find
+         * @param  {String} scope     activated, deactivated or all (default)
+         * @return {Object}           A promise for the result of the Sequelize find call
          */
-        find_with_google_id: function find_with_google_id(google_id) {
-          return this.find({ where: { google_id: google_id } });
+        find_with_google_id: function find_with_google_id(google_id, scope) {
+          scope = scope || 'all';
+          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          return this.scope(scope).find({ where: { google_id: google_id }, paranoid: false });
         },
 
         /**
-         * Finds a user with the requested twitter ID
-         * @param  {[type]} twitter_id The twitter ID to find
-         * @return {[type]}            A promise for the result of the Sequelize find call
+         * Finds a user (whether activated or deactivated) with the requested twitter ID
+         * @param  {String} twitter_id The twitter ID to find
+         * @param  {String} scope      activated, deactivated or all (default)
+         * @return {Object}            A promise for the result of the Sequelize find call
          */
-        find_with_twitter_id: function find_with_twitter_id(twitter_id) {
-          return this.find({ where: { twitter_id: twitter_id } });
+        find_with_twitter_id: function find_with_twitter_id(twitter_id, scope) {
+          scope = scope || 'all';
+          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          return this.scope(scope).find({ where: { twitter_id: twitter_id }, paranoid: false });
         }
       },
 
@@ -384,6 +440,14 @@ module.exports = function(sequelize, DataTypes) {
           else {
             throw new Error('Cannot disc local - user only has following providers: ' + JSON.stringify(auth_providers));
           }
+        },
+
+        /**
+         * Returns the activated status of a user object and the account it represents
+         * @return {Boolean} True if the account is activated, false otherwise
+         */
+        is_active: function is_active() {
+          return this.get(database_config.object_status.deleted) === null;
         }
       }
     })
