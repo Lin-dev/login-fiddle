@@ -21,7 +21,7 @@ var logger = logger_module.get('app/util/auth/index');
  */
 function get_fb_auth_callback_url() {
   return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
-    user_config.fb.auth_callback_url;
+    user_config.fb.auth_callback_path;
 }
 
 /**
@@ -37,7 +37,7 @@ function get_fb_reactivate_callback_url() {
  */
 function get_fb_connect_callback_url() {
   return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
-    user_config.fb.connect_callback_url;
+    user_config.fb.connect_callback_path:
 }
 
 /**
@@ -45,7 +45,7 @@ function get_fb_connect_callback_url() {
  */
 function get_google_auth_callback_url() {
   return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
-    user_config.google.auth_callback_url;
+    user_config.google.auth_callback_path;
 }
 
 /**
@@ -61,7 +61,7 @@ function get_google_reactivate_callback_url() {
  */
 function get_google_connect_callback_url() {
   return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
-    user_config.google.connect_callback_url;
+    user_config.google.connect_callback_path:
 }
 
 /**
@@ -69,7 +69,7 @@ function get_google_connect_callback_url() {
  */
 function get_twitter_auth_callback_url() {
   return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
-    user_config.twitter.auth_callback_url;
+    user_config.twitter.auth_callback_path;
 }
 
 /**
@@ -85,7 +85,7 @@ function get_twitter_reactivate_callback_url() {
  */
 function get_twitter_connect_callback_url() {
   return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
-    user_config.twitter.connect_callback_url;
+    user_config.twitter.connect_callback_path:
 }
 
 /**

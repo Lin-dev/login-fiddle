@@ -7,17 +7,17 @@ module.exports = {
   fb: {
     client_id: '', // configure.py: facebook
     client_secret: '', // configure.py: facebook
-    auth_callback_url: '/api/user/access/fb/callback', // configure.py: facebook
+    auth_callback_path: '/api/user/access/fb/callback', // configure.py: facebook
     reactivate_callback_path: '/api/user/reactivate/fb/callback',
-    connect_callback_url: '/api/user/connect/fb/callback', // configure.py: facebook
+    connect_callback_path: '/api/user/connect/fb/callback', // configure.py: facebook
     scope: ['public_profile', 'email']
   },
   google: {
     client_id: '', // configure.py: google
     client_secret: '', // configure.py: google
-    auth_callback_url: '/api/user/access/google/callback', // configure.py: google
+    auth_callback_path: '/api/user/access/google/callback', // configure.py: google
     reactivate_callback_path: '/api/user/reactivate/google/callback',
-    connect_callback_url: '/api/user/connect/google/callback', // configure.py: google
+    connect_callback_path: '/api/user/connect/google/callback', // configure.py: google
     scope: ['profile', 'email']
   },
   local: {
@@ -29,9 +29,9 @@ module.exports = {
   twitter: {
     consumer_key: '', // configure.py: twitter
     consumer_secret: '', // configure.py: twitter
-    auth_callback_url: '/api/user/access/twitter/callback', // configure.py: twitter
+    auth_callback_path: '/api/user/access/twitter/callback', // configure.py: twitter
     reactivate_callback_path: '/api/user/reactivate/twitter/callback',
-    connect_callback_url: '/api/user/connect/twitter/callback' // configure.py: twitter
+    connect_callback_path: '/api/user/connect/twitter/callback' // configure.py: twitter
   },
   logged_in_cookie_name: 'logged_in',
   client_reactivate_path: '/profile/reactivate',
