@@ -19,6 +19,16 @@ var keys_required_for_connect = keys_required_for_login.concat(
   _.map(keys_required_for_login, function(field) { return field + '_check'; })
 );
 
+/**
+ * Logs the user out, clears their log in cookie, then redirects to the success util endpoint - does not destroy session
+ */
+function do_logout_and_redirect_to_success(req, res, flash_message) {
+  req.logout();
+  res.clearCookie(user_config.logged_in_cookie_name);
+  req.flash(api_util_config.flash_message_key, flash_message);
+  res.redirect(server_config.util_route_success);
+}
+
 module.exports = {
   /**
    * Returns user description - assumes that the requester must be logged in to access this API endpoint
@@ -41,17 +51,10 @@ module.exports = {
   },
 
   /**
-   * Logs user out and destroys session (the logic for this: if they're logging out then in user's mind this session
-   * is over)
+   * Logs user out but does not destroy user's sessions
    */
   logout: function logout(req, res, next) {
-    req.logout();
-    res.clearCookie(user_config.logged_in_cookie_name);
-    req.session.destroy(function() {
-      // No flash msg because we just destroyed the session: req.flash(api_util_config.flash_message_key, 'Logged out');
-      // TODO: Can we create a new session immediately? No reason why not...
-      res.redirect(server_config.util_route_success);
-    });
+    do_logout_and_redirect_to_success(req, res, 'Logged out');
   },
 
   /**
