@@ -62,6 +62,21 @@ define(function(require) {
     });
 
     /**
+     * Represents a local access form submission for reactivation (email and password), They are client side only and
+     * used for validating form inputs client-side. There is no reqres handler because they're so simple and should be
+     * referenced directly via the AppObj object.
+     */
+    Entities.UserLocalReactivate = AppObj.Common.Entities.ClientModel.extend({
+      __name: 'UserLocalReactivate',
+      validate: function validate(attrs, options) {
+        var errs = {};
+        errs['local-email'] = val_checks.email(attrs.local_email);
+        errs['local-password'] = val_checks.password(attrs.local_password);
+        return _.pick(errs, _.identity); // remove undefined keys
+      }
+    });
+
+    /**
      * Represents a local signup or connect form submission (email, email_check, password, password_check). This entity
      * is client side only because they are used for client-side validation only. There is no reqres handler because
      * they're so simple and should be referenced directly via the AppObj object.

@@ -52,6 +52,35 @@ define(function(require) {
     }
 
     /**
+     * Returns the string to set the client browser location to, to request auth from FB. Is the
+     * server API endpoint, which in turn generates and redirects to FB. If successful the user is
+     * reactivated.
+     */
+    function get_fb_reactivate_url() {
+      return AppObj.config.apps.user.fb_reactivate_url + '?display=' +
+        get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
+    }
+
+    /**
+     * Returns the string to set the client browser location to, to request auth from Google. Is the
+     * server API endpoint, which in turn generates and redirects to Google. If successful the user is
+     * reactivated.
+     */
+    function get_google_reactivate_url() {
+      return AppObj.config.apps.user.google_reactivate_url + '?display=' +
+        get_fb_google_display_mode_from_ui_scale(Marionette.get_ui_scale());
+    }
+
+    /**
+     * Returns the string to set the client browser location to, to request auth from Twitter. Is the
+     * server API endpoint, which in turn generates and redirects to Twitter. If successful the user is
+     * reactivated.
+     */
+    function get_twitter_reactivate_url() {
+      return AppObj.config.apps.user.twitter_reactivate_url;
+    }
+
+    /**
      * Process a FB login request - redirect the client browser to the fb auth request URL
      */
     function proc_fb_login() {
@@ -73,6 +102,33 @@ define(function(require) {
     function proc_twitter_login() {
       logger.trace('private.proc_twitter_login -- redirecting to twitter');
       window.location.href = get_twitter_auth_url();
+    }
+
+    /**
+     * Process a FB login request - redirect the client browser to the fb auth request URL. If the user
+     * account is deactivated then reactivate it on successful login.
+     */
+    function proc_fb_reactivate() {
+      logger.trace('private.proc_fb_reactivate -- redirecting to fb');
+      window.location.href = get_fb_reactivate_url();
+    }
+
+    /**
+     * Process a Google login request - redirect the client browser to the Google auth request URL. If the user
+     * account is deactivated then reactivate it on successful login.
+     */
+    function proc_google_reactivate() {
+      logger.trace('private.proc_fb_reactivate -- redirecting to Google');
+      window.location.href = get_google_reactivate_url();
+    }
+
+    /**
+     * Process a twitter login request - redirect the client browser to the twitter auth request URL. If the user
+     * account is deactivated then reactivate it on successful login.
+     */
+    function proc_twitter_reactivate() {
+      logger.trace('private.proc_twitter_reactivate -- redirecting to twitter');
+      window.location.href = get_twitter_reactivate_url();
     }
 
     /**
@@ -219,6 +275,83 @@ define(function(require) {
       }
     }
 
+    /**
+     * Respond to the local reactivation form submission
+     * @param {Object} form_data                The submitted form data serialised as an object using syphon
+     * @param {Object} access_view              The instance of AccessViews.AccessLayout that is rendered already
+     * @param {String} trigger_after_reactivate The event to trigger after successful reactivation
+     */
+    function proc_local_reactivate_submitted(form_data, access_view, trigger_after_reactivate) {
+      require('js/apps/user/entities');
+      trigger_after_reactivate  = trigger_after_reactivate || 'user:profile';
+      // UserLocalReactivate just for validation (passport redirect mucks up Backbone model sync)
+      var ula = new AppObj.UserApp.Entities.UserLocalReactivate({
+        local_email: form_data.local_email,
+        local_password: form_data.local_password
+      });
+      var val_errs = ula.validate(ula.attributes);
+      if(_.isEmpty(val_errs)) {
+        logger.debug('private.proc_local_reactivate_submitted -- validation passed');
+        proc_local_reactivate(form_data, access_view, trigger_after_reactivate);
+      }
+      else {
+        logger.debug('private.proc_local_reactivate_submitted -- user form val failed: ' + JSON.stringify(val_errs));
+        access_view.trigger('reactivate_form:show_val_errs', val_errs);
+      }
+    }
+
+    /**
+     * Posts a request to the server for user reactivation and log in using their local email and password.
+     * @param {Object} form_data                The submitted form data serialised as an object using syphon
+     * @param {Object} access_view              The instance of AccessViews.AccessLayout that is rendered already
+     * @param {String} trigger_after_reactivate The application event to trigger after reactivation (successful or not)
+     */
+    function proc_local_reactivate(form_data, access_view, trigger_after_reactivate) {
+      require('js/apps/user/entities');
+      var ula = new AppObj.UserApp.Entities.UserLocalAccess({
+        local_email: form_data.local_email,
+        local_password: form_data.local_password
+      });
+      var val_errs = ula.validate(ula.attributes);
+      if(_.isEmpty(val_errs)) {
+        $.post(AppObj.config.apps.user.local_reactivate_path, form_data, function(resp_data, textStatus, jqXhr) {
+          if(resp_data.status === 'success') {
+            logger.debug('private.proc_local_reactivate - server API call response -- succeess, redirecting to: ' +
+              trigger_after_reactivate);
+            AppObj.trigger(trigger_after_reactivate);
+          }
+          else if(resp_data.status === 'failure') {
+            q(AppObj.request('common:entities:flashmessage'))
+            .then(function(flash_message_model) {
+              logger.debug('private.proc_local_reactivate - server API call response -- ' +
+                'signup failure: ' + flash_message_model);
+              var CommonViews = require('js/common/views');
+              var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+              access_view.region_message.show(msg_view);
+              AppObj.scroll_to_top();
+            })
+            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_reactivate'));
+          }
+          else {
+            q(AppObj.request('common:entities:flashmessage'))
+            .then(function(flash_message_model) {
+              logger.error('private.proc_local_reactivate - server API call response -- ' +
+                'unknown status: ' + resp_data.status + ' (flash message: ' + flash_message_model + ')');
+              var CommonViews = require('js/common/views');
+              var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+              access_view.region_message.show(msg_view);
+              AppObj.scroll_to_top();
+            })
+            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_reactivate'));
+          }
+        });
+      }
+      else {
+        logger.debug('private.proc_local_reactivate -- user form validation failed: ' + JSON.stringify(val_errs));
+        access_view.trigger('reactivate_form:show_val_errs', val_errs);
+      }
+    }
+
     Access.controller = {
       /**
        * Display the access form, allowing users to sign up and login
@@ -304,6 +437,51 @@ define(function(require) {
           AppObj.scroll_to_top();
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_signup_form'));
+      },
+
+      /**
+       * Displays the reactivation form, filled out with the deactivated user's email address if they just tried to
+       * log in using their local email
+       * @param {String} local_email The local email address of the account to reactivate (optional)
+       */
+      show_reactivate_form: function show_reactivate_form(local_email) {
+        logger.trace('show_reactivate_form -- enter with local_email: ' + local_email);
+        require('js/common/entities');
+        q(AppObj.request('common:entities:flashmessage'))
+        .then(function(flash_message_model) {
+          require('js/apps/user/entities');
+          var AccessViews = require('js/apps/user/access/views');
+          var CommonViews = require('js/common/views');
+          var access_layout = new AccessViews.AccessLayout();
+          var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+            header_text: 'Reactivate and login'
+          })});
+          var reactivate_form = new AccessViews.ReactivateForm({ model: new AppObj.Common.Entities.ClientModel({
+            fb_url: get_fb_reactivate_url(),
+            google_url: get_google_reactivate_url(),
+            twitter_url: get_twitter_reactivate_url(),
+            local_email: local_email
+          })});
+          reactivate_form.on('home-clicked', function() { AppObj.trigger('home:show'); });
+          reactivate_form.on('fb-access-clicked', proc_fb_reactivate);
+          reactivate_form.on('google-access-clicked', proc_google_reactivate);
+          reactivate_form.on('twitter-access-clicked', proc_twitter_reactivate);
+          reactivate_form.on('local-reactivate-submitted', function(form_data) {
+            proc_local_reactivate_submitted(form_data, access_layout, 'user:profile');
+          });
+          access_layout.on('reactivate_form:show_val_errs', function(val_errs) {
+            reactivate_form.show_val_errs.call(reactivate_form, val_errs, 'user:profile');
+          });
+          access_layout.on('render', function() {
+            access_layout.region_header.show(header_view);
+            access_layout.region_message.show(msg_view);
+            access_layout.region_form.show(reactivate_form);
+          });
+          AppObj.region_main.show(access_layout);
+          AppObj.scroll_to_top();
+        })
+        .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_reactivate_form'));
       }
     };
   });

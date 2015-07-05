@@ -9,6 +9,7 @@ define(function(require) {
       appRoutes: {
         'access': 'show_access_form',
         'access/signup': 'show_signup_form',
+        'access/reactivate': 'show_reactivate_form',
         'profile': 'show_user_profile',
         'profile/logout': 'proc_logout',
         'profile/deactivate': 'proc_deactivate',
@@ -35,6 +36,18 @@ define(function(require) {
         logger.trace('API.show_signup_form -- enter');
         var controller = require('js/apps/user/access/controller');
         controller.show_signup_form(trigger_after_signup, email_address);
+        AppObj.execute('headerapp:set_active_navitem', 'user');
+      },
+
+      /**
+       * Displays the reactivation form, filled out with the deactivated user's email address if they just tried to
+       * log in using their local email
+       * @param {String} local_email The local email address of the account to reactivate (optional)
+       */
+      show_reactivate_form: function show_reactivate_form(local_email) {
+        logger.debug('API.show_reactivate_form -- enter');
+        var controller = require('js/apps/user/access/controller');
+        controller.show_reactivate_form(local_email);
         AppObj.execute('headerapp:set_active_navitem', 'user');
       },
 
@@ -124,6 +137,11 @@ define(function(require) {
     AppObj.on('user:access:signup', function(trigger_after_signup, email_address) {
       AppObj.navigate('access/signup');
       API.show_signup_form(trigger_after_signup, email_address);
+    });
+
+    AppObj.on('user:access:reactivate', function(optional_local_email) {
+      AppObj.navigate('access/reactivate');
+      API.show_reactivate_form(optional_local_email);
     });
 
     AppObj.on('user:profile', function() {

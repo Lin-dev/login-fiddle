@@ -86,6 +86,42 @@ define(function(require) {
       }
     });
 
+    /** @type {Object} View for a single form supporting account login or creation (user selected) */
+    Views.ReactivateForm = AppObj.Common.Views.AppObjFormItemView.extend({
+      __name: 'ReactivateForm',
+      __form_element_id_prefix: 'user-reactivate-',
+      template: _.template(require('text!js/apps/user/access/templates/reactivate_form.html'), { variable: 'data' }),
+
+      triggers: {
+        'click a.js-home': 'home-clicked',
+        'click button.js-fb': 'fb-access-clicked',
+        'click button.js-google': 'google-access-clicked',
+        'click button.js-twitter': 'twitter-access-clicked'
+      },
+
+      events: {
+        'click button.js-submit': 'submit_clicked'
+      },
+
+      modelEvents: {
+        'change': 'render'
+      },
+
+      ui: {
+        'password_input': 'input#user-access-local-password'
+      },
+
+      // Event handlers
+      submit_clicked: function submit_clicked(event) {
+        require('backbone_syphon');
+        event.preventDefault();
+        var data = Backbone.Syphon.serialize(this);
+        logger.debug('ReactivateForm.submit_clicked -- serialised data: ' + JSON.stringify(data));
+        this.model.set(data, { silent: true });
+        this.trigger('local-reactivate-submitted', data);
+      }
+    });
+
     /** @type {Object} View for inputting info needed for local account creation */
     Views.SignupForm = AppObj.Common.Views.AppObjFormItemView.extend({
       __name: 'SignupForm',
