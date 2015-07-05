@@ -12,6 +12,7 @@ define(function(require) {
       user: {
         local_password_min_length: 8,
         local_password_max_length: 256,
+        logout_path: '/api/user/logout',
         local_login_path: '/api/user/access/local/login',
         local_signup_path: '/api/user/access/local/signup',
         local_connect_path: '/api/user/connect/local/connect',

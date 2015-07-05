@@ -214,7 +214,7 @@ define(function(require) {
           })});
           // no profile control panel
           confirm_view.on('confirm-clicked', function() {
-            $.get('/api/user/logout', function(resp_data, textStatus, jqXhr) {
+            $.get(AppObj.config.apps.user.logout_path, function(resp_data, textStatus, jqXhr) {
               AppObj.trigger('home:show');
             });
           });
