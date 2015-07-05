@@ -9,6 +9,15 @@ define(function(require) {
     logger.trace('AppObj.module -- enter');
     require('js/common/views');
 
+    Views.HomeLayout = AppObj.Common.Views.AppObjLayout.extend({
+      __name: 'HomeLayout',
+      template: _.template(require('text!js/apps/home/show/templates/home_layout.html'), { variable: 'data' }),
+      regions: {
+        region_message: 'div.js-flash-message',
+        region_home_main: 'div.js-home-main',
+      }
+    });
+
     Views.Home = AppObj.Common.Views.AppObjItemView.extend({
       template: _.template(require('text!js/apps/home/show/templates/home.html')),
     });
