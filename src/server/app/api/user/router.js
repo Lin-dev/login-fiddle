@@ -17,6 +17,8 @@ router.post('/access/local/login', auth.mw.ensure_unauth, router_impl.local_chec
   router_impl.access_local_login);
 router.post('/access/local/signup', auth.mw.ensure_unauth, router_impl.local_check_signup,
   router_impl.access_local_signup);
+router.post('/reactivate/local/login', auth.mw.ensure_unauth, router_impl.local_check_reactivate,
+  router_impl.access_local_reactivate);
 router.post('/connect/local/connect', auth.mw.ensure_auth, router_impl.local_check_connect,
   router_impl.connect_local_connect);
 router.post('/connect/local/disconnect', auth.mw.ensure_auth, router_impl.local_check_connect,
@@ -29,6 +31,12 @@ router.get('/access/google/callback', auth.mw.ensure_unauth, router_impl.access_
 router.get('/access/twitter/auth', auth.mw.ensure_unauth, router_impl.access_twitter_auth);
 router.get('/access/twitter/callback', auth.mw.ensure_unauth, router_impl.access_twitter_callback);
 
+router.get('/reactivate/fb/auth', auth.mw.ensure_unauth, router_impl.reactivate_fb_auth);
+router.get('/reactivate/fb/callback', auth.mw.ensure_unauth, router_impl.reactivate_fb_callback);
+router.get('/reactivate/google/auth', auth.mw.ensure_unauth, router_impl.reactivate_google_auth);
+router.get('/reactivate/google/callback', auth.mw.ensure_unauth, router_impl.reactivate_google_callback);
+router.get('/reactivate/twitter/auth', auth.mw.ensure_unauth, router_impl.reactivate_twitter_auth);
+router.get('/reactivate/twitter/callback', auth.mw.ensure_unauth, router_impl.reactivate_twitter_callback);
 
 router.get('/connect/fb/auth', auth.mw.ensure_auth, router_impl.connect_fb_auth);
 router.get('/connect/fb/callback', auth.mw.ensure_auth, router_impl.connect_fb_callback,

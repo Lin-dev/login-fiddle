@@ -95,6 +95,28 @@ module.exports = {
   }),
 
   /**
+   * Initiates requests for Google authentication to reactivate an account, using passport.js to redirect to Google -
+   * this API endpoint should be accessed directly by the client browser, not via AJAX
+   */
+  reactivate_google_auth: function reactivate_google_auth(req, res, next) {
+    logger.debug('exports.reactivate_google_auth -- redir request to Google (display mode: ' + req.query.display + ')');
+    (auth.passport.authenticate('google-reactivate', {
+      scope: user_config.google.scope,
+      display: req.query.display
+    }))(req, res, next);
+  },
+
+  /**
+   * Completes requests for Google authentication for account reactivation
+   * @type {Function}
+   */
+  reactivate_google_callback: auth.passport.authenticate('google-reactivate', {
+    successRedirect: '/profile',
+    failureRedirect: '/access/reactivate',
+    failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Google' }
+  }),
+
+  /**
    * Initiates request for Google authorization, to connect accounts, using passport to redirect to Google - this
    * API endpoint should be accessed directly by the browser, not via AJAX
    * @type {Function}
@@ -154,6 +176,28 @@ module.exports = {
   }),
 
   /**
+   * Initiates requests for Facebook authentication to reactivate an account, using passport.js to redirect to FB -
+   * this API endpoint should be accessed directly by the client browser, not via AJAX
+   */
+  reactivate_fb_auth: function reactivate_fb_auth(req, res, next) {
+    logger.debug('exports.reactivate_fb_auth -- redir request to FB (display mode: ' + req.query.display + ')');
+    (auth.passport.authenticate('fb-reactivate', {
+      scope: user_config.fb.scope,
+      display: req.query.display
+    }))(req, res, next);
+  },
+
+  /**
+   * Completes requests for Google authentication for account reactivation
+   * @type {Function}
+   */
+  reactivate_fb_callback: auth.passport.authenticate('fb-reactivate', {
+    successRedirect: '/profile',
+    failureRedirect: '/access/reactivate',
+    failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Facebook' }
+  }),
+
+  /**
    * Initiates request for Facebook authorization, to connect accounts, using passport to redirect to Facebook - this
    * API endpoint should be accessed directly by the browser, not via AJAX
    * @type {Function}
@@ -198,6 +242,13 @@ module.exports = {
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
+   * fields expected by the authentication strategy for local reactivation are present (the same as for login) -
+   * log if they are not
+   */
+  local_check_reactivate: auth.mw_gen.check_post_has_req_fields(keys_required_for_login),
+
+  /**
+   * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local signup are present - log if not
    */
   local_check_signup: auth.mw_gen.check_post_has_req_fields(keys_required_for_signup),
@@ -213,6 +264,16 @@ module.exports = {
    * @type {Function}
    */
   access_local_login: auth.passport.authenticate('local-login', {
+    successRedirect: server_config.util_route_success,
+    failureRedirect: server_config.util_route_failure,
+    failureFlash: true
+  }),
+
+  /**
+   * Handles requests for local access account reactivation (also logs user in)
+   * @type {Function}
+   */
+  access_local_reactivate: auth.passport.authenticate('local-reactivate', {
     successRedirect: server_config.util_route_success,
     failureRedirect: server_config.util_route_failure,
     failureFlash: true
@@ -268,6 +329,23 @@ module.exports = {
   access_twitter_callback: auth.passport.authenticate('twitter-access', {
     successRedirect: '/profile',
     failureRedirect: '/access',
+    failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Twitter' }
+  }),
+
+  /**
+   * Initiates requests for Twitter authentication to reactivate an account, using passport.js to redirect to Twitter -
+   * this API endpoint should be accessed directly by the client browser, not via AJAX
+   * @type {Function}
+   */
+  reactivate_twitter_auth: auth.passport.authenticate('twitter-reactivate'),
+
+  /**
+   * Completes requests for Twitter authentication for account reactivation
+   * @type {Function}
+   */
+  reactivate_twitter_callback: auth.passport.authenticate('twitter-reactivate', {
+    successRedirect: '/profile',
+    failureRedirect: '/access/reactivate',
     failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Twitter' }
   }),
 

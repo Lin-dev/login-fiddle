@@ -25,6 +25,14 @@ function get_fb_auth_callback_url() {
 }
 
 /**
+ * Returns the facebook reactivate callback URL (assembled from server and user configs)
+ */
+function get_fb_reactivate_callback_url() {
+  return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
+    user_config.fb.reactivate_callback_path;
+}
+
+/**
  * Returns the facebook connect callback URL (assembled from server and user configs)
  */
 function get_fb_connect_callback_url() {
@@ -41,6 +49,14 @@ function get_google_auth_callback_url() {
 }
 
 /**
+ * Returns the google reactivate callback URL (assembled from server and user configs)
+ */
+function get_google_reactivate_callback_url() {
+  return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
+    user_config.google.reactivate_callback_path;
+}
+
+/**
  * Returns the google connect callback URL (assembled from server and user configs)
  */
 function get_google_connect_callback_url() {
@@ -54,6 +70,14 @@ function get_google_connect_callback_url() {
 function get_twitter_auth_callback_url() {
   return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
     user_config.twitter.auth_callback_url;
+}
+
+/**
+ * Returns the twitter reactivate callback URL (assembled from server and user configs)
+ */
+function get_twitter_reactivate_callback_url() {
+  return server_config.server_protocol + '://' + server_config.server_host + ':' + server_config.https_port +
+    user_config.twitter.reactivate_callback_path;
 }
 
 /**
@@ -160,7 +184,53 @@ passport.use('local-login', new LocalStrategy({
     }
   })
   .fail(function(err) {
-    logger.error('local-login -- callback for ' + email + ' failed while querying for user: ' + err);
+    logger.error('local-login -- callback for ' + email + ' failed while querying for user: ' + JSON.stringify(err));
+    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
+  });
+}));
+
+/**
+ * passport.js local-reactivate strategy - reactivates user account if not active and logs them in, else just logs in
+ */
+passport.use('local-reactivate', new LocalStrategy({
+  usernameField: user_config.local.username_field,
+  passwordField: user_config.local.password_field,
+  passReqToCallback: true
+}, function local_reactivate_strategy_callback(req, email, password, done) {
+  logger.trace('local-reactivate callback -- enter');
+  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
+  .then(function(user) {
+    if(user !== null) {
+      if(user.check_password(password)) {
+        if(!user.is_active()) {
+          q(user.reactivate_and_save())
+          .then(function(activated_user) {
+            logger.debug('local-reactivate -- reactivated user and logged in: ' + email);
+            return done(null, activated_user, req.flash(api_util_config.flash_message_key,
+              'Reactivated and logged in'));
+          })
+          .fail(function(err) {
+            logger.error('local-reactivate -- failed to reactivate user: ' + err);
+            return done(null, false, req.flash('Server error - failed to reactivate account'));
+          });
+        }
+        else {
+          logger.debug('local-reactivate -- user already active, logged in: ' + email);
+          return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
+        }
+      }
+      else {
+        logger.debug('local-reactivate -- incorrect password: ' + email);
+        return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
+      }
+    }
+    else {
+      logger.debug('local-reactivate -- unknown email: ' + email);
+      return done(null, false, req.flash(api_util_config.flash_message_key, 'No user with that email address found'));
+    }
+  })
+  .fail(function(err) {
+    logger.error('local-reactivate -- callback for ' + email + ' failed while querying for user: ' + err);
     return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
   });
 }));
@@ -242,6 +312,57 @@ passport.use('fb-access', new FacebookStrategy({
   })
   .fail(function(err) {
     logger.error('fb-access -- callback for token ' + token + ' failed while querying for user, error: ' + err);
+    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
+  });
+}));
+
+/**
+ * passport.js Facebook reactivate strategy - react's user account if not active and logs them in, else just logs in
+ */
+passport.use('fb-reactivate', new FacebookStrategy({
+  clientID: user_config.fb.client_id,
+  clientSecret: user_config.fb.client_secret,
+  callbackURL: get_fb_reactivate_callback_url(),
+  passReqToCallback: true
+}, function fb_reactivate_strategy_callback(req, token, refresh_token, profile, done) {
+  q(pr.pr.auth.user.find_with_fb_id(profile.id, 'all'))
+  .then(function(user) {
+    if(user !== null) {
+      if(!user.is_active()) {
+        q(user.reactivate_and_save())
+        .then(function(activated_user) {
+          logger.debug('fb-reactivate -- reactivated user and logged in: ' + JSON.stringify(activated_user));
+          return done(null, activated_user, req.flash(api_util_config.flash_message_key,
+            'Reactivated and logged in via Facebook'));
+        })
+        .fail(function(err) {
+          logger.error('fb-reactivate -- failed to reactivate user: ' + err);
+          return done(null, false, req.flash('Server error - failed to reactivate account'));
+        });
+      }
+      else {
+        logger.debug('fb-reactivate -- user already active, logging in: ' + JSON.stringify(user));
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Facebook'));
+      }
+    }
+    else { // user not found - create account
+      logger.debug('fb-reactivate -- callback user not found, creating from: ' + JSON.stringify(profile));
+      q(pr.pr.auth.user.create_from_fb_and_save(profile, token))
+      .then(function(user) {
+        logger.info('fb-reactivate -- user created: ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
+          profile.name.familyName);
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
+      })
+      .fail(function(err) {
+        // DB or validation error - do not distinguish validation or set flash because that is also done client side
+        logger.warn('fb-reactivate -- callback for ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
+          profile.name.familyName + ' failed user creation, error: ' + err);
+        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
+      });
+    }
+  })
+  .fail(function(err) {
+    logger.error('fb-reactivate -- callback for token ' + token + ' failed while querying for user, error: ' + err);
     return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
   });
 }));
@@ -332,6 +453,56 @@ passport.use('google-access', new GoogleStrategy({
 }));
 
 /**
+ * passport.js Google reactivate strategy - react's user account if not active and logs them in, else just logs in
+ */
+passport.use('google-reactivate', new GoogleStrategy({
+  clientID: user_config.google.client_id,
+  clientSecret: user_config.google.client_secret,
+  callbackURL: get_google_reactivate_callback_url(),
+  passReqToCallback: true
+}, function google_reactivate_strategy_callback(req, token, refresh_token, profile, done) {
+  q(pr.pr.auth.user.find_with_google_id(profile.id, 'all'))
+  .then(function(user) {
+    if(user !== null) {
+      if(!user.is_active()) {
+        q(user.reactivate_and_save())
+        .then(function(activated_user) {
+          logger.debug('google-reactivate -- reactivated user and logged in: ' + JSON.stringify(activated_user));
+          return done(null, activated_user, req.flash(api_util_config.flash_message_key,
+            'Reactivated and logged in via Google'));
+        })
+        .fail(function(err) {
+          logger.error('google-reactivate -- failed to reactivate user: ' + err);
+          return done(null, false, req.flash('Server error - failed to reactivate account'));
+        });
+      }
+      else {
+        logger.debug('google-reactivate -- user already active, logging in: ' + JSON.stringify(user));
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Google'));
+      }
+    }
+    else { // user not found - create account
+      logger.debug('google-reactivate -- user not found, creating from: ' + JSON.stringify(profile));
+      q(pr.pr.auth.user.create_from_google_and_save(profile, token))
+      .then(function(user) {
+        logger.info('google-reactivate -- user created: ' + profile.id + ' / ' + profile.display_name);
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
+      })
+      .fail(function(err) {
+        // DB or validation error - do not distinguish validation or set flash because that is also done client side
+        logger.warn('google-reactivate -- callback for ' + profile.id + ' / ' + profile.display_name +
+          ' failed user creation, error: ' + err);
+        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
+      });
+    }
+  })
+  .fail(function(err) {
+    logger.error('google-reactivate -- callback for token ' + token + ' failed while querying for user, error: ' + err);
+    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
+  });
+}));
+
+/**
  * passport.js Google connect strategy
  */
 passport.use('google-connect', new GoogleStrategy({
@@ -411,6 +582,56 @@ passport.use('twitter-access', new TwitterStrategy({
   })
   .fail(function(err) {
     logger.error('twitter-access -- callback for token ' + token + ' failed while querying for user, error: ' + err);
+    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
+  });
+}));
+
+/**
+ * passport.js Twitter reactivate strategy - react's user account if not active and logs them in, else just logs in
+ */
+passport.use('twitter-reactivate', new TwitterStrategy({
+  consumerKey: user_config.twitter.consumer_key,
+  consumerSecret: user_config.twitter.consumer_secret,
+  callbackURL: get_twitter_reactivate_callback_url(),
+  passReqToCallback: true
+}, function twitter_reactivate_strategy_callback(req, token, token_secret, profile, done) {
+  q(pr.pr.auth.user.find_with_twitter_id(profile.id, 'all'))
+  .then(function(user) {
+    if(user !== null) {
+      if(!user.is_active()) {
+        q(user.reactivate_and_save())
+        .then(function(activated_user) {
+          logger.debug('twitter-reactivate -- reactivated user and logged in: ' + JSON.stringify(activated_user));
+          return done(null, activated_user, req.flash(api_util_config.flash_message_key,
+            'Reactivated and logged in via Twitter'));
+        })
+        .fail(function(err) {
+          logger.error('twitter-reactivate -- failed to reactivate user: ' + err);
+          return done(null, false, req.flash('Server error - failed to reactivate account'));
+        });
+      }
+      else {
+        logger.debug('twitter-reactivate -- user already active, logging in: ' + JSON.stringify(user));
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Twitter'));
+      }
+    }
+    else { // user not found - create account
+      logger.debug('twitter-reactivate -- user not found, creating from: ' + JSON.stringify(profile));
+      q(pr.pr.auth.user.create_from_twitter_and_save(profile, token))
+      .then(function(user) {
+        logger.info('twitter-reactivate -- user created: ' + profile.id  + ' / ' + profile.username);
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
+      })
+      .fail(function(err) {
+        // DB or validation error - do not distinguish validation or set flash because that is also done client side
+        logger.warn('twitter-reactivate -- callback for ' + profile.id + ' / ' + profile.username +
+          ' failed user creation, error: ' + err);
+        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Account creation failed'));
+      });
+    }
+  })
+  .fail(function(err) {
+    logger.error('twitter-reactivate -- callback for token ' + token + ' failed while querying for user, error: ' + err);
     return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
   });
 }));
