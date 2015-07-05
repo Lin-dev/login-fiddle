@@ -60,7 +60,11 @@ define(function(require) {
      */
     Views.FlashMessageView = Views.AppObjItemView.extend({
       __name: 'FlashMessageView',
-      template: _.template(require('text!js/common/templates/flash_message.html'), { variable: 'data' })
+      template: _.template(require('text!js/common/templates/flash_message.html'), { variable: 'data' }),
+      triggers: {
+        /** Allows an action link to be embedded in a flash message and listened to via JavaScript */
+        'click a.js-action-link': 'action-link-clicked'
+      }
     });
 
     /**
