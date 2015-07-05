@@ -134,6 +134,9 @@ define(function(require) {
             .then(function(flash_message_model) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+              msg_view.on('action-link-clicked', function() {
+                AppObj.trigger('user:access:reactivate', form_data.local_email);
+              });
               access_view.region_message.show(msg_view);
               AppObj.scroll_to_top();
             })
@@ -231,6 +234,8 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var access_view = new AccessViews.AccessLayout();
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+          // Needed here because attempts to log in to a deactivated account reload the access form
+          msg_view.on('action-link-clicked', function() { AppObj.trigger('user:access:reactivate'); });
           var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
             header_text: 'Sign in'
           })});

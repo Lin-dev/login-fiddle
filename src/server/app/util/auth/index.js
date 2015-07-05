@@ -138,8 +138,16 @@ passport.use('local-login', new LocalStrategy({
   .then(function(user) {
     if(user !== null) {
       if(user.check_password(password)) {
-        logger.debug('local-login -- logged in: ' + email);
-        return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
+        if(user.is_active()) {
+          logger.debug('local-login -- logged in: ' + email);
+          return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
+        }
+        else {
+          logger.debug('local-login -- deactivated login successful: ' + email);
+          return done(null, false, req.flash(api_util_config.flash_message_key,
+            'Account currently deactivated, to reactivate click <a href="' + user_config.client_reactivate_path +
+            '" class="js-action-link">here</a>'));
+        }
       }
       else {
         logger.debug('local-login -- incorrect password: ' + email);
@@ -204,9 +212,17 @@ passport.use('fb-access', new FacebookStrategy({
 }, function fb_access_strategy_callback(req, token, refresh_token, profile, done) {
   q(pr.pr.auth.user.find_with_fb_id(profile.id, 'all'))
   .then(function(user) {
-    if(user !== null) { // user found - log in
-      logger.debug('fb-access -- callback found existing user, logging in: ' + JSON.stringify(user));
-      return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Facebook'));
+    if(user !== null) { // user found - log in or offer to reactivate
+      if(user.is_active()) {
+        logger.debug('fb-access -- callback found existing user, logging in: ' + JSON.stringify(user));
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Facebook'));
+      }
+      else {
+        logger.debug('fb-access -- deactivated login successful: ' + JSON.stringify(user));
+        return done(null, false, req.flash(api_util_config.flash_message_key,
+          'Account currently deactivated, to reactivate click <a href="' + user_config.client_reactivate_path +
+          '" class="js-action-link">here</a>'));
+      }
     }
     else { // user not found - create account
       logger.debug('fb-access -- callback user not found, creating from: ' + JSON.stringify(profile));
@@ -282,9 +298,17 @@ passport.use('google-access', new GoogleStrategy({
 }, function google_access_strategy_callback(req, token, refresh_token, profile, done) {
   q(pr.pr.auth.user.find_with_google_id(profile.id, 'all'))
   .then(function(user) {
-    if(user !== null) { // user found - log in
-      logger.debug('google-access -- found existing user, logging in: ' + JSON.stringify(user));
-      return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Google'));
+    if(user !== null) { // user found - log in or offer to reactivate
+      if(user.is_active()) {
+        logger.debug('google-access -- found existing user, logging in: ' + JSON.stringify(user));
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Google'));
+      }
+      else {
+        logger.debug('google-access -- deactivated login successful: ' + JSON.stringify(user));
+        return done(null, false, req.flash(api_util_config.flash_message_key,
+          'Account currently deactivated, to reactivate click <a href="' + user_config.client_reactivate_path +
+          '" class="js-action-link">here</a>'));
+      }
     }
     else { // user not found - create account
       logger.debug('google-access -- user not found, creating from: ' + JSON.stringify(profile));
@@ -358,9 +382,17 @@ passport.use('twitter-access', new TwitterStrategy({
 }, function twitter_access_strategy_callback(req, token, token_secret, profile, done) {
   q(pr.pr.auth.user.find_with_twitter_id(profile.id, 'all'))
   .then(function(user) {
-    if(user !== null) { // user found - log in
-      logger.debug('twitter-access -- found existing user, logging in: ' + JSON.stringify(user));
-      return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Twitter'));
+    if(user !== null) {  // user found - log in or offer to reactivate
+      if(user.is_active()) {
+        logger.debug('twitter-access -- found existing user, logging in: ' + JSON.stringify(user));
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in via Twitter'));
+      }
+      else {
+        logger.debug('twitter-access -- deactivated login successful: ' + JSON.stringify(user));
+        return done(null, false, req.flash(api_util_config.flash_message_key,
+          'Account currently deactivated, to reactivate click <a href="' + user_config.client_reactivate_path +
+          '" class="js-action-link">here</a>'));
+      }
     }
     else { // user not found - create account
       logger.debug('twitter-access -- user not found, creating from: ' + JSON.stringify(profile));
