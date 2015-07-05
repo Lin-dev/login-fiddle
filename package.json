@@ -27,6 +27,7 @@
     "grunt-template-jasmine-requirejs": "git://github.com/cfogelberg/grunt-template-jasmine-requirejs",
     "grunt-version-file": "0.2.2",
     "matchdep": "0.3.0",
+    "mocha": "2.2.1",
     "mocha-lcov-reporter": "0.0.2",
     "should": "3.3.2",
     "sinon": "1.10.3"
