@@ -46,8 +46,8 @@ define(function(require) {
 
     /**
      * Represents a local access form submission (email and possibly a password), They are client side only and used
-     * because they are used for client-side validation only. There is no reqres handler because they're so simple
-     * and should be referenced directly via the AppObj object.
+     * for validating form inputs client-side. There is no reqres handler because they're so simple and should be
+     * referenced directly via the AppObj object.
      */
     Entities.UserLocalAccess = AppObj.Common.Entities.ClientModel.extend({
       __name: 'UserLocalAccess',

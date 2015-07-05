@@ -71,7 +71,7 @@ module.exports = {
   },
 
   /**
-   * Completes requests for Google authentication for account signup
+   * Completes requests for Google authentication for account signup and login
    * @type {Function}
    */
   access_google_callback: auth.passport.authenticate('google-access', {
@@ -120,7 +120,6 @@ module.exports = {
   /**
    * Initiates requests for Facebook authentication, using passport to redirect to Facebook - this API endpoint should
    * be access directly by the browser, not via AJAX
-   * @type {Function}
    */
   access_fb_auth: function access_fb_auth(req, res, next) {
     logger.debug('exports.access_fb_auth -- redir request to FB (display mode: ' + req.query.display + ')');
@@ -255,7 +254,7 @@ module.exports = {
   access_twitter_callback: auth.passport.authenticate('twitter-access', {
     successRedirect: '/profile',
     failureRedirect: '/access',
-    failureFlash:  { type: api_util_config.flash_message_key, message: 'Login cancelled on Twitter' }
+    failureFlash: { type: api_util_config.flash_message_key, message: 'Login cancelled on Twitter' }
   }),
 
   /**

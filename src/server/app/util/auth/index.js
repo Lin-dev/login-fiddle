@@ -171,7 +171,7 @@ passport.use('local-connect', new LocalStrategy({
       var user_attrs = {};
       user_attrs[user_config.local.username_field] = email;
       user_attrs[user_config.local.password_field] = pr.pr.auth.user.hash_password(password);
-      req.user.connect_local_and_save(user_attrs)
+      q(req.user.connect_local_and_save(user_attrs))
       .then(function(updated_user) {
         logger.debug('local-connect -- email added to user: ' + JSON.stringify(updated_user));
         done(null, updated_user, req.flash(api_util_config.flash_message_key, 'Email address added'));

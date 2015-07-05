@@ -61,8 +61,8 @@ define(function(require) {
         require('backbone_syphon');
         event.preventDefault();
         var data = Backbone.Syphon.serialize(this);
+        logger.debug('AccessForm.submit_clicked -- serialised data: ' + JSON.stringify(data));
         this.model.set(data, { silent: true });
-        logger.debug('submit_clicked with: ' + JSON.stringify(data));
         this.trigger('local-access-submitted', data);
       },
 

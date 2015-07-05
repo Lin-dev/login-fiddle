@@ -95,7 +95,7 @@ define(function(require) {
         else {
           logger.debug('show_access_form -- user form validation failed: invalid email address for signup' +
             JSON.stringify(val_errs));
-          access_view.trigger('signup_form:show_val_errs', val_errs);
+          access_view.trigger('access_form:show_val_errs', val_errs);
         }
       }
       else {
@@ -108,11 +108,12 @@ define(function(require) {
      * Process a local login request
      * @param  {Object} form_data            An object with a key for each form data field
      * @param  {Object} access_view          The layout view (whose access_form in region_main should show val errors)
-     * @param  {String} trigger_after_access The navigation event that should be triggered after successful login
+     * @param  {String} trigger_after_access The event to trigger after successful login (default: user:profile)
      */
     function proc_local_login(form_data, access_view, trigger_after_access) {
-      // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
       require('js/apps/user/entities');
+      trigger_after_access = trigger_after_access || 'user:profile';
+      // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
       var ula = new AppObj.UserApp.Entities.UserLocalAccess({
         local_email: form_data.local_email,
         has_pw_flag: form_data.has_pw_flag,
@@ -162,11 +163,12 @@ define(function(require) {
      * Process a local signup request, validating it and synchronising to the DB
      * @param  {Object} form_data            An object with a key for each submitted form data field
      * @param  {Object} access_view          The layout view (whose access_form in region_main should show val errors)
-     * @param  {String} trigger_after_access The navigation event that should be triggered after successful login
+     * @param  {String} trigger_after_access The event to trigger after successful signup (default: user:profile)
      */
     function proc_local_signup(form_data, access_view, trigger_after_access) {
-      // UserLocalSignup just for validation (passport redirect mucks up Backbone model sync)
       require('js/apps/user/entities');
+      trigger_after_access = trigger_after_access || 'user:profile';
+      // UserLocalSignup just for validation (passport redirect mucks up Backbone model sync)
       var uls = new AppObj.UserApp.Entities.UserLocalSignup({
         local_email: form_data.local_email,
         local_email_check: form_data.local_email_check,
