@@ -38,6 +38,7 @@ define(function(require) {
 
       triggers: {
         'click a.js-logout': 'logout-clicked',
+        'click a.js-deactivate': 'deactivate-clicked',
         'click a.js-local-connect': 'local-connect-clicked',
         'click a.js-local-disconnect': 'local-disc-clicked',
         'click a.js-fb-connect': 'fb-connect-clicked',

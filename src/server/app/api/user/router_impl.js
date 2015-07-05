@@ -58,9 +58,23 @@ module.exports = {
   },
 
   /**
+   * Deactivates user account and logs out, which destroys session and redirects to the success util route
+   */
+  deactivate: function deactivate(req, res, next) {
+    q(req.user.deactivate_and_save())
+    .then(function() {
+      do_logout_and_redirect_to_success(req, res, 'Account deactivated, to reactivate it just log back in');
+    })
+    .fail(function(err) {
+      logger.error('exports.deactivate -- error: ' + err);
+      req.flash(api_util_config.flash_message_key, 'Error deactivating account');
+      res.redirect(server_config.util_route_failure);
+    });
+  },
+
+  /**
    * Initiates requests for Google authentication, using passport to redirect to Google - this API endpoint should
    * be access directly by the browser, not via AJAX
-   * @type {Function}
    */
   access_google_auth: function access_google_auth(req, res, next) {
     logger.debug('exports.access_google_auth -- redir request to Google (display mode: ' + req.query.diplay + ')');

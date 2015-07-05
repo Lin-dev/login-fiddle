@@ -163,6 +163,7 @@ define(function(require) {
         client_disc_google_path: '/profile/disconnect/google',
         client_disc_twitter_path: '/profile/disconnect/twitter',
         client_logout_path: '/profile/logout',
+        client_deactivate_path: '/profile/deactivate'
       }
     });
 

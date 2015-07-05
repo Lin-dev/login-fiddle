@@ -11,6 +11,7 @@ var express = require('express');
 var router = new express.Router();
 router.get('/user', auth.mw.ensure_auth, helpers.inject_pr_into_router_impl(router_impl.get_user, pr));
 router.get('/logout', auth.mw.ensure_auth, router_impl.logout);
+router.get('/deactivate', auth.mw.ensure_auth, router_impl.deactivate);
 
 router.post('/access/local/login', auth.mw.ensure_unauth, router_impl.local_check_login,
   router_impl.access_local_login);

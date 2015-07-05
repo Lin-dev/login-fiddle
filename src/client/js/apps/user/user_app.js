@@ -11,6 +11,7 @@ define(function(require) {
         'access/signup': 'show_signup_form',
         'profile': 'show_user_profile',
         'profile/logout': 'proc_logout',
+        'profile/deactivate': 'proc_deactivate',
         'profile/connect/local': 'proc_conn_local',
         'profile/connect/facebook': 'proc_conn_fb',
         'profile/connect/google': 'proc_conn_google',
@@ -48,6 +49,13 @@ define(function(require) {
         logger.trace('API.proc_logout -- enter');
         var controller = require('js/apps/user/profile/controller');
         controller.proc_logout();
+        AppObj.execute('headerapp:set_active_navitem', 'user');
+      },
+
+      proc_deactivate: function proc_deactivate() {
+        logger.trace('API.proc_deactivate -- enter');
+        var controller = require('js/apps/user/profile/controller');
+        controller.proc_deactivate();
         AppObj.execute('headerapp:set_active_navitem', 'user');
       },
 
@@ -126,6 +134,11 @@ define(function(require) {
     AppObj.on('user:profile:logout', function() {
       AppObj.navigate('profile/logout');
       API.proc_logout();
+    });
+
+    AppObj.on('user:profile:deactivate', function() {
+      AppObj.navigate('profile/deactivate');
+      API.proc_deactivate();
     });
 
     AppObj.on('user:profile:connect:local', function() {

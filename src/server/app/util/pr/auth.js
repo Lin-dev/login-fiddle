@@ -448,6 +448,34 @@ module.exports = function(sequelize, DataTypes) {
          */
         is_active: function is_active() {
           return this.get(database_config.object_status.deleted) === null;
+        },
+
+        /**
+         * Deactivates an account, marking it as inactive (current implementation: Sequelize `destroy`, which sets the
+         * delete-at field to the time of deletion)
+         * @return {Object} A promise for completion of the user instance save
+         */
+        deactivate_and_save: function deactivate_and_save() {
+          if(!this.is_active()) {
+            throw new Error('Attempted to deactivate inactive user model: ' + JSON.stringify(this));
+          }
+          else {
+            return this.destroy();
+          }
+        },
+
+        /**
+         * Restores an account, marking it as active (current implementation: Sequelize `restore`, which sets the
+         * delete-at field null)
+         * @return {Object} A promise for completion of the user instance save
+         */
+        reactivate_and_save: function restore_and_save() {
+          if(this.is_active()) {
+            throw new Error('Attempted to reactivate active user model: ' + JSON.stringify(this));
+          }
+          else {
+            return this.restore();
+          }
         }
       }
     })

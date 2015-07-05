@@ -167,6 +167,7 @@ define(function(require) {
             var p_data_view = new ProfileViews.UserProfileData({ model: up_data });
             var p_admin_view = new ProfileViews.UserProfileControlPanel({ model: up_admin });
             p_admin_view.on('logout-clicked', function() { AppObj.trigger('user:profile:logout'); });
+            p_admin_view.on('deactivate-clicked', function() { AppObj.trigger('user:profile:deactivate'); });
             p_admin_view.on('local-connect-clicked', function() { AppObj.trigger('user:profile:connect:local'); });
             p_admin_view.on('fb-connect-clicked', function() { AppObj.trigger('user:profile:connect:fb'); });
             p_admin_view.on('google-connect-clicked', function() { AppObj.trigger('user:profile:connect:google'); });
@@ -230,6 +231,47 @@ define(function(require) {
           AppObj.scroll_to_top();
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_logout'));
+      },
+
+      /**
+       * Delete (deactivate) logged in user after prompting for confirmation, redirect to home:show
+       */
+      proc_deactivate: function proc_deactivate() {
+        logger.trace('controller.proc_deactivate');
+        require('js/common/entities');
+        q(AppObj.request('common:entities:flashmessage'))
+        .then(function(flash_message_model) {
+          var CommonViews = require('js/common/views');
+          var ProfileViews = require('js/apps/user/profile/views');
+          var profile_view = new ProfileViews.UserProfileLayout();
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+            header_text: 'User profile'
+          })});
+          var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+          var confirm_view = new CommonViews.ConfirmationPrompt({ model: new AppObj.Common.Entities.ConfirmationPrompt({
+            header: 'Deactivate acount?',
+            detail: 'If you deactivate your account you will not be able to log in. Are you sure?',
+            confirm_text: 'Yes',
+            reject_text: 'No'
+          })});
+          // no profile control panel
+          confirm_view.on('confirm-clicked', function() {
+            $.get(AppObj.config.apps.user.deactivate_path, function(resp_data, textStatus, jqXhr) {
+              AppObj.trigger('home:show');
+            });
+          });
+          confirm_view.on('reject-clicked', function() {
+            AppObj.trigger('user:profile');
+          });
+          profile_view.on('render', function() {
+            profile_view.region_header.show(header_view);
+            profile_view.region_message.show(msg_view);
+            profile_view.region_profile_main.show(confirm_view);
+          });
+          AppObj.region_main.show(profile_view);
+          AppObj.scroll_to_top();
+        })
+        .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_deactivate'));
       },
 
       /**
