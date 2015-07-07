@@ -62,7 +62,7 @@ define(function(require) {
     };
   };
 
-  q.longStackSupport = AppObj.config.app.q_long_stack_support;
+  q.longStackSupport = AppObj.config.app.q_longStackSupport;
   ////////
 
   // Display helpers

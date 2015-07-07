@@ -5,8 +5,8 @@ define(function(require) {
 
   var config = {
     app: {
-      logged_in_cookie_name: 'logged_in',
-      q_long_stack_support: true
+      logged_in_cookie_name: 'logged_in', // configure.py: user-cookie
+      q_longStackSupport: true // configure.py: client
     },
     apps: {
       user: {
@@ -23,30 +23,30 @@ define(function(require) {
         fb_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/fb/auth',
         fb_connect_url: 'https://127.0.0.1:27974/api/user/connect/fb/auth',
         fb_disconnect_path: '/api/user/connect/fb/disconnect',
-        fb_client_id: '',
+        fb_client_id: '', // configure.py: user-facebook
         google_auth_url: 'https://127.0.0.1:27974/api/user/access/google/auth',
         google_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/google/auth',
         google_connect_url: 'https://127.0.0.1:27974/api/user/connect/google/auth',
         google_disconnect_path: '/api/user/connect/google/disconnect',
-        google_client_id: '',
+        google_client_id: '', // configure.py: user-google
         twitter_auth_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth',
         twitter_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/twitter/auth',
         twitter_connect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/auth',
         twitter_disconnect_path: '/api/user/connect/twitter/disconnect',
-        twitter_consumer_key: ''
+        twitter_consumer_key: '' // configure.py: user-twitter
       }
     },
     logger: {
       root: {
         js: {
           conf: {
-            level: 'trace', // configure.py: js
+            level: 'trace', // configure.py: logger-js
             appenders: ['console']
           }
         },
         events_logger: {
           conf: {
-            level: 'trace', // configure.py: events_logger
+            level: 'trace', // configure.py: logger-events
             appenders: ['console']
           }
         }
