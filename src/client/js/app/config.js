@@ -33,7 +33,7 @@ define(function(require) {
         twitter_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/twitter/auth',
         twitter_connect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/auth',
         twitter_disconnect_path: '/api/user/connect/twitter/disconnect',
-        twitter_consumer_key: '' // configure.py: user-twitter
+        twitter_consumer_key: '', // configure.py: user-twitter
       }
     },
     logger: {

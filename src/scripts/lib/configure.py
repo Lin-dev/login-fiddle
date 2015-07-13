@@ -26,7 +26,7 @@ class Option:
     self.name = name
     self.description = description
 
-  def __get_value_input(current_value):
+  def __get_value_input(self, current_value):
     input_value = raw_input('Enter desired value [%s]: ' % current_value)
     if input_value == '':
       return current_value
@@ -49,9 +49,9 @@ class Option:
 
     #### Explain to user and get updated value
     print(self.name + ': ' + self.description)
-    output_value = __get_value_input(current_value)
+    output_value = self.__get_value_input(current_value)
     while not general.prompt_for_confirm('Is this correct?', True):
-      output_value = __get_value_input(current_value)
+      output_value = self.__get_value_input(current_value)
 
     if output_value != current_value:
       replacement_string = re.sub(r'\([^\)]*\)', output_value, self.regex_match_string)

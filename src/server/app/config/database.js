@@ -15,11 +15,11 @@ module.exports = {
   object_status: {
     created: 'sq_created_at', // constant
     updated: 'sq_updated_at', // constant
-    deleted: 'sq_deleted_at' // constant
+    deleted: 'sq_deleted_at', // constant
   },
   pool: {
     maxConnections: 10, // configure.py: database
     minConnections: 3, // configure.py: database
-    maxIdleTime: 30000 // configure.py: database
+    maxIdleTime: 30000, // configure.py: database
   }
 };

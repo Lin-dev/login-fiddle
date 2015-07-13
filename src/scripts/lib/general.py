@@ -59,7 +59,7 @@ def prompt_for_confirm(prompt=None, resp=None):
     prompt = 'Confirm'
 
   if resp is None:
-    prompt = '%s %s|%s: ' % prompt
+    prompt = '%s y|n: ' % prompt
   elif resp:
     prompt = '%s [y]|n: ' % prompt
   else:

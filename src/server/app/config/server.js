@@ -16,5 +16,5 @@ module.exports = {
   util_route_success: '/api/util/success', // constant
   util_route_failure: '/api/util/failure', // constant
   q_longStackSupport: false, // configure.py: server
-  static_max_age: 1000 // configure.py: server
+  static_max_age: 1000, // configure.py: server
 };
