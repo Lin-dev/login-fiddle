@@ -37,7 +37,7 @@ require.config({
     underscore: '/bower_components/underscore/underscore',
     validator: '/bower_components/validator-js/validator.min'
   },
-  urlArgs: 'bust=' + (new Date()).getTime() // development only
+  urlArgs: 'bust=' + ((new Date()).getTime()), // configure.py: require-urlArgs
 });
 
 require([

@@ -45,9 +45,9 @@ module.exports = {
     secret: 'default', // configure.py: user-cookie; specified here so can be shared across nodes in cluster
     store: {
       host: 'localhost', // configure.py: user-cookie
-      port: 6379, // configure.py: user-cookie
+      port: '6379', // configure.py: user-cookie
       db: 3, // configure.py: user-cookie
     }
   },
-  salt_rounds: 10, // configure.py: user-security
+  salt_rounds: '10', // configure.py: user-security
 };

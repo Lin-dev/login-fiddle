@@ -177,7 +177,7 @@ module.exports = function(grunt) {
         command: 'cp -r src/* build/out/<%= build_name %>'
       },
       mkdir: {
-        command: 'mkdir -p build/out/<%= build_name %>/logs build/dist'
+        command: 'mkdir -p build/out/<%= build_name %>/logs build/out/<%= build_name %>/security build/dist'
       },
     }
   });

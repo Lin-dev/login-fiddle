@@ -6,7 +6,7 @@ define(function(require) {
   var config = {
     app: {
       logged_in_cookie_name: 'logged_in', // configure.py: user-cookie
-      q_longStackSupport: true // configure.py: client
+      q_longStackSupport: true, // configure.py: client
     },
     apps: {
       user: {
@@ -19,19 +19,19 @@ define(function(require) {
         local_reactivate_path: '/api/user/reactivate/local/login',
         local_connect_path: '/api/user/connect/local/connect',
         local_disconnect_path: '/api/user/connect/local/disconnect',
-        fb_auth_url: 'https://127.0.0.1:27974/api/user/access/fb/auth',
-        fb_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/fb/auth',
-        fb_connect_url: 'https://127.0.0.1:27974/api/user/connect/fb/auth',
+        fb_auth_url: 'https://127.0.0.1:27974/api/user/access/fb/auth', //configure.py: client-oauth
+        fb_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/fb/auth', //configure.py: client-oauth
+        fb_connect_url: 'https://127.0.0.1:27974/api/user/connect/fb/auth', //configure.py: client-oauth
         fb_disconnect_path: '/api/user/connect/fb/disconnect',
         fb_client_id: '', // configure.py: user-facebook
-        google_auth_url: 'https://127.0.0.1:27974/api/user/access/google/auth',
-        google_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/google/auth',
-        google_connect_url: 'https://127.0.0.1:27974/api/user/connect/google/auth',
+        google_auth_url: 'https://127.0.0.1:27974/api/user/access/google/auth', //configure.py: client-oauth
+        google_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/google/auth', //configure.py: client-oauth
+        google_connect_url: 'https://127.0.0.1:27974/api/user/connect/google/auth', //configure.py: client-oauth
         google_disconnect_path: '/api/user/connect/google/disconnect',
         google_client_id: '', // configure.py: user-google
-        twitter_auth_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth',
-        twitter_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/twitter/auth',
-        twitter_connect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/auth',
+        twitter_auth_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth', //configure.py: client-oauth
+        twitter_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/twitter/auth', //configure.py: client-oauth
+        twitter_connect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/auth', //configure.py: client-oauth
         twitter_disconnect_path: '/api/user/connect/twitter/disconnect',
         twitter_consumer_key: '', // configure.py: user-twitter
       }

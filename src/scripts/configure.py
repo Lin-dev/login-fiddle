@@ -55,7 +55,7 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   groups[-1].add_option(
     name='Static cache max age',
     desc='The maximum length of time a static element is cached by the server [number]',
-    re_string='static_max_age: (\d+), // configure.py: server'
+    re_string='static_max_age: ([\d\*]+), // configure.py: server'
   )
 
   groups.append(configure.Group(
@@ -146,12 +146,12 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   groups[-1].add_option(
     name='Google - client id',
     desc='For application (client, server config should be equal) [an alphanumeric string with - and .]',
-    re_string='client_id: \'([a-zA-Z_.0-9]*)\', // configure.py: user-google'
+    re_string='client_id: \'([a-zA-Z\-_.0-9]*)\', // configure.py: user-google'
   )
   groups[-1].add_option(
     name='Google - client secret',
     desc='For application (do not share this information or record it elsewhere) [an alphanumeric string with - and .]',
-    re_string='client_secret: \'([a-zA-Z_.0-9]*)\', // configure.py: user-google'
+    re_string='client_secret: \'([a-zA-Z\-_.0-9]*)\', // configure.py: user-google'
   )
   groups[-1].add_option(
     name='Twitter - consumer key',
@@ -161,7 +161,7 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   groups[-1].add_option(
     name='Twitter - consumer secret',
     desc='For application (do not share this information or record it elsewhere) [an alphanumeric string]',
-    re_string='client_secret: \'([a-zA-Z0-9]*)\', // configure.py: user-twitter'
+    re_string='consumer_secret: \'([a-zA-Z0-9]*)\', // configure.py: user-twitter'
   )
   groups[-1].add_option(
     name='Logged in cookie name',
@@ -186,12 +186,12 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   groups[-1].add_option(
     name='Cookie - store DB number',
     desc='To secure server cookies [number])',
-    re_string='db: \'(\d+)\', // configure.py: user-cookie'
+    re_string='db: (\d+), // configure.py: user-cookie'
   )
   groups[-1].add_option(
     name='Salt rounds',
     desc='For hashing passwords, do not change after any passwords are hashed [number, small])',
-    re_string='salt_rounds: \'(\d+)\', // configure.py: user-security'
+    re_string='salt_rounds: (\d+), // configure.py: user-security'
   )
 
   groups.append(configure.Group(
@@ -213,17 +213,62 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   groups[-1].add_option(
     name='Facebook - client id',
     desc='For application (client, server config should be equal) [a number]',
-    re_string='facebook_client_id: \'(\d+)\', // configure.py: user-facebook'
+    re_string='fb_client_id: \'(\d*)\', // configure.py: user-facebook'
   )
   groups[-1].add_option(
     name='Google - client id',
     desc='For application (client, server config should be equal) [an alphanumeric string with - and .]',
-    re_string='google_client_id: \'([a-zA-Z_.0-9]+)\', // configure.py: user-google'
+    re_string='google_client_id: \'([a-zA-Z\-_.0-9]*)\', // configure.py: user-google'
   )
   groups[-1].add_option(
     name='Twitter - consumer key',
     desc='For application (client, server config should be equal) [an alphanumeric string]',
-    re_string='twitter_consumer_key: \'([a-zA-Z0-9]+)\', // configure.py: user-twitter'
+    re_string='twitter_consumer_key: \'([a-zA-Z0-9]*)\', // configure.py: user-twitter'
+  )
+  groups[-1].add_option(
+    name='Facebook - auth server',
+    desc='Hostname or IP [host or ip]',
+    re_string='fb_auth_url: \'https://([a-zA-Z_0-9.]+):27974/api/user/access/fb/auth\', // configure.py: client-oauth'
+  )
+  groups[-1].add_option(
+    name='Facebook - reactivate server',
+    desc='Hostname or IP [host or ip]',
+    re_string='fb_reactivate_url: \'https://([a-zA-Z_0-9.]+):27974/api/user/reactivate/fb/auth\', // configure.py: client-oauth'
+  )
+  groups[-1].add_option(
+    name='Facebook - connect server',
+    desc='Hostname or IP [host or ip]',
+    re_string='fb_connect_url: \'https://([a-zA-Z_0-9.]+):27974/api/user/connect/fb/auth\', // configure.py: client-oauth'
+  )
+  groups[-1].add_option(
+    name='Google - auth server',
+    desc='Hostname or IP [host or ip]',
+    re_string='google_auth_url: \'https://([a-zA-Z_0-9.]+):27974/api/user/access/google/auth\', // configure.py: client-oauth'
+  )
+  groups[-1].add_option(
+    name='Google - reactivate server',
+    desc='Hostname or IP [host or ip]',
+    re_string='google_reactivate_url: \'https://([a-zA-Z_0-9.]+):27974/api/user/reactivate/google/auth\', // configure.py: client-oauth'
+  )
+  groups[-1].add_option(
+    name='Google - connect server',
+    desc='Hostname or IP [host or ip]',
+    re_string='google_connect_url: \'https://([a-zA-Z_0-9.]+):27974/api/user/connect/google/auth\', // configure.py: client-oauth'
+  )
+  groups[-1].add_option(
+    name='Twitter - auth server',
+    desc='Hostname or IP [host or ip]',
+    re_string='twitter_auth_url: \'https://([a-zA-Z_0-9.]+):27974/api/user/access/twitter/auth\', // configure.py: client-oauth'
+  )
+  groups[-1].add_option(
+    name='Twitter - reactivate server',
+    desc='Hostname or IP [host or ip]',
+    re_string='twitter_reactivate_url: \'https://([a-zA-Z_0-9.]+):27974/api/user/reactivate/twitter/auth\', // configure.py: client-oauth'
+  )
+  groups[-1].add_option(
+    name='Twitter - connect server',
+    desc='Hostname or IP [host or ip]',
+    re_string='twitter_connect_url: \'https://([a-zA-Z_0-9.]+):27974/api/user/connect/twitter/auth\', // configure.py: client-oauth'
   )
 
   groups.append(configure.Group(
@@ -239,9 +284,23 @@ def configure_app(current_value_install_dir, output_value_install_dir):
   )
   groups[-1].add_option(
     name='Client events_logger',
-    desc='The log level for events_logger (Marionette evets) [trace, debug, info, warn, error, fatal]',
+    desc='The log level for events_logger (Marionette events) [trace, debug, info, warn, error, fatal]',
     re_string='level: \'([^\']*)\', // configure.py: logger-events'
   )
+
+  '''
+  groups.append(configure.Group(
+    group_name='Client require.js configuration',
+    current_value_install_dir=current_value_install_dir,
+    output_value_install_dir=output_value_install_dir,
+    default_config_file_rel_path='./client/js/main.js'
+  ))
+  groups[-1].add_option(
+    name='Cache buster',
+    desc='The (possibly dynamic) string to append to requests for server cache busting, include single quotes if nec.',
+    re_string='\(([^\n]*)\), // configure.py: require-urlArgs'
+  )
+  '''
 
   [group.configure_options() for group in groups]
 

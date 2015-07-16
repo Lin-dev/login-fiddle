@@ -132,7 +132,7 @@ def setup_database(install_dir_path):
   # Read DB configuration from server/app/config/database.js
   (user, pw, name, schema) = read_db_configuration(install_dir_path)
 
-  if prompt_for_confirm('Drop existing DB schema and user?', None):
+  if general.prompt_for_confirm('Drop existing DB schema and user?', None):
     db_clear_commands = CONST_DB_CLEAR_COMMANDS \
       .replace('{db.user}', user) \
       .replace('{db.name}', name) \
