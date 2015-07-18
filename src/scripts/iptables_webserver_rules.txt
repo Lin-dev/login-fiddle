@@ -1,0 +1,41 @@
+*filter
+# Randomly generate these port numbers for each server:
+# - aaaa - SSH port
+# - xxxx - Node.js HTTP
+# - yyyy - Node.js HTTPS
+# Port redirect from 80 and 443 to Node.JS ports is not specified in this file, they can
+# be added running these two commands (and do "iptables-save > /etc/iptable.up.rules" as
+# root after)
+# sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port xxxx
+# sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j REDIRECT --to-port yyyy
+
+#  Allows all loopback (lo0) traffic and drop all traffic to 127/8 that doesn't use lo0
+-A INPUT -i lo -j ACCEPT
+-A INPUT -i lo -d 127.0.0.0/8 -j REJECT
+
+#  Accepts all established inbound connections
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+#  Allows all outbound traffic
+#  You can modify this to only allow certain traffic
+-A OUTPUT -j ACCEPT
+
+# Allows HTTP connections from anywhere for Node HTTP, HTTPS
+-A INPUT -p tcp --dport xxxx -j ACCEPT
+-A INPUT -p tcp --dport yyyy -j ACCEPT
+
+#  Allows SSH connections (port aaaa), rsync seems happy to use this rather than 873
+# THE SSH -dport NUMBER IS THE SAME ONE YOU SET UP IN THE SSHD_CONFIG FILE
+-A INPUT -p tcp -m state --state NEW --dport aaaa -j ACCEPT
+
+# Allow ping
+-A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+
+# log iptables denied calls
+-A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables denied: " --log-level 7
+
+# Reject all other inbound - default deny unless explicitly allowed policy
+-A INPUT -j REJECT
+-A FORWARD -j REJECT
+
+COMMIT
