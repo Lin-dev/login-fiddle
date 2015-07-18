@@ -4,17 +4,49 @@ define(function(require) {
   'use strict';
 
   var config = {
+    app: {
+      logged_in_cookie_name: 'logged_in', // configure.py: user-cookie
+      q_longStackSupport: true, // configure.py: client
+    },
+    apps: {
+      user: {
+        local_password_min_length: 8,
+        local_password_max_length: 256,
+        logout_path: '/api/user/logout',
+        deactivate_path: '/api/user/deactivate',
+        local_login_path: '/api/user/access/local/login',
+        local_signup_path: '/api/user/access/local/signup',
+        local_reactivate_path: '/api/user/reactivate/local/login',
+        local_connect_path: '/api/user/connect/local/connect',
+        local_disconnect_path: '/api/user/connect/local/disconnect',
+        fb_auth_url: 'https://127.0.0.1:27974/api/user/access/fb/auth', //configure.py: client-oauth
+        fb_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/fb/auth', //configure.py: client-oauth
+        fb_connect_url: 'https://127.0.0.1:27974/api/user/connect/fb/auth', //configure.py: client-oauth
+        fb_disconnect_path: '/api/user/connect/fb/disconnect',
+        fb_client_id: '', // configure.py: user-facebook
+        google_auth_url: 'https://127.0.0.1:27974/api/user/access/google/auth', //configure.py: client-oauth
+        google_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/google/auth', //configure.py: client-oauth
+        google_connect_url: 'https://127.0.0.1:27974/api/user/connect/google/auth', //configure.py: client-oauth
+        google_disconnect_path: '/api/user/connect/google/disconnect',
+        google_client_id: '', // configure.py: user-google
+        twitter_auth_url: 'https://127.0.0.1:27974/api/user/access/twitter/auth', //configure.py: client-oauth
+        twitter_reactivate_url: 'https://127.0.0.1:27974/api/user/reactivate/twitter/auth', //configure.py: client-oauth
+        twitter_connect_url: 'https://127.0.0.1:27974/api/user/connect/twitter/auth', //configure.py: client-oauth
+        twitter_disconnect_path: '/api/user/connect/twitter/disconnect',
+        twitter_consumer_key: '', // configure.py: user-twitter
+      }
+    },
     logger: {
       root: {
         js: {
           conf: {
-            level: 'warn', // configure.py: js
+            level: 'trace', // configure.py: logger-js
             appenders: ['console']
           }
         },
         events_logger: {
           conf: {
-            level: 'warn', // configure.py: events_logger
+            level: 'trace', // configure.py: logger-events
             appenders: ['console']
           }
         }

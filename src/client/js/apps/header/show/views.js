@@ -1,15 +1,15 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/header/show/view');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/header/show/view');
   logger.trace('require:lambda -- enter');
 
-  PF.module('HeaderApp.Show.Views', function(Views, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
+  AppObj.module('HeaderApp.Show.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
     require('js/common/views');
 
-    Views.NavItemView = PF.Common.Views.PFItemView.extend({
+    Views.NavItemView = AppObj.Common.Views.AppObjItemView.extend({
       __name: 'NavItemView',
       template: _.template(require('text!js/apps/header/show/templates/navitem.html')),
       tagName: 'li',
@@ -18,14 +18,14 @@ define(function(require) {
         'click a.js-navitem': 'navigate'
       },
 
-      onRender: function() {
+      onRender: function onRender() {
         if(this.model.selected) {
           this.$el.addClass('active');
         }
       }
     });
 
-    Views.Header = PF.Common.Views.PFCompositeView.extend({
+    Views.Header = AppObj.Common.Views.AppObjCompositeView.extend({
       __name: 'Header',
       template: _.template(require('text!js/apps/header/show/templates/header.html')),
       childView: Views.NavItemView,
@@ -36,9 +36,9 @@ define(function(require) {
       }
     });
 
-    logger.trace('PF.module -- exit');
+    logger.trace('AppObj.module -- exit');
   });
 
   logger.trace('require:lambda -- exit');
-  return PF.HeaderApp.Show.Views;
+  return AppObj.HeaderApp.Show.Views;
 });

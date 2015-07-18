@@ -17,6 +17,12 @@ describe('requires', function() {
   describe('api', function() {
     var tests_executed = 0;
 
+    it('app/api/helpers', function() {
+      tests_executed++;
+      var result = require('app/api/helpers');
+      result.should.not.be.undefined;
+    });
+
     it('app/api/router', function() {
       tests_executed++;
       var result = require('app/api/router');
@@ -35,14 +41,56 @@ describe('requires', function() {
       result.should.not.be.undefined;
     });
 
+    it('app/api/session/router', function() {
+      tests_executed++;
+      var result = require('app/api/session/router_impl');
+      result.should.not.be.undefined;
+    });
+
+    it('app/api/session/router_impl', function() {
+      tests_executed++;
+      var result = require('app/api/session/router_impl');
+      result.should.not.be.undefined;
+    });
+
+    it('app/api/user/router', function() {
+      tests_executed++;
+      var result = require('app/api/user/router');
+      result.should.not.be.undefined;
+    });
+
+    it('app/api/user/router_impl', function() {
+      tests_executed++;
+      var result = require('app/api/user/router_impl');
+      result.should.not.be.undefined;
+    });
+
+    it('app/api/util/router', function() {
+      tests_executed++;
+      var result = require('app/api/util/router');
+      result.should.not.be.undefined;
+    });
+
+    it('app/api/util/router_impl', function() {
+      tests_executed++;
+      var result = require('app/api/util/router_impl');
+      result.should.not.be.undefined;
+    });
+
     // This test must be last in its suite
-    it('all api js files should be tested', function() {
+    it('all api js files should be require-tested', function() {
       tests_executed.should.equal(test_lib.js_app_files_in_dir('./src/server/app/api/').length);
     });
   });
 
   describe('config', function() {
     var tests_executed = 0;
+
+    it('app/config/api_util', function() {
+      tests_executed++;
+      var result = require('app/config/api_util');
+      result.should.not.be.undefined;
+    });
 
     it('app/config/database', function() {
       tests_executed++;
@@ -62,14 +110,26 @@ describe('requires', function() {
       result.should.not.be.undefined;
     });
 
+    it('app/config/user', function() {
+      tests_executed++;
+      var result = require('app/config/user');
+      result.should.not.be.undefined;
+    });
+
     // This test must be last in its suite
-    it('all config js files should be tested', function() {
+    it('all config js files should be require-tested', function() {
       tests_executed.should.equal(test_lib.js_app_files_in_dir('./src/server/app/config/').length);
     });
   });
 
   describe('util', function() {
     var tests_executed = 0;
+
+    it('app/util/auth', function() {
+      tests_executed++;
+      var result = require('app/util/auth');
+      result.should.not.be.undefined;
+    });
 
     it('app/util/logger', function() {
       tests_executed++;
@@ -83,6 +143,12 @@ describe('requires', function() {
       result.should.not.be.undefined;
     });
 
+    it('app/util/pr/auth', function() {
+      tests_executed++;
+      var result = require('app/util/pr/auth');
+      result.should.not.be.undefined;
+    });
+
     it('app/util/pr/entry', function() {
       tests_executed++;
       var result = require('app/util/pr/entry');
@@ -90,7 +156,7 @@ describe('requires', function() {
     });
 
     // This test must be last in its suite
-    it('all util js files should be tested', function() {
+    it('all util js files should be require-tested', function() {
       tests_executed.should.equal(test_lib.js_app_files_in_dir('./src/server/app/util/').length);
     });
   });

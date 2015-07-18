@@ -33,6 +33,7 @@
     /* RequireJS */
     "define"     : false,
     /* Other */
-    "window"     : false
+    "window"     : false,
+    "escape"     : false
   }
 }

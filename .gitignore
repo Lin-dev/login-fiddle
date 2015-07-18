@@ -9,3 +9,5 @@ logs
 .grunt
 *.pyc
 jasmine_output.html
+security
+

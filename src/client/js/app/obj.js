@@ -3,55 +3,101 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Marionette = require('marionette');
+  var $ = require('jquery');
+  var q = require('q'); // for setting long stack support
 
   // Set up app object
-  var PF = new Marionette.Application();
-  PF.config = require('js/app/config');
-  PF.logger = require('js/app/logger_builder')(PF.config.logger);
-  var logger = PF.logger.get('root/js/app/obj');
-  logger.debug('require:lambda -- entered, PF built, config loaded, logger initialised');
+  var AppObj = new Marionette.Application();
+  AppObj.config = require('js/app/config');
+  AppObj.logger = require('js/app/logger_builder')(AppObj.config.logger);
+  var logger = AppObj.logger.get('root/js/app/obj');
+  logger.debug('require:lambda -- entered, AppObj built, config loaded, logger initialised');
 
   // Set up regions
-  PF.addRegions({
+  AppObj.addRegions({
     'region_navbar': 'div#region_navbar',
     'region_main': 'div#region_main',
     'region_footer': 'div#region_footer'
   });
 
   // Routing helpers
-  PF.navigate = function(route, options) {
+  /**
+   * Updates the URL in the address bar - wraps Backbone.history.navigate
+   */
+  AppObj.navigate = function navigate(route, options) {
     options = options || {};
     Backbone.history.navigate(route, options);
   };
 
-  PF.get_current_route = function() {
+  /**
+   * Returns current routing fragment - wraps Backbone.history.fragment
+   */
+  AppObj.get_current_route = function get_current_route() {
     return Backbone.history.fragment;
   };
+  ////////
+
+  // Auth helpers
+  /**
+   * Checks if a user is logged in (according to the cookies sent by the server)
+   * @return {Boolean} True if the user is logged in and the Server user_config.logged_in_cookie_name === 'true',
+   *                   false otherwise
+   */
+  AppObj.is_logged_in = function is_logged_in() {
+    require('jquery_cookie');
+    return $.cookie.get('logged_in') === 'true';
+  };
+  ////////
+
+  // Promise helpers - putting them here is a bit hacky but not worth creating a separate module in common yet
+  /**
+   * Returns a function that can be passed into a promise fail handler to log promise failure and do other cleanup.
+   * Method is currently simple but makes avoiding silent failure due to promise failure a one-liner.
+   * @param  {String}   caller The function name used in logs to describe the calling location
+   * @return {Function}        A function that can be passed in to a promise's fail method
+   */
+  AppObj.on_promise_fail_gen = function on_promise_fail_gen(caller) {
+    return function on_promise_fail(err) {
+      logger.error(caller + ' -- promise failed, error: ' + err);
+    };
+  };
+
+  q.longStackSupport = AppObj.config.app.q_longStackSupport;
+  ////////
+
+  // Display helpers
+  /**
+   * Scrolls the browser to the top
+   */
+  AppObj.scroll_to_top = function scroll_to_top() {
+    $('html, body').animate({ scrollTop: 0 }, 600);
+  };
+  ////////
 
   // Log all events at trace
-  PF.on('all', function(event_string) {
-    var events_logger = PF.logger.get('root/events_logger');
-    events_logger.trace('PF.event -- events logger: ' + event_string);
+  AppObj.on('all', function(event_string) {
+    var events_logger = AppObj.logger.get('root/events_logger');
+    events_logger.trace('AppObj.event -- events logger: ' + event_string);
   });
 
   // Set application to start after initialisation
-  PF.on('start', function(options) {
-    logger.trace('PF.event - start -- enter');
+  AppObj.on('start', function(options) {
+    logger.trace('AppObj.event - start -- enter');
     if(Backbone.history) {
       Backbone.history.start({ // assume router already required elsewhere, e.g. in main.js
         pushState: true
       });
 
       if(Backbone.history.fragment === '') {
-        PF.trigger('home:show');
+        AppObj.trigger('home:show');
       }
     }
     else {
       logger.error('Backbone.history is falsey: ' + Backbone.history);
     }
-    logger.trace('PF.event - start -- exit');
+    logger.trace('AppObj.event - start -- exit');
   });
 
-  logger.debug('require:lambda -- exited, PF regions and on-start listener initialised');
-  return PF;
+  logger.debug('require:lambda -- exited, AppObj regions and on-start listener initialised');
+  return AppObj;
 });

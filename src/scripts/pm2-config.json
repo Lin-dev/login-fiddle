@@ -1,5 +1,5 @@
 {
-  "name":             "postgres-fiddle",
+  "name":             "login-fiddle",
 
   "watch":            true,
   "ignore_watch":     ["[\\/\\\\]\\./", "node_modules"],

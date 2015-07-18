@@ -1,17 +1,17 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/common/filtering_wrapper_collection');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/common/filtering_wrapper_collection');
 
-  PF.module('Entities', function(Entities, PF, Backbone, Marionette, $, _) {
+  AppObj.module('Common.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     /**
      * Returns a collection decorated with filtering functionality, does not need to be called with 'new'
      *
      * @param {Object} options.collection The original backbone collection to filter
      * @param {Function} options.filter_generator A function that takes a criterion and returns a filtering function
      */
-    Entities.FilteringWrapperCollection = function(options) {
+    Entities.FilteringWrapperCollection = function FilteringWrapperCollection(options) {
       var original = options.collection;
       var filtered = new original.constructor();
       var current_criterion; // used to cache the current criterion ,for use on original:reset or :add
@@ -25,44 +25,44 @@ define(function(require) {
       // logs (apart from add, which is used by reset, and set, used by add)
       var filtered_reset_pointer = filtered.reset;
       var doing_filtered_reset = false;
-      var filtered_reset = function() {
+      var filtered_reset = function filtered_reset() {
         doing_filtered_reset = true;
         filtered_reset_pointer.apply(filtered, arguments);
         doing_filtered_reset = false;
       };
-      filtered.add = function() {
+      filtered.add = function add() {
         if(!doing_filtered_reset) {
           logger.warn('FilteringWrapperCollection should not be modified directly');
         }
         filtered.constructor.prototype.add.apply(filtered, arguments);
       };
-      filtered.set = function() {
+      filtered.set = function set() {
         if(!doing_filtered_reset) {
           logger.warn('FilteringWrapperCollection should not be modified directly');
         }
         filtered.constructor.prototype.set.apply(filtered, arguments);
       };
-      filtered.remove = function() {
+      filtered.remove = function remove() {
         logger.warn('FilteringWrapperCollection should not be modified directly');
         filtered.constructor.prototype.remove.apply(filtered, arguments);
       };
-      filtered.reset = function() {
+      filtered.reset = function reset() {
         logger.warn('FilteringWrapperCollection should not be modified directly');
         filtered.constructor.prototype.reset.apply(filtered, arguments);
       };
-      filtered.push = function() {
+      filtered.push = function push() {
         logger.warn('FilteringWrapperCollection should not be modified directly');
         filtered.constructor.prototype.push.apply(filtered, arguments);
       };
-      filtered.pop = function() {
+      filtered.pop = function pop() {
         logger.warn('FilteringWrapperCollection should not be modified directly');
         filtered.constructor.prototype.pop.apply(filtered, arguments);
       };
-      filtered.shift = function() {
+      filtered.shift = function shift() {
         logger.warn('FilteringWrapperCollection should not be modified directly');
         filtered.constructor.prototype.shift.apply(filtered, arguments);
       };
-      filtered.unshift = function() {
+      filtered.unshift = function unshift() {
         logger.warn('FilteringWrapperCollection should not be modified directly');
         filtered.constructor.prototype.unshift.apply(filtered, arguments);
       };
@@ -76,7 +76,7 @@ define(function(require) {
        * @param  {[type]} collection       The collection to apply the filter to, defaults to original
        * @return {[type]}                  An array of models selected by the filter
        */
-      var apply_filter = function(filter_criterion, filter_strategy, collection) {
+      var apply_filter = function apply_filter(filter_criterion, filter_strategy, collection) {
         logger.debug('applying filter: ' + JSON.stringify(arguments));
         var collection_to_filter = collection || original;
         var criterion = filter_criterion;
@@ -101,7 +101,7 @@ define(function(require) {
         return items;
       };
 
-      filtered.filter = function(filter_criterion){
+      filtered.filter = function filter(filter_criterion){
         current_strategy = 'filter';
         var items = apply_filter(filter_criterion, current_strategy);
         // reset the filtered collection with the new items
@@ -109,7 +109,7 @@ define(function(require) {
         return filtered;
       };
 
-      filtered.where = function(filter_criterion){
+      filtered.where = function where(filter_criterion){
         current_strategy = 'where';
         var items = apply_filter(filter_criterion, current_strategy);
         // reset the filtered collection with the new items
@@ -141,5 +141,5 @@ define(function(require) {
     };
   });
 
-  return PF.Entities;
+  return AppObj.Common.Entities;
 });

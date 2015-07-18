@@ -13,32 +13,57 @@ define(function(require) {
    *
    * @param {Object} options Options - currently none used
    */
-  var ConsoleAppender = function(options) {
+  var ConsoleAppender = function ConsoleAppender(options) {
     if(!window.console) {
       window.console = {};
     }
-    this.log = console.log ? console.log.bind(console) : function() {};
-    this.trace = console.debug ? console.debug.bind(console) : this.log;
-    this.debug = console.debug ? console.debug.bind(console) : this.log;
+    this.log = console.info ? console.info.bind(console) : console.log ? console.log.bind(console) : function log() {};
     this.info = this.log;
-    this.warn = this.log;
+
+    this.debug = console.debug ? console.debug.bind(console) : this.info;
+    this.trace = this.debug; // not console.trace ? console.trace.bind(console) : this.debug; because auto stack trace
+
+    this.warn = console.warn ? console.warn.bind(console) : this.log;
     this.error = console.error ? console.error.bind(console) : this.warn;
-    this.fatal = console.fatal ? console.fatal.bind(console) : this.error;
+    this.fatal = console.fatal ? console.bind.fatal(console) : this.error;
+
+    this.temp_only = this.error; // use for temporary logging statements - easily grep to remove
   };
 
   /**
    * A logger object, associated with a group and with some set of appenders attached to it
    * @param {Object} options Required and possible properties are String:level Array[String]:appenders, String:group
    */
-  var Logger = function(options) {
-    // PRIVATE FUNCTIONS
+  var Logger = function Logger(options) {
+    // PRIVATE FIELDS AND FUNCTIONS
     var that = this;
 
+    /**
+     * Returns an appropriate appender object for an appender string from a logger config. Valid strings (case
+     * insensitive) are:
+     * - console
+     */
+    var parse_appenders = function parse_appenders(appender_strings) {
+      var appender_objects = [];
+      _.each(appender_strings, function(appender_string) {
+        switch(appender_string.toLowerCase()) {
+          case 'console': appender_objects.push(new ConsoleAppender()); break;
+          default: throw new Error('Unknown appender string: ' + appender_string);
+        }
+      });
+      if(appender_objects.length === 0) {
+        throw new Error('No appenders defined for logger ' + that.group);
+      }
+      return appender_objects;
+    };
+    // END PRIVATE FUNCTIONS
+
+    // PUBLIC PRIVILEGED METHODS
     /**
      * Converts level string from logger config into Log4js enum. Valid strings (case insensitive) are: all. trace,
      * debug, info, warn, error, fatal
      */
-    var parse_level = function(level_string) {
+    this.parse_level = function parse_level(level_string) {
       var levels = {
         all:   0,
         trace: 100,
@@ -54,117 +79,110 @@ define(function(require) {
     };
 
     /**
-     * Returns an appropriate appender object for an appender string from a logger config. Valid strings (case
-     * insensitive) are:
-     * - console
+     * Build log message string based on message and log-level
+     * @param  {String} message      The message to be logged
+     * @param  {String} level_string A log level string, e.g. trace, info, fatal
+     * @return {String}              The assembled log message string
      */
-    var parse_appenders = function(appender_strings) {
-      var appender_objects = [];
-      _.each(appender_strings, function(appender_string) {
-        switch(appender_string.toLowerCase()) {
-          case 'console': appender_objects.push(new ConsoleAppender()); break;
-          default: throw new Error('Unknown appender string: ' + appender_string);
-        }
-      });
-      if(appender_objects.length === 0) {
-        throw new Error('No appenders defined for logger ' + that.group);
-      }
-      return appender_objects;
-    };
-
-    var assemble_log_entry = function(message, level_string) {
+    this.assemble_log_entry = function assemble_log_entry(message, level_string) {
       var timestamp = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
       return timestamp + ' ' + level_string.toUpperCase() + ' [' + that.group + '] ' + message;
     };
-    // END PRIVATE FUNCTIONS
+    // END PUBLIC PRIVILEGED METHODS
 
-    // PUBLIC PRIVILEGED FUNCTIONS
-    // TODO: Refactor so that these methos are on the prototype, not the instance
-    this.is_trace_enabled = function() {
-      return this.log_level <= parse_level('trace');
-    };
-
-    this.trace = function(message) {
-      if(this.is_trace_enabled()) {
-        var log_entry = assemble_log_entry(message, 'trace');
-        _.each(this.appenders, function(appender) {
-          appender.trace(log_entry);
-        });
-      }
-    };
-
-    this.is_debug_enabled = function() {
-      return this.log_level <= parse_level('debug');
-    };
-
-    this.debug = function(message) {
-      if(this.is_debug_enabled()) {
-        var log_entry = assemble_log_entry(message, 'debug');
-        _.each(this.appenders, function(appender) {
-          appender.debug(log_entry);
-        });
-      }
-    };
-
-    this.is_info_enabled = function() {
-      return this.log_level <= parse_level('info');
-    };
-
-    this.info = function(message) {
-      if(this.is_info_enabled()) {
-        var log_entry = assemble_log_entry(message, 'info');
-        _.each(this.appenders, function(appender) {
-          appender.info(log_entry);
-        });
-      }
-    };
-
-    this.is_warn_enabled = function() {
-      return this.log_level <= parse_level('warn');
-    };
-
-    this.warn = function(message) {
-      if(this.is_warn_enabled()) {
-        var log_entry = assemble_log_entry(message, 'warn');
-        _.each(this.appenders, function(appender) {
-          appender.warn(log_entry);
-        });
-      }
-    };
-
-    this.is_error_enabled = function() {
-      return this.log_level <= parse_level('error');
-    };
-
-    this.error = function(message) {
-      if(this.is_error_enabled()) {
-        var log_entry = assemble_log_entry(message, 'error');
-        _.each(this.appenders, function(appender) {
-          appender.error(log_entry);
-        });
-      }
-    };
-
-    this.is_fatal_enabled = function() {
-      return this.log_level <= parse_level('fatal');
-    };
-
-    this.fatal = function(message) {
-      if(this.is_fatal_enabled()) {
-        var log_entry = assemble_log_entry(message, 'fatal');
-        _.each(this.appenders, function(appender) {
-          appender.fatal(log_entry);
-        });
-      }
-    };
-    // END PUBLIC FUNCTIONS
-
-    // CONFIGURE OBJECT
+    // CONFIGURE OBJECT, PUBLIC FIELDS
     this.group = options.group;
-    this.log_level = parse_level(options.level);
     this.appenders = parse_appenders(options.appenders);
+    this.log_level = this.parse_level(options.level);
     // END CONFIGURE OBJECT
   };
+
+  // PUBLIC-ACCESSIBLE, UNPRIVILEGED METHODS ON THE PROTOTYPE
+  Logger.prototype.is_trace_enabled = function is_trace_enabled() {
+    return this.log_level <= this.parse_level('trace');
+  };
+
+  Logger.prototype.trace = function trace(message) {
+    if(this.is_trace_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'trace');
+      _.each(this.appenders, function(appender) {
+        appender.trace(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_debug_enabled = function is_debug_enabled() {
+    return this.log_level <= this.parse_level('debug');
+  };
+
+  Logger.prototype.debug = function debug(message) {
+    if(this.is_debug_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'debug');
+      _.each(this.appenders, function(appender) {
+        appender.debug(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_info_enabled = function is_info_enabled() {
+    return this.log_level <= this.parse_level('info');
+  };
+
+  Logger.prototype.info = function info(message) {
+    if(this.is_info_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'info');
+      _.each(this.appenders, function(appender) {
+        appender.info(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_warn_enabled = function is_warn_enabled() {
+    return this.log_level <= this.parse_level('warn');
+  };
+
+  Logger.prototype.warn = function warn(message) {
+    if(this.is_warn_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'warn');
+      _.each(this.appenders, function(appender) {
+        appender.warn(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_error_enabled = function is_error_enabled() {
+    return this.log_level <= this.parse_level('error');
+  };
+
+  Logger.prototype.error = function error(message) {
+    if(this.is_error_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'error');
+      _.each(this.appenders, function(appender) {
+        appender.error(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.is_fatal_enabled = function is_fatal_enabled() {
+    return this.log_level <= this.parse_level('fatal');
+  };
+
+  Logger.prototype.fatal = function fatal(message) {
+    if(this.is_fatal_enabled()) {
+      var log_entry = this.assemble_log_entry(message, 'fatal');
+      _.each(this.appenders, function(appender) {
+        appender.fatal(log_entry);
+      });
+    }
+  };
+
+  Logger.prototype.temp_only = function temp_only(message) {
+    var log_entry = this.assemble_log_entry(message, 'temp-only');
+    _.each(this.appenders, function(appender) {
+      appender.temp_only(log_entry);
+    });
+  };
+  // END PUBLIC-ACCESSIBLE, UNPRIVILEGED METHODS ON THE PROTOYPE
 
 
 
@@ -179,7 +197,7 @@ define(function(require) {
    * @param  {Object} log_config   The logger configuration
    * @return {Object}              A conf object with fields log_level and appenders
    */
-  var get_group_config_clone = function(group_string, log_config) {
+  var get_group_config_clone = function get_group_config_clone(group_string, log_config) {
     var group_elements = group_string.split('/');
     var current_level = log_config;
     for(var i = 0; i < group_elements.length; ++i) {
@@ -202,7 +220,7 @@ define(function(require) {
   /**
    * Returned from this module, can be used to build logs according to the log_config parameter
    */
-  var logger_builder = function(log_config) {
+  var logger_builder = function logger_builder(log_config) {
     var existing_loggers = {};
 
     return {
@@ -213,7 +231,7 @@ define(function(require) {
        * @param  {String} group The logger group - usually the path to the javascript file
        * @return {Object}       A logger object for {{group}}
        */
-      get: function(group) {
+      get: function get(group) {
         if(existing_loggers[group]) {
           return existing_loggers[group];
         }

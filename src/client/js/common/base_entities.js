@@ -1,49 +1,49 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/common/base_entities');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/common/base_entities');
   logger.trace('require:lambda -- enter');
 
-  PF.module('Entities', function(Entities, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
+  AppObj.module('Common.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
     require('js/common/backbone_extensions');
 
-    Entities.PFDatabaseModel = Backbone.Model.extend({ __name: 'PFDatabaseModel' });
-    Entities.PFDatabaseCollection = Backbone.Collection.extend({ __name: 'PFDatabaseCollection' });
+    Entities.ServerModel = Backbone.Model.extend({ __name: 'ServerModel' });
+    Entities.AppObjDatabaseCollection = Backbone.Collection.extend({ __name: 'AppObjDatabaseCollection' });
 
     // Base class for model which represent client-only data, i.e. not directly fetched or saved to server
-    Entities.PFClientOnlyModel = Backbone.Model.extend({ __name: 'PFClientOnlyModel' });
-    Entities.PFClientOnlyModel.prototype.sync = function() {
-      logger.warn('Entities.PFClientOnlyModel.sync called, method does nothing and returns null');
+    Entities.ClientModel = Backbone.Model.extend({ __name: 'ClientModel' });
+    Entities.ClientModel.prototype.sync = function sync() {
+      logger.warn('Entities.ClientModel.sync called, method does nothing and returns null');
       return null;
     };
-    Entities.PFClientOnlyModel.prototype.fetch = function() {
-      logger.warn('Entities.PFClientOnlyModel.fetch called, method does nothing and returns null');
+    Entities.ClientModel.prototype.fetch = function fetch() {
+      logger.warn('Entities.ClientModel.fetch called, method does nothing and returns null');
       return null;
     };
-    Entities.PFClientOnlyModel.prototype.save = function() {
-      logger.warn('Entities.PFClientOnlyModel.save called, method does nothing and returns null');
+    Entities.ClientModel.prototype.save = function save() {
+      logger.warn('Entities.ClientModel.save called, method does nothing and returns null');
       return null;
     };
 
     // Base class for collections which represent client-only data, i.e. not directly fetched or saved to server
-    Entities.PFClientOnlyCollection = Backbone.Collection.extend({ __name: 'PFClientOnlyCollection' });
-    Entities.PFClientOnlyCollection.prototype.sync = function() {
-      logger.warn('Entities.PFClientOnlyCollection.sync called, method does nothing and returns null');
+    Entities.AppObjClientOnlyCollection = Backbone.Collection.extend({ __name: 'AppObjClientOnlyCollection' });
+    Entities.AppObjClientOnlyCollection.prototype.sync = function sync() {
+      logger.warn('Entities.AppObjClientOnlyCollection.sync called, method does nothing and returns null');
       return null;
     };
-    Entities.PFClientOnlyCollection.prototype.fetch = function() {
-      logger.warn('Entities.PFClientOnlyCollection.fetch called, method does nothing and returns null');
+    Entities.AppObjClientOnlyCollection.prototype.fetch = function fetch() {
+      logger.warn('Entities.AppObjClientOnlyCollection.fetch called, method does nothing and returns null');
       return null;
     };
-    Entities.PFClientOnlyCollection.prototype.save = function() {
-      logger.warn('Entities.PFClientOnlyCollection.save called, method does nothing and returns null');
+    Entities.AppObjClientOnlyCollection.prototype.save = function save() {
+      logger.warn('Entities.AppObjClientOnlyCollection.save called, method does nothing and returns null');
       return null;
     };
-    logger.trace('PF.module -- exit');
+    logger.trace('AppObj.module -- exit');
   });
 
   logger.trace('require:lambda -- exit');
-  return undefined;
+  return AppObj.Common.Entities;
 });

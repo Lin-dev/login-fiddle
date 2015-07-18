@@ -1,0 +1,26 @@
+<form>
+    <div class="form-group">
+      <label class="control-label">With...</label>
+      <a class="btn btn-warning js-fb" href="<%= data.fb_url %>">Facebook</a>
+      <a class="btn btn-warning js-google" href="<%= data.google_url %>">Google</a>
+      <a class="btn btn-warning js-twitter" href="<%= data.twitter_url %>">Twitter</a>
+    </div>
+    <div class="form-group">
+      <label class="control-label">... or use your email address and password:</label>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Email:</label>
+      <input type="text" class="form-control" name="local_email" id="user-reactivate-local-email"
+        value="<%= data.local_email %>" />
+    </div>
+    <div class="form-group">
+      <label class="control-label">Password:</label>
+      <input type="password" class="form-control" name="local_password" id="user-reactivate-local-password"
+        value="<%= data.local_password %>" />
+    </div>
+
+    <button class="btn btn-warning btn-lg js-submit">Reactivate and sign in using email</button>
+</form>
+
+<hr>
+<p>Or go <a href="/home" class="js-home">home</a>.</p>

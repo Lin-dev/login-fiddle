@@ -14,20 +14,20 @@ var sq = new Sequelize(database_config.name, database_config.user, database_conf
   port: database_config.port,
   define: {
     paranoid: true,
-    createdAt: 'sq_created_at',
-    updatedAt: 'sq_updated_at',
-    deletedAt: 'sq_deleted_at',
+    createdAt: database_config.object_status.created,
+    updatedAt: database_config.object_status.updated,
+    deletedAt: database_config.object_status.deleted,
     underscored: true,
     schema: database_config.schema,
     freezeTableName: true
   },
   sync: {
     match: database_config.database_name_check_before_sync, // match regex against DB name before sync'ing, for safety
-    logging: function(msg) {
+    logging: function logging(msg) {
       logger.debug('sq:sync -- ' + msg);
     }
   },
-  logging: function(msg) {
+  logging: function logging(msg) {
     logger.debug('sq -- ' + msg);
   },
   pool: database_config.pool
@@ -46,7 +46,7 @@ pr_module_files.forEach(function(pr_module_file) {
 
 // Define relationships across modules
 (function(pr) {
-  // When needed - define cross module model relationships here
+  // TODO When needed - define cross module model relationships here
 })(pr);
 
 // Export connection: { sq, pr(.modules.models) }

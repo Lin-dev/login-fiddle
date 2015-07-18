@@ -1,18 +1,93 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/common/views');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/common/views');
   logger.trace('require:lambda -- enter');
 
-  PF.module('Common.Views', function(Views, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
-    Views.PFItemView = Marionette.ItemView.extend({ __name: 'PFItemView' });
-    Views.PFCollectionView = Marionette.CollectionView.extend({ __name: 'PFCollectionView' });
-    Views.PFCompositeView = Marionette.CompositeView.extend({ __name: 'PFCompositeView' });
-    Views.PFLayout = Marionette.LayoutView.extend({ __name: 'PFLayout' });
-    Views.PFRegion = Marionette.Region.extend({ __name: 'PFRegion' });
-    logger.trace('PF.module -- exit');
+  AppObj.module('Common.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
+    Views.AppObjItemView = Marionette.ItemView.extend({ __name: 'AppObjItemView' });
+    Views.AppObjCollectionView = Marionette.CollectionView.extend({ __name: 'AppObjCollectionView' });
+    Views.AppObjCompositeView = Marionette.CompositeView.extend({ __name: 'AppObjCompositeView' });
+    Views.AppObjLayout = Marionette.LayoutView.extend({ __name: 'AppObjLayout' });
+    Views.AppObjRegion = Marionette.Region.extend({ __name: 'AppObjRegion' });
+
+    /**
+     * A base view for any view containing a form whose values need to be validated
+     */
+    Views.AppObjFormItemView = Views.AppObjItemView.extend({
+      __name: 'AppObjFormItemView',
+
+      /** Check __form_element_id_prefix is set - expect sub classes with custom initialise to call this */
+      initialize: function initialize() {
+        if(this.__form_element_id_prefix === undefined) {
+          logger.error('AppObjFormItemView.initialize -- __form_element_id_prefix is undefined, subclass must define');
+        }
+      },
+
+      show_val_errs: function show_val_errs(val_errs) {
+        if(this.__form_element_id_prefix === undefined) {
+          // Backup check in case AppObjFormItemView extending object overrides initialize and doesn't call super
+          // initialize
+          logger.error('AppObjFormItemView.initialize -- __form_element_id_prefix is undefined, subclass must define');
+        }
+        var $view = this.$el;
+        /** Remove all error messages added to form */
+        var clear_form_errs = function clear_form_errs(){
+          var $form = $view.find('form');
+          $form.find('.js-validation-message').each(function(){
+            $(this).remove();
+          });
+          $form.find('.form-group.has-error').each(function(){
+            $(this).removeClass('has-error');
+          });
+        };
+        /** Add error message `value` to form for field `key` */
+        var that = this;
+        var mark_err = function mark_err(value, key){
+          var $form_group = $view.find('#' + that.__form_element_id_prefix + key).parent();
+          var $errorEl = $('<span>', {class: 'js-validation-message help-block', text: value});
+          $form_group.append($errorEl).addClass('has-error');
+        };
+        clear_form_errs();
+        _.each(val_errs, mark_err);
+      }
+    });
+
+    /**
+     * A view component that can be used in many layouts to display a flash message
+     */
+    Views.FlashMessageView = Views.AppObjItemView.extend({
+      __name: 'FlashMessageView',
+      template: _.template(require('text!js/common/templates/flash_message.html'), { variable: 'data' }),
+      triggers: {
+        /** Allows an action link to be embedded in a flash message and listened to via JavaScript */
+        'click a.js-action-link': 'action-link-clicked'
+      }
+    });
+
+    /**
+     * Display a simple, static text header in an h1 element
+     */
+    Views.H1Header = AppObj.Common.Views.AppObjItemView.extend({
+      __name: 'H1Header',
+      template: _.template(require('text!js/common/templates/h1_header.html'), { variable: 'data' })
+    });
+
+    /**
+     * A confirmation prompt (can be used modelessly)
+     */
+    Views.ConfirmationPrompt = AppObj.Common.Views.AppObjItemView.extend({
+      __name: 'ConfirmationPrompt',
+      template: _.template(require('text!js/common/templates/confirmation_prompt.html'), { variable: 'data' }),
+      triggers: {
+        'click a.js-confirm': 'confirm-clicked',
+        'click a.js-reject': 'reject-clicked'
+      }
+    });
+    logger.trace('AppObj.module -- exit');
   });
   logger.trace('require:lambda -- exit');
+  return AppObj.Common.Views;
 });

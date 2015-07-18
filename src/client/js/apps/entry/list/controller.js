@@ -3,18 +3,18 @@ define(function(require) {
 
   var q = require('q');
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/entry/list/controller');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/entry/list/controller');
   logger.trace('require:lambda -- enter');
 
-  PF.module('EntryApp.List', function(List, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
+  AppObj.module('EntryApp.List', function(List, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
     List.controller = {
-      show_list: function(tag_string) {
+      show_list: function show_list(tag_string) {
         logger.trace('show_list -- enter - ' + tag_string);
         require('js/apps/entry/entities');
-        var tags_promise = PF.request('entryapp:entities:tags');
-        var entries_promise = PF.request('entryapp:entities:entries', tag_string);
+        var tags_promise = AppObj.request('entryapp:entities:tags');
+        var entries_promise = AppObj.request('entryapp:entities:entries', tag_string);
         q.all([tags_promise, entries_promise])
         .spread(function(tags, entries) {
           var Views = require('js/apps/entry/list/views');
@@ -23,13 +23,13 @@ define(function(require) {
           var tags_view = new Views.Tags({ collection: tags });
           tags_view.on('childview:navigate', function(args) {
             logger.trace('event - tags_view:childview:navigate -- enter w/ ' + args.model.get('value'));
-            PF.trigger('entry:list', args.model.get('value'));
+            AppObj.trigger('entry:list', args.model.get('value'));
           });
 
           var FWC = require('js/common/filtering_wrapper_collection').FilteringWrapperCollection;
           var filterable_entries = FWC({
             collection: entries,
-            filter_generator: function() {
+            filter_generator: function filter_generator() {
               return function(entry) {
                 return _.any(entry.get('tags'), function(tag) { return tag.value === tag_string; });
               };
@@ -44,15 +44,16 @@ define(function(require) {
             view.entries_region.show(entries_view);
           });
 
-          PF.region_main.show(view);
-        });
-
+          AppObj.region_main.show(view);
+          AppObj.scroll_to_top();
+        })
+        .fail(AppObj.on_promise_fail_gen('EntryApp.List.controller.show_list'));
         logger.trace('show_list -- exit');
       }
     };
-    logger.trace('PF.module -- exit');
+    logger.trace('AppObj.module -- exit');
   });
 
   logger.trace('require:lambda -- exit');
-  return PF.EntryApp.List.controller;
+  return AppObj.EntryApp.List.controller;
 });

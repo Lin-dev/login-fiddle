@@ -3,25 +3,25 @@
     "appenders": [{
       "category": "connect-appender",
       "type": "dateFile",
-      "filename": "logs/postgres-fiddle.requests.log",
+      "filename": "logs/login-fiddle.requests.log",
       "pattern": "-yyyy-MM-dd",
       "alwaysIncludePattern": false
     }, {
       "category": "connect-appender",
       "type": "dateFile",
-      "filename": "logs/postgres-fiddle.node.log",
+      "filename": "logs/login-fiddle.node.log",
       "pattern": "-yyyy-MM-dd",
       "alwaysIncludePattern": false
     }, {
       "category": "node-appender",
       "type": "dateFile",
-      "filename": "logs/postgres-fiddle.node.log",
+      "filename": "logs/login-fiddle.node.log",
       "pattern": "-yyyy-MM-dd",
       "alwaysIncludePattern": false
     }, {
       "category": "app-appender",
       "type": "dateFile",
-      "filename": "logs/postgres-fiddle.app.log",
+      "filename": "logs/login-fiddle.app.log",
       "pattern": "-yyyy-MM-dd",
       "alwaysIncludePattern": false
     }, {
@@ -32,7 +32,7 @@
   "loggers": {
     "app": {
       "conf": {
-        "level": "warn",
+        "level": "trace",
         "destgroups": ["node-appender", "app-appender"]
       }
     }

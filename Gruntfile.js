@@ -83,9 +83,12 @@ module.exports = function(grunt) {
               paths: {
                 backbone: 'bower_components/backbone/backbone',
                 jquery: 'bower_components/jquery/dist/jquery',
+                jquery_cookie: 'bower_components/js-cookie/src/js.cookie',
                 marionette: 'bower_components/marionette/lib/backbone.marionette',
                 moment: 'bower_components/moment/min/moment-with-locales.min',
-                underscore: 'bower_components/underscore/underscore'
+                q: 'bower_components/q/q',
+                underscore: 'bower_components/underscore/underscore',
+                validator: 'bower_components/validator-js/validator.min'
               },
               urlArgs: 'bust=' + (new Date()).getTime() // no cache for testing / development only
             }
@@ -174,16 +177,16 @@ module.exports = function(grunt) {
         command: 'cp -r src/* build/out/<%= build_name %>'
       },
       mkdir: {
-        command: 'mkdir -p build/out/<%= build_name %>/logs build/dist'
+        command: 'mkdir -p build/out/<%= build_name %>/logs build/out/<%= build_name %>/security build/dist'
       },
     }
   });
 
   grunt.registerTask('assemble', ['exec:mkdir', 'exec:copy']);
   grunt.registerTask('metadata', ['usebanner', 'version_file']);
-  grunt.registerTask('test', ['jshint', 'mochaTest', 'jasmine', 'git-is-clean']);
-  grunt.registerTask('dirty_test', ['jshint', 'mochaTest', 'jasmine']);
+  grunt.registerTask('build_test', ['jshint', 'mochaTest', 'jasmine', 'git-is-clean']);
+  grunt.registerTask('test', ['jshint', 'mochaTest', 'jasmine']);
 
-  grunt.registerTask('build', ['test', 'clean', 'assemble', 'metadata', 'exec:compress']);
-  grunt.registerTask('dirty_build', ['dirty_test', 'clean', 'assemble', 'metadata', 'exec:compress']);
+  grunt.registerTask('build', ['build_test', 'clean', 'assemble', 'metadata', 'exec:compress']);
+  grunt.registerTask('dirty_build', ['test', 'clean', 'assemble', 'metadata', 'exec:compress']);
 };

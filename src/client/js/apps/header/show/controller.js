@@ -1,44 +1,46 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/header/show/controller');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/header/show/controller');
   logger.trace('require:lambda -- enter');
 
-  PF.module('HeaderApp.Show', function(Show, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
+  AppObj.module('HeaderApp.Show', function(Show, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
     Show.controller = {
-      show_header: function() {
+      show_header: function show_header() {
         logger.trace('show_header -- enter');
         require('js/apps/header/entities');
         var Views = require('js/apps/header/show/views');
-        var navitem_collection_promise = PF.request('headerapp:entities:navitems');
+        var navitem_collection_promise = AppObj.request('headerapp:entities:navitems');
         navitem_collection_promise.then(function(navitem_collection) {
           var view = new Views.Header({ collection: navitem_collection });
 
           view.on('brand_clicked', function() {
             logger.trace('event - brand_clicked -- enter');
-            PF.trigger('home:show');
+            AppObj.trigger('home:show');
             logger.trace('event - brand_clicked -- exit');
           });
 
           view.on('childview:navigate', function(args) {
             logger.trace('event - childview:navigate -- enter w/ ' + args.model.get('nav_trigger'));
-            PF.trigger(args.model.get('nav_trigger'));
+            AppObj.trigger(args.model.get('nav_trigger'));
             logger.trace('event - childview:navigate -- exit');
           });
 
-          PF.region_navbar.show(view);
-        });
+          AppObj.region_navbar.show(view);
+        })
+        .fail(AppObj.on_promise_fail_gen('HeaderApp.Show.controller.show_header'));
         logger.trace('show_header -- exit');
       },
 
-      set_active_navitem: function(url) {
+      set_active_navitem: function set_active_navitem(url) {
         logger.debug('set_active_navitem -- setting ' + url + ' to active');
         require('backbone_picky');
         require('js/apps/header/entities');
-        var navitem_collection_promise = PF.request('headerapp:entities:navitems');
-        navitem_collection_promise.then(function(navitem_collection) {
+        var navitem_collection_promise = AppObj.request('headerapp:entities:navitems');
+        navitem_collection_promise
+        .then(function(navitem_collection) {
           var navitem_to_select = navitem_collection.find(function(navitem) {
             return navitem.get('url') === url;
           });
@@ -53,13 +55,14 @@ define(function(require) {
             });
             navitem_collection.trigger('reset');
           }
-        });
+        })
+        .fail(AppObj.on_promise_fail_gen('HeaderApp.Show.controller.set_active_navitem'));
         logger.trace('set_active_navitem -- exit');
       }
     };
-    logger.trace('PF.module -- exit');
+    logger.trace('AppObj.module -- exit');
   });
 
   logger.trace('require:lambda -- exit');
-  return PF.HeaderApp.Show.controller;
+  return AppObj.HeaderApp.Show.controller;
 });

@@ -1,7 +1,7 @@
 '''
 Upgrades an existing application, reading from the current configuration and writing to the new one
 
-After prompting for the application directory symlink (e.g. /opt/postgres-fiddle/app), this script guides the user
+After prompting for the application directory symlink (e.g. /opt/login-fiddle/app), this script guides the user
 through any configuration changes and updates the symlink to point to the install location that this script is in. Does
 not make any changes to the database. Does not restart the webservers.
 
@@ -16,20 +16,27 @@ import os as os
 import lib.general as general
 import configure as configure
 
+def prompt_for_upgrade_directories():
+  install_dir_path = general.prompt_for_text('Enter the upgraded application install directory path: ').strip()
+  app_symlink_path = general.prompt_for_text('Enter the application symlink path:                    ').strip()
+  return (install_dir_path, app_symlink_path)
+
+
+
 def update_symlink(symlink_path, target_path):
   '''
   Updates the symlink that is at symlink_path to point to target_path
   Raises errors if either the symlink_path or target_path do not exist
   '''
   if not os.path.exists(target_path):
-    raise Error(
+    raise Exception(
       'Error:\n' +
       'Could not update symlink - target path "' + target_path + '" does not exist'
     )
   if os.path.lexists(symlink_path) and os.path.islink(symlink_path):
     os.unlink(symlink_path)
   else:
-    raise Error(
+    raise Exception(
       'Error:\n' +
       'Could not update symlink - symlink path "' + symlink + '" does not exist or is not a symlink'
     )
@@ -54,13 +61,15 @@ def upgrade_app(install_dir_path, app_symlink_path):
 
 
 if __name__ == '__main__':
-  print('NB: The upgraded application install directory is probably the parent of this scripts directory')
-  install_dir_path = raw_input('Enter the upgraded application install directory path: ').strip()
-  app_symlink_path = raw_input('Enter the application symlink path:                    ').strip()
+  print('NB: Usually the upgraded application install directory is the parent of directory of this script')
+  (install_dir_path, app_symlink_path) = prompt_for_install_directories()
+  while not general.prompt_for_confirm('Is this correct?', False):
+    (install_dir_path, app_symlink_path) = prompt_for_install_directories()
+
   print('\nYou have entered:')
   print('- upgraded application install directory path: ' + install_dir_path)
   print('- application symlink path:                    ' + app_symlink_path)
-  if general.prompt_for_confirm('Is this correct?'):
+  if general.prompt_for_confirm('Is this correct?', None):
     print('')
     upgrade_app(
       install_dir_path=install_dir_path,

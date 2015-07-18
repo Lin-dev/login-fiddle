@@ -1,12 +1,12 @@
 define(function(require) {
   'use strict';
 
-  var PF = require('js/app/obj');
-  var logger = PF.logger.get('root/js/apps/about/about_app');
+  var AppObj = require('js/app/obj');
+  var logger = AppObj.logger.get('root/js/apps/about/about_app');
   logger.trace('require:lambda -- enter');
 
-  PF.module('AboutApp', function(AboutApp, PF, Backbone, Marionette, $, _) {
-    logger.trace('PF.module -- enter');
+  AppObj.module('AboutApp', function(AboutApp, AppObj, Backbone, Marionette, $, _) {
+    logger.trace('AppObj.module -- enter');
     AboutApp.Router = Marionette.AppRouter.extend({
       appRoutes: {
         'about': 'show_about',
@@ -14,34 +14,34 @@ define(function(require) {
     });
 
     var API = {
-      show_about: function() {
+      show_about: function show_about() {
         logger.trace('API.show_about -- enter');
         var controller = require('js/apps/about/show/controller');
         controller.show_about();
-        PF.execute('headerapp:set_active_navitem', 'about');
+        AppObj.execute('headerapp:set_active_navitem', 'about');
         logger.trace('API.show_about -- exit');
       },
     };
 
-    PF.on('about:show', function() {
-      logger.trace('PF.event - about:show -- enter');
-      PF.navigate('about');
+    AppObj.on('about:show', function() {
+      logger.trace('AppObj.event - about:show -- enter');
+      AppObj.navigate('about');
       API.show_about();
-      logger.trace('PF.event - about:show -- exit');
+      logger.trace('AppObj.event - about:show -- exit');
     });
 
-    PF.addInitializer(function() {
-      logger.trace('PF.addInitializer -- enter');
+    AppObj.addInitializer(function() {
+      logger.trace('AppObj.addInitializer -- enter');
       (function() {
         return new AboutApp.Router({
           controller: API
         });
       }());
-      logger.trace('PF.addInitializer -- exit');
+      logger.trace('AppObj.addInitializer -- exit');
     });
-    logger.trace('PF.module -- exit');
+    logger.trace('AppObj.module -- exit');
   });
 
   logger.trace('require:lambda -- exit');
-  return PF.AboutApp;
+  return AppObj.AboutApp;
 });

@@ -6,7 +6,7 @@ extract the files from any install archive to where they should be installed fir
 - Guides user through configuration file changes
 - Sets up and configures the database and database schema
 - Executes further database-level tasks like index creation (optional)
-- Symlinks the desired application directory (e.g. /opt/postgres-fiddle/app) to the install location
+- Symlinks the desired application directory (e.g. /opt/login-fiddle/app) to the install location
 
 Assumptions:
 - That the database engine is running and listening
@@ -19,6 +19,13 @@ import uuid as uuid
 
 import lib.general as general
 import configure as configure
+
+
+
+CONST_DB_CLEAR_COMMANDS = """
+sudo -u postgres dropdb {db.name}
+sudo -u postgres dropuser {db.user}
+"""
 
 
 
@@ -90,6 +97,13 @@ sudo -u postgres psql -c "CREATE INDEX entry_tag_tag_ndx ON {db.schema}.entry_ta
 
 
 
+def prompt_for_install_directories():
+  install_dir_path = general.prompt_for_text('Enter the application install directory path: ').strip()
+  app_symlink_path = general.prompt_for_text('Enter the application symlink path:           ').strip()
+  return (install_dir_path, app_symlink_path)
+
+
+
 def read_db_configuration(install_dir_path):
   db_config_path = 'server/app/config/database.js'
   with open(os.path.join(install_dir_path, db_config_path), 'r') as db_config_file:
@@ -117,6 +131,15 @@ def setup_database(install_dir_path):
   print('NB: Commands may create spurious stderr output if postgres user cannot read install dir')
   # Read DB configuration from server/app/config/database.js
   (user, pw, name, schema) = read_db_configuration(install_dir_path)
+
+  if general.prompt_for_confirm('Drop existing DB schema and user?', None):
+    db_clear_commands = CONST_DB_CLEAR_COMMANDS \
+      .replace('{db.user}', user) \
+      .replace('{db.name}', name) \
+      .strip() \
+      .split('\n')
+
+    execute_shell_commands(db_clear_commands)
 
   # Generate and write DB creation shell script
   db_setup_commands = CONST_DB_SETUP_COMMANDS_TEMPLATE \
@@ -227,12 +250,12 @@ def install_app(install_dir_path, app_symlink_path):
   '''
   # (0)
   if not os.path.exists(install_dir_path):
-    raise Error(
+    raise Exception(
       'Error:\n' +
       'Install directory path does not exist: "' + install_dir_path + '"'
     )
   if os.path.lexists(app_symlink_path):
-    raise Error(
+    raise Exception(
       'Error:\n' +
       'App symlink already exists: "' + app_symlink_path + '"'
     )
@@ -267,13 +290,16 @@ def install_app(install_dir_path, app_symlink_path):
 
 
 if __name__ == '__main__':
-  print('NB: The application install directory is probably the parent of this scripts directory')
-  install_dir_path = raw_input('Enter the application install directory path: ').strip()
-  app_symlink_path = raw_input('Enter the application symlink path:           ').strip()
+  print('NB: Usually the application install directory is the parent of directory of this script')
+
+  (install_dir_path, app_symlink_path) = prompt_for_install_directories()
+  while not general.prompt_for_confirm('Is this correct?', False):
+    (install_dir_path, app_symlink_path) = prompt_for_install_directories()
+
   print('\nYou have entered:')
   print('- application install directory path: ' + install_dir_path)
   print('- application symlink path:           ' + app_symlink_path)
-  if general.prompt_for_confirm('Is this correct?'):
+  if general.prompt_for_confirm('Is this correct?', None):
     print('')
     install_app(
       install_dir_path=install_dir_path,

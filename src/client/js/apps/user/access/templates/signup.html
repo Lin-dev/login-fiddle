@@ -1,0 +1,30 @@
+<form>
+    <div class="form-group">
+      <label>New to this app? Sign up below</label>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Email:</label>
+      <input type="text" class="form-control" name="local_email" id="user-signup-email"
+        value="<%= data.local_email %>">
+      <label class="control-label">Enter it again:</label>
+      <input type="text" class="form-control" name="local_email_check" id="user-signup-email-check"
+        value="<%= data.local_email_check %>">
+    </div>
+    <div class="form-group">
+      <label>Protect your account with a password</label>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Password:</label>
+      <input type="password" class="form-control" name="local_password" id="user-signup-password"
+        value="<%= data.local_password %>">
+      <label class="control-label">Enter it again:</label>
+      <input type="password" class="form-control" name="local_password_check" id="user-signup-password-check"
+        value="<%= data.local_password_check %>">
+    </div>
+
+    <button class="btn btn-warning btn-lg js-submit">Create account using email</button>
+</form>
+
+<hr>
+<p>Already have an account? <a href="/access" class="js-login">Login</a></p>
+<p>Or go <a href="/home" class="js-home">home</a>.</p>
