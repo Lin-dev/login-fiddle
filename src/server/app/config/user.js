@@ -49,5 +49,5 @@ module.exports = {
       db: 3, // configure.py: user-cookie
     }
   },
-  salt_rounds: '10', // configure.py: user-security
+  salt_rounds: 10, // configure.py: user-security
 };
