@@ -117,6 +117,7 @@ passport.use('local-signup', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_signup_strategy_callback(req, email, password, done) {
+  email = email.trim();
   // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
   // Prob: "Quora: What does process.nextTick(callback) actually do in Node.js?" - answer by Aran Mulholland, bullet 3
   process.nextTick(function() {
@@ -158,6 +159,7 @@ passport.use('local-login', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_login_strategy_callback(req, email, password, done) {
+  email = email.trim();
   q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(function(user) {
     if(user !== null) {
@@ -198,6 +200,7 @@ passport.use('local-reactivate', new LocalStrategy({
   passReqToCallback: true
 }, function local_reactivate_strategy_callback(req, email, password, done) {
   logger.trace('local-reactivate callback -- enter');
+  email = email.trim();
   q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(function(user) {
     if(user !== null) {
@@ -243,6 +246,7 @@ passport.use('local-connect', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_connect_strategy_callback(req, email, password, done) {
+  email = email.trim();
   q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(function(user_with_email) {
     if(user_with_email === null) { // that email address is not used - add it to logged in a/c along with the password
