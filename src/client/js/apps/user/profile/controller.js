@@ -173,7 +173,7 @@ define(function(require) {
             p_admin_view.on('google-connect-clicked', function() { AppObj.trigger('user:profile:connect:google'); });
             p_admin_view.on('twitter-connect-clicked', function() { AppObj.trigger('user:profile:connect:twitter'); });
             p_admin_view.on('local-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:local'); });
-            p_admin_view.on('fb-disco-clicked', function() { AppObj.trigger('user:profile:disconnect:fb'); });
+            p_admin_view.on('fb-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:fb'); });
             p_admin_view.on('google-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:google'); });
             p_admin_view.on('twitter-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:twitter'); });
             profile_view.on('render', function() {
