@@ -282,6 +282,7 @@ passport.use('fb-access', new FacebookStrategy({
   clientID: user_config.fb.client_id,
   clientSecret: user_config.fb.client_secret,
   callbackURL: get_fb_auth_callback_url(),
+  profileFields: user_config.fb.profile_fields,
   passReqToCallback: true
 }, function fb_access_strategy_callback(req, token, refresh_token, profile, done) {
   q(pr.pr.auth.user.find_with_fb_id(profile.id, 'all'))
@@ -302,14 +303,13 @@ passport.use('fb-access', new FacebookStrategy({
       logger.debug('fb-access -- callback user not found, creating from: ' + JSON.stringify(profile));
       q(pr.pr.auth.user.create_from_fb_and_save(profile, token))
       .then(function(user) {
-        logger.info('fb-access -- user created: ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
-          profile.name.familyName);
+        logger.info('fb-access -- user created: ' + profile.id + ' / ' + profile.displayName);
         return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
       })
       .fail(function(err) {
         // DB or validation error - do not distinguish validation or set flash because that is also done client side
-        logger.warn('fb-access -- callback for ' + profile.id + ' / ' + profile.name.givenName + ' / ' +
-          profile.name.familyName + ' failed user creation, error: ' + err);
+        logger.warn('fb-access -- callback for ' + profile.id + ' / ' + profile.displayName +
+          ' failed user creation, error: ' + err);
         return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
       });
     }
@@ -327,6 +327,7 @@ passport.use('fb-reactivate', new FacebookStrategy({
   clientID: user_config.fb.client_id,
   clientSecret: user_config.fb.client_secret,
   callbackURL: get_fb_reactivate_callback_url(),
+  profileFields: user_config.fb.profile_fields,
   passReqToCallback: true
 }, function fb_reactivate_strategy_callback(req, token, refresh_token, profile, done) {
   q(pr.pr.auth.user.find_with_fb_id(profile.id, 'all'))
@@ -378,6 +379,7 @@ passport.use('fb-connect', new FacebookStrategy({
   clientID: user_config.fb.client_id,
   clientSecret: user_config.fb.client_secret,
   callbackURL: get_fb_connect_callback_url(),
+  profileFields: user_config.fb.profile_fields,
   passReqToCallback: true
 }, function fb_connect_strategy_callback(req, token, token_secret, profile, done) {
   if(req.user) {

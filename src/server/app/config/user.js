@@ -11,6 +11,7 @@ module.exports = {
     reactivate_callback_path: '/api/user/reactivate/fb/callback', // constant
     connect_callback_path: '/api/user/connect/fb/callback', // constant
     scope: ['public_profile', 'email'], // constant
+    profile_fields: ['id', 'displayName', 'emails'], // constant
   },
   google: {
     client_id: '', // configure.py: user-google
