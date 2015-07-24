@@ -114,6 +114,9 @@ It also has issues and outstanding tasks of its own:
 - Improve the client logger - logger configuration should be more like log4j and dynamically changeable, remove the logger function calls fro the stack traces
 - Improve the server logger - logger configuration should be more like log4j and dynamically changeable, remove the logger function calls fro the stack traces
 - HTTP to HTTPS redirects to HTTPS port even if 443 port translation is defined in iptables, instead it should redirect to https without any explicit port defined in the URL; likewise the auth callbacks redirect to the internal HTTPS port not 443
+- In upgrade.py, if the value in the source configuration file is not changed then it is not copied across to the destination, even if the source and destination differ
+- In upgrade.py, pm2 still points to the old symlink destination after an upgrade (`pm2 restart` does not resolve this)
+- In upgrade.py, certificates are not copied across to the new install
 
 ## Changelog
 
