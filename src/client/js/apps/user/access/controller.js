@@ -171,7 +171,7 @@ define(function(require) {
       trigger_after_access = trigger_after_access || 'user:profile';
       // UserLocalAccess just for validation (passport redirect mucks up Backbone model sync)
       var ula = new AppObj.UserApp.Entities.UserLocalAccess({
-        local_email: form_data.local_email,
+        local_email: form_data.local_email.trim(),
         has_pw_flag: form_data.has_pw_flag,
         local_password: form_data.local_password
       });
@@ -229,8 +229,8 @@ define(function(require) {
       trigger_after_access = trigger_after_access || 'user:profile';
       // UserLocalSignup just for validation (passport redirect mucks up Backbone model sync)
       var uls = new AppObj.UserApp.Entities.UserLocalSignup({
-        local_email: form_data.local_email,
-        local_email_check: form_data.local_email_check,
+        local_email: form_data.local_email.trim(),
+        local_email_check: form_data.local_email_check.trim(),
         local_password: form_data.local_password,
         local_password_check: form_data.local_password_check
       });
@@ -286,7 +286,7 @@ define(function(require) {
       trigger_after_reactivate  = trigger_after_reactivate || 'user:profile';
       // UserLocalReactivate just for validation (passport redirect mucks up Backbone model sync)
       var ula = new AppObj.UserApp.Entities.UserLocalReactivate({
-        local_email: form_data.local_email,
+        local_email: form_data.local_email.trim(),
         local_password: form_data.local_password
       });
       var val_errs = ula.validate(ula.attributes);

@@ -114,11 +114,16 @@ It also has issues and outstanding tasks of its own:
 - Improve the client logger - logger configuration should be more like log4j and dynamically changeable, remove the logger function calls fro the stack traces
 - Improve the server logger - logger configuration should be more like log4j and dynamically changeable, remove the logger function calls fro the stack traces
 - HTTP to HTTPS redirects to HTTPS port even if 443 port translation is defined in iptables, instead it should redirect to https without any explicit port defined in the URL; likewise the auth callbacks redirect to the internal HTTPS port not 443
+- In upgrade.py, if the value in the source configuration file is not changed then it is not copied across to the destination, even if the source and destination differ
+- In upgrade.py, pm2 still points to the old symlink destination after an upgrade (`pm2 restart` does not resolve this)
+- In upgrade.py, certificates are not copied across to the new install
+- Tests require OAuth provider client ID/key and secret etc to be defined in config files
 
 ## Changelog
 
 - v0.0.1 - Initial stub application, identical to postgres-fiddle v0.1.2
 - v1.0.0 - Initial public release under the MIT license
+- v1.0.1 - Misc minor bug fixes
 
 ## License
 

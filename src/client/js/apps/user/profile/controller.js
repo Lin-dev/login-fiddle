@@ -60,8 +60,8 @@ define(function(require) {
       require('js/apps/user/entities');
       // UserLocalConnect just for validation (passport redirect mucks up Backbone model sync)
       var ulc = new AppObj.UserApp.Entities.UserLocalConnect({
-        local_email: form_data.local_email,
-        local_email_check: form_data.local_email_check,
+        local_email: form_data.local_email.trim(),
+        local_email_check: form_data.local_email_check.trim(),
         local_password: form_data.local_password,
         local_password_check: form_data.local_password_check
       });
@@ -173,7 +173,7 @@ define(function(require) {
             p_admin_view.on('google-connect-clicked', function() { AppObj.trigger('user:profile:connect:google'); });
             p_admin_view.on('twitter-connect-clicked', function() { AppObj.trigger('user:profile:connect:twitter'); });
             p_admin_view.on('local-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:local'); });
-            p_admin_view.on('fb-disco-clicked', function() { AppObj.trigger('user:profile:disconnect:fb'); });
+            p_admin_view.on('fb-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:fb'); });
             p_admin_view.on('google-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:google'); });
             p_admin_view.on('twitter-disc-clicked', function() { AppObj.trigger('user:profile:disconnect:twitter'); });
             profile_view.on('render', function() {
