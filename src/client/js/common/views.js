@@ -7,16 +7,12 @@ define(function(require) {
 
   AppObj.module('Common.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
-    Views.AppObjItemView = Marionette.ItemView.extend({ __name: 'AppObjItemView' });
-    Views.AppObjCollectionView = Marionette.CollectionView.extend({ __name: 'AppObjCollectionView' });
-    Views.AppObjCompositeView = Marionette.CompositeView.extend({ __name: 'AppObjCompositeView' });
-    Views.AppObjLayout = Marionette.LayoutView.extend({ __name: 'AppObjLayout' });
-    Views.AppObjRegion = Marionette.Region.extend({ __name: 'AppObjRegion' });
+    require('js/common/base_views');
 
     /**
      * A base view for any view containing a form whose values need to be validated
      */
-    Views.AppObjFormItemView = Views.AppObjItemView.extend({
+    Views.AppObjFormItemView = AppObj.Common.Views.AppObjItemView.extend({
       __name: 'AppObjFormItemView',
 
       /** Check __form_element_id_prefix is set - expect sub classes with custom initialise to call this */
@@ -58,7 +54,7 @@ define(function(require) {
     /**
      * A view component that can be used in many layouts to display a flash message
      */
-    Views.FlashMessageView = Views.AppObjItemView.extend({
+    Views.FlashMessageView = AppObj.Common.Views.AppObjItemView.extend({
       __name: 'FlashMessageView',
       template: _.template(require('text!js/common/templates/flash_message.html'), { variable: 'data' }),
       triggers: {
