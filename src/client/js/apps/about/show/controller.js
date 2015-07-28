@@ -2,6 +2,7 @@ define(function(require) {
   'use strict';
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/app/display/obj');
   var logger = AppObj.logger.get('root/js/apps/about/show/controller');
   logger.trace('require:lambda -- enter');
 
@@ -12,8 +13,7 @@ define(function(require) {
         logger.trace('show_about -- enter');
         var Views = require('js/apps/about/show/views');
         var view = new Views.About();
-        AppObj.region_main.show(view);
-        AppObj.scroll_to_top();
+        Display.tainer.show_in('main', view);
         logger.trace('show_about -- exit');
       }
     };

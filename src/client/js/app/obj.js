@@ -13,13 +13,6 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/app/obj');
   logger.debug('require:lambda -- entered, AppObj built, config loaded, logger initialised');
 
-  // Set up regions
-  AppObj.addRegions({
-    'region_navbar': 'div#region_navbar',
-    'region_main': 'div#region_main',
-    'region_footer': 'div#region_footer'
-  });
-
   // Routing helpers
   /**
    * Updates the URL in the address bar - wraps Backbone.history.navigate
@@ -63,15 +56,6 @@ define(function(require) {
   };
 
   q.longStackSupport = AppObj.config.app.q_longStackSupport;
-  ////////
-
-  // Display helpers
-  /**
-   * Scrolls the browser to the top
-   */
-  AppObj.scroll_to_top = function scroll_to_top() {
-    $('html, body').animate({ scrollTop: 0 }, 600);
-  };
   ////////
 
   // Log all events at trace

@@ -4,6 +4,7 @@ define(function(require) {
   var q = require('q');
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/app/display/obj');
   var logger = AppObj.logger.get('root/js/apps/home/show/controller');
   logger.trace('require:lambda -- enter');
 
@@ -24,8 +25,7 @@ define(function(require) {
             home_layout.region_message.show(msg_view);
             home_layout.region_home_main.show(home_view);
           });
-          AppObj.region_main.show(home_layout);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', home_layout);
           logger.trace('show_home -- done');
         })
         .fail(AppObj.on_promise_fail_gen('HomeApp.Show.controller.show_home'));

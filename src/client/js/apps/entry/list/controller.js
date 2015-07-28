@@ -4,6 +4,7 @@ define(function(require) {
   var q = require('q');
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/app/display/obj');
   var logger = AppObj.logger.get('root/js/apps/entry/list/controller');
   logger.trace('require:lambda -- enter');
 
@@ -44,8 +45,7 @@ define(function(require) {
             view.entries_region.show(entries_view);
           });
 
-          AppObj.region_main.show(view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', view);
         })
         .fail(AppObj.on_promise_fail_gen('EntryApp.List.controller.show_list'));
         logger.trace('show_list -- exit');

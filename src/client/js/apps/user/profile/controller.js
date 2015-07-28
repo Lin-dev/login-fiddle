@@ -4,6 +4,7 @@ define(function(require) {
   var q = require('q');
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/app/display/obj');
   var logger = AppObj.logger.get('root/js/apps/user/profile/controller');
 
   AppObj.module('UserApp.Profile', function(Profile, AppObj, Backbone, Marionette, $, _) {
@@ -129,8 +130,7 @@ define(function(require) {
           profile_view.region_message.show(msg_view);
           profile_view.region_profile_main.show(confirm_view);
         });
-        AppObj.region_main.show(profile_view);
-        AppObj.scroll_to_top();
+        Display.tainer.show_in('main', profile_view);
       })
       .fail(AppObj.on_promise_fail_gen('UserApp.Profile -- private.proc_disconnect'));
     }
@@ -182,8 +182,7 @@ define(function(require) {
               profile_view.region_profile_main.show(p_data_view);
               profile_view.region_profile_control_panel.show(p_admin_view);
             });
-            AppObj.region_main.show(profile_view);
-            AppObj.scroll_to_top();
+            Display.tainer.show_in('main', profile_view);
           })
           .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.show_user_profile'));
         }
@@ -227,8 +226,7 @@ define(function(require) {
             profile_view.region_message.show(msg_view);
             profile_view.region_profile_main.show(confirm_view);
           });
-          AppObj.region_main.show(profile_view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', profile_view);
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_logout'));
       },
@@ -268,8 +266,7 @@ define(function(require) {
             profile_view.region_message.show(msg_view);
             profile_view.region_profile_main.show(confirm_view);
           });
-          AppObj.region_main.show(profile_view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', profile_view);
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_deactivate'));
       },
@@ -299,8 +296,7 @@ define(function(require) {
           profile_view.region_header.show(header_view);
           profile_view.region_profile_main.show(connect_form_view);
         });
-        AppObj.region_main.show(profile_view);
-        AppObj.scroll_to_top();
+        Display.tainer.show_in('main', profile_view);
       },
 
       /**

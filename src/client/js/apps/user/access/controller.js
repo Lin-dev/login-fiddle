@@ -4,6 +4,7 @@ define(function(require) {
   var q = require('q');
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/app/display/obj');
   var logger = AppObj.logger.get('root/js/apps/user/access/controller');
 
   AppObj.module('UserApp.Access', function(Access, AppObj, Backbone, Marionette, $, _) {
@@ -392,8 +393,7 @@ define(function(require) {
             access_view.region_message.show(msg_view);
             access_view.region_form.show(access_form);
           });
-          AppObj.region_main.show(access_view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', access_view);
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_access_form'));
       },
@@ -433,8 +433,7 @@ define(function(require) {
             access_view.region_message.show(msg_view);
             access_view.region_form.show(signup_form);
           });
-          AppObj.region_main.show(access_view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', access_view);
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_signup_form'));
       },
@@ -478,8 +477,7 @@ define(function(require) {
             access_layout.region_message.show(msg_view);
             access_layout.region_form.show(reactivate_form);
           });
-          AppObj.region_main.show(access_layout);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', access_layout);
         })
         .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_reactivate_form'));
       }
