@@ -7,7 +7,7 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/common/flash_message');
 
   AppObj.module('Common.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
-    require('js/common/base_entities');
+    require('js/base/entities');
 
     /**
      * Used to access a flash message stored on the server api_util_config.flash_message_key ('flash_message')

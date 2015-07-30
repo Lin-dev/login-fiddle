@@ -6,7 +6,7 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/apps/session/entities');
 
   AppObj.module('SessionApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
-    require('js/common/base_entities');
+    require('js/base/entities');
 
     Entities.SessionInfo = AppObj.Base.Entities.PersistentModel.extend({
       __name: 'SessionInfo',

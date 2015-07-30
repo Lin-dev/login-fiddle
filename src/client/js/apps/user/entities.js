@@ -42,7 +42,7 @@ define(function(require) {
   };
 
   AppObj.module('UserApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
-    require('js/common/base_entities');
+    require('js/base/entities');
 
     /**
      * Represents a local access form submission (email and possibly a password), They are client side only and used

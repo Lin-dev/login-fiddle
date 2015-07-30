@@ -6,7 +6,7 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/apps/entry/entities');
 
   AppObj.module('EntryApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
-    require('js/common/base_entities');
+    require('js/base/entities');
 
     Entities.Entry = AppObj.Base.Entities.PersistentModel.extend({
       __name: 'Entry',

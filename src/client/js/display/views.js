@@ -6,7 +6,7 @@ define(function(require) {
 
   AppObj.module('Display.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
-    require('js/common/base_views');
+    require('js/base/views');
 
     /**
      * The wrapper layout for displaying the application layouts in
