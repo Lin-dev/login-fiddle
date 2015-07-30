@@ -12,7 +12,7 @@ define(function(require) {
      * The wrapper layout for displaying the application layouts in
      * @type {Object}
      */
-    Views.AppLayoutContainer = AppObj.Common.Views.AppObjLayout.extend({
+    Views.AppLayoutContainer = AppObj.Base.Views.AppObjLayout.extend({
       template: _.template(require('text!js/display/templates/app_layout_container.html')),
       regions: {
         'app': 'div#app'
@@ -54,7 +54,7 @@ define(function(require) {
      * An application layout with a top-bound navbar, a main region and a footer bar
      * @type {Object}
      */
-    Views.AppMenuBarLayout = AppObj.Common.Views.AppObjLayout.extend({
+    Views.AppMenuBarLayout = AppObj.Base.Views.AppObjLayout.extend({
       template: _.template(require('text!js/display/templates/header_bar_layout.html')),
       regions: {
         'navbar': 'div#region_navbar',

@@ -9,7 +9,7 @@ define(function(require) {
     logger.trace('AppObj.module -- enter');
     require('js/common/views');
 
-    Views.Tag = AppObj.Common.Views.AppObjItemView.extend({
+    Views.Tag = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'Tag',
       template: _.template(require('text!js/apps/entry/list/templates/tag.html')),
       tagName: 'li',
@@ -19,14 +19,14 @@ define(function(require) {
       }
     });
 
-    Views.Tags = AppObj.Common.Views.AppObjCompositeView.extend({
+    Views.Tags = AppObj.Base.Views.AppObjCompositeView.extend({
       __name: 'Tags',
       template: _.template(require('text!js/apps/entry/list/templates/tags.html')),
       childView: Views.Tag,
       childViewContainer: 'ul.js-tag-items'
     });
 
-    Views.Entry = AppObj.Common.Views.AppObjItemView.extend({
+    Views.Entry = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'Entry',
       template: _.template(require('text!js/apps/entry/list/templates/entry.html')),
       tagName: 'li',
@@ -36,14 +36,14 @@ define(function(require) {
       }
     });
 
-    Views.Entries = AppObj.Common.Views.AppObjCompositeView.extend({
+    Views.Entries = AppObj.Base.Views.AppObjCompositeView.extend({
       __name: 'Entries',
       template: _.template(require('text!js/apps/entry/list/templates/entries.html')),
       childView: Views.Entry,
       childViewContainer: 'ul.js-entry-items'
     });
 
-    Views.ListLayout = AppObj.Common.Views.AppObjLayout.extend({
+    Views.ListLayout = AppObj.Base.Views.AppObjLayout.extend({
       __name: 'ListLayout',
       template: _.template(require('text!js/apps/entry/list/templates/list_layout.html')),
       regions: {

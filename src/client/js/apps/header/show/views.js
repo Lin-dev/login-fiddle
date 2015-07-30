@@ -9,7 +9,7 @@ define(function(require) {
     logger.trace('AppObj.module -- enter');
     require('js/common/views');
 
-    Views.NavItemView = AppObj.Common.Views.AppObjItemView.extend({
+    Views.NavItemView = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'NavItemView',
       template: _.template(require('text!js/apps/header/show/templates/navitem.html')),
       tagName: 'li',
@@ -25,7 +25,7 @@ define(function(require) {
       }
     });
 
-    Views.Header = AppObj.Common.Views.AppObjCompositeView.extend({
+    Views.Header = AppObj.Base.Views.AppObjCompositeView.extend({
       __name: 'Header',
       template: _.template(require('text!js/apps/header/show/templates/header.html')),
       childView: Views.NavItemView,

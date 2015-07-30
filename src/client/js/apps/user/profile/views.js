@@ -10,7 +10,7 @@ define(function(require) {
     /**
      * @type {Object} View for containing profile-display sub views
      */
-    Views.UserProfileLayout = AppObj.Common.Views.AppObjLayout.extend({
+    Views.UserProfileLayout = AppObj.Base.Views.AppObjLayout.extend({
       __name: 'UserProfileLayout',
       template: _.template(require('text!js/apps/user/profile/templates/profile.html'), { variable: 'data' }),
       regions: {
@@ -24,7 +24,7 @@ define(function(require) {
     /**
      * @type {Object} View for displaying user profile data
      */
-    Views.UserProfileData = AppObj.Common.Views.AppObjItemView.extend({
+    Views.UserProfileData = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'UserProfileData',
       template: _.template(require('text!js/apps/user/profile/templates/profile_data.html'), { variable: 'data' })
     });
@@ -32,7 +32,7 @@ define(function(require) {
     /**
      * @type {Object} View for displaying user profile connect UI elements
      */
-    Views.UserProfileControlPanel = AppObj.Common.Views.AppObjItemView.extend({
+    Views.UserProfileControlPanel = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'UserProfileControlPanel',
       template: _.template(require('text!js/apps/user/profile/templates/profile_admin.html'), { variable: 'data' }),
 

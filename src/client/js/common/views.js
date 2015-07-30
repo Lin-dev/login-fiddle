@@ -7,12 +7,12 @@ define(function(require) {
 
   AppObj.module('Common.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
-    require('js/common/base_views');
+    require('js/base/views');
 
     /**
      * A base view for any view containing a form whose values need to be validated
      */
-    Views.AppObjFormItemView = AppObj.Common.Views.AppObjItemView.extend({
+    Views.AppObjFormItemView = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'AppObjFormItemView',
 
       /** Check __form_element_id_prefix is set - expect sub classes with custom initialise to call this */
@@ -54,7 +54,7 @@ define(function(require) {
     /**
      * A view component that can be used in many layouts to display a flash message
      */
-    Views.FlashMessageView = AppObj.Common.Views.AppObjItemView.extend({
+    Views.FlashMessageView = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'FlashMessageView',
       template: _.template(require('text!js/common/templates/flash_message.html'), { variable: 'data' }),
       triggers: {
@@ -66,7 +66,7 @@ define(function(require) {
     /**
      * Display a simple, static text header in an h1 element
      */
-    Views.H1Header = AppObj.Common.Views.AppObjItemView.extend({
+    Views.H1Header = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'H1Header',
       template: _.template(require('text!js/common/templates/h1_header.html'), { variable: 'data' })
     });
@@ -74,7 +74,7 @@ define(function(require) {
     /**
      * A confirmation prompt (can be used modelessly)
      */
-    Views.ConfirmationPrompt = AppObj.Common.Views.AppObjItemView.extend({
+    Views.ConfirmationPrompt = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'ConfirmationPrompt',
       template: _.template(require('text!js/common/templates/confirmation_prompt.html'), { variable: 'data' }),
       triggers: {
