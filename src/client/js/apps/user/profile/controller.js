@@ -113,7 +113,7 @@ define(function(require) {
         var CommonViews = require('js/common/views');
         var ProfileViews = require('js/apps/user/profile/views');
         var profile_view = new ProfileViews.UserProfileLayout();
-        var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+        var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
           header_text: 'User profile'
         })});
         var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
@@ -160,7 +160,7 @@ define(function(require) {
             up_admin.set('google_connected', up_data.is_google_connected());
             up_admin.set('twitter_connected', up_data.is_twitter_connected());
             var profile_view = new ProfileViews.UserProfileLayout();
-            var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+            var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
               header_text: 'User profile'
             })});
             var msg_view = new CommonViews.FlashMessageView({ model: msg });
@@ -202,7 +202,7 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var ProfileViews = require('js/apps/user/profile/views');
           var profile_view = new ProfileViews.UserProfileLayout();
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'User profile'
           })});
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
@@ -242,7 +242,7 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var ProfileViews = require('js/apps/user/profile/views');
           var profile_view = new ProfileViews.UserProfileLayout();
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'User profile'
           })});
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
@@ -279,7 +279,7 @@ define(function(require) {
         var CommonViews = require('js/common/views');
         var ProfileViews = require('js/apps/user/profile/views');
         var profile_view = new ProfileViews.UserProfileLayout();
-        var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+        var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
           header_text: 'Add email'
         })});
         var connect_form_view = new ProfileViews.LocalConnectForm({

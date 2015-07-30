@@ -370,10 +370,10 @@ define(function(require) {
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
           // Needed here because attempts to log in to a deactivated account reload the access form
           msg_view.on('action-link-clicked', function() { AppObj.trigger('user:access:reactivate'); });
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'Sign in'
           })});
-          var access_form = new AccessViews.AccessForm({ model: new AppObj.Common.Entities.ClientModel({
+          var access_form = new AccessViews.AccessForm({ model: new AppObj.Base.Entities.TransientModel({
             fb_url: get_fb_auth_url(),
             google_url: get_google_auth_url(),
             twitter_url: get_twitter_auth_url(),
@@ -414,7 +414,7 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var access_view = new AccessViews.AccessLayout();
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'Sign up'
           })});
           var signup_form = new AccessViews.SignupForm({
@@ -453,10 +453,10 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var access_layout = new AccessViews.AccessLayout();
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'Reactivate and login'
           })});
-          var reactivate_form = new AccessViews.ReactivateForm({ model: new AppObj.Common.Entities.ClientModel({
+          var reactivate_form = new AccessViews.ReactivateForm({ model: new AppObj.Base.Entities.TransientModel({
             fb_url: get_fb_reactivate_url(),
             google_url: get_google_reactivate_url(),
             twitter_url: get_twitter_reactivate_url(),

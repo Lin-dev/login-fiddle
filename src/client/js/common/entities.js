@@ -12,7 +12,7 @@ define(function(require) {
     /**
      * Used to access a flash message stored on the server api_util_config.flash_message_key ('flash_message')
      */
-    Entities.FlashMessage = AppObj.Common.Entities.ServerModel.extend({
+    Entities.FlashMessage = AppObj.Base.Entities.PersistentModel.extend({
       __name: 'FlashMessage',
       urlRoot: '/api/util/flash_message',
 
@@ -30,7 +30,7 @@ define(function(require) {
     /**
      * A client only model for instantiating an. No API or event requesters as it is a simple, client only model
      */
-    Entities.ConfirmationPrompt = AppObj.Common.Entities.ClientModel.extend({
+    Entities.ConfirmationPrompt = AppObj.Base.Entities.TransientModel.extend({
       __name: 'ConfirmationPrompt',
       defaults: {
         header: 'Please confirm',

@@ -49,7 +49,7 @@ define(function(require) {
      * for validating form inputs client-side. There is no reqres handler because they're so simple and should be
      * referenced directly via the AppObj object.
      */
-    Entities.UserLocalAccess = AppObj.Common.Entities.ClientModel.extend({
+    Entities.UserLocalAccess = AppObj.Base.Entities.TransientModel.extend({
       __name: 'UserLocalAccess',
       validate: function validate(attrs, options) {
         var errs = {};
@@ -66,7 +66,7 @@ define(function(require) {
      * used for validating form inputs client-side. There is no reqres handler because they're so simple and should be
      * referenced directly via the AppObj object.
      */
-    Entities.UserLocalReactivate = AppObj.Common.Entities.ClientModel.extend({
+    Entities.UserLocalReactivate = AppObj.Base.Entities.TransientModel.extend({
       __name: 'UserLocalReactivate',
       validate: function validate(attrs, options) {
         var errs = {};
@@ -81,7 +81,7 @@ define(function(require) {
      * is client side only because they are used for client-side validation only. There is no reqres handler because
      * they're so simple and should be referenced directly via the AppObj object.
      */
-    Entities.LocalDataForValidation = AppObj.Common.Entities.ClientModel.extend({
+    Entities.LocalDataForValidation = AppObj.Base.Entities.TransientModel.extend({
       __name: 'LocalDataForValidation',
       validate: function validate(attrs, options) {
         var errs = {};
@@ -122,7 +122,7 @@ define(function(require) {
      * Represents the information on a user profile - used for reading, updating and deleting the user profile but
      * not for creation
      */
-    Entities.UserProfileData = AppObj.Common.Entities.ServerModel.extend({
+    Entities.UserProfileData = AppObj.Base.Entities.PersistentModel.extend({
       __name: 'UserProfileData',
       urlRoot: '/api/user/user',
       sync: function sync(method, model, options) {
@@ -166,7 +166,7 @@ define(function(require) {
     /**
      * Stores the client (browser accessible) URL's used in the profile control panel
      */
-    Entities.UserProfileControlPanel = AppObj.Common.Entities.ClientModel.extend({
+    Entities.UserProfileControlPanel = AppObj.Base.Entities.TransientModel.extend({
       __name: 'UserProfileControlPanel',
       defaults: {
         client_conn_local_path: '/profile/connect/local',

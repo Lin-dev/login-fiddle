@@ -8,7 +8,7 @@ define(function(require) {
   AppObj.module('SessionApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     require('js/common/base_entities');
 
-    Entities.SessionInfo = AppObj.Common.Entities.ServerModel.extend({
+    Entities.SessionInfo = AppObj.Base.Entities.PersistentModel.extend({
       __name: 'SessionInfo',
       urlRoot: '/api/session/session'
     });

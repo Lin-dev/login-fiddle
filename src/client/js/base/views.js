@@ -2,10 +2,10 @@ define(function(require) {
   'use strict';
 
   var AppObj = require('js/app/obj');
-  var logger = AppObj.logger.get('root/js/common/base_entities');
+  var logger = AppObj.logger.get('root/js/base/entities');
   logger.trace('require:lambda -- enter');
 
-  AppObj.module('Common.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
+  AppObj.module('Base.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     Views.AppObjItemView = Marionette.ItemView.extend({ __name: 'AppObjItemView' });
     Views.AppObjCollectionView = Marionette.CollectionView.extend({ __name: 'AppObjCollectionView' });
     Views.AppObjCompositeView = Marionette.CompositeView.extend({ __name: 'AppObjCompositeView' });
@@ -13,5 +13,5 @@ define(function(require) {
     Views.AppObjRegion = Marionette.Region.extend({ __name: 'AppObjRegion' });
   });
 
-  return AppObj.Common.Views;
+  return AppObj.Base.Views;
 });
