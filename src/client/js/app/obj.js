@@ -6,10 +6,15 @@ define(function(require) {
   var $ = require('jquery');
   var q = require('q'); // for setting long stack support
 
+  // Extensions
+  require('js/app/extensions/backbone');
+  require('js/app/extensions/marionette');
+  require('js/app/extensions/regexp');
+
   // Set up app object
   var AppObj = new Marionette.Application();
-  AppObj.config = require('js/app/config');
-  AppObj.logger = require('js/app/logger_builder')(AppObj.config.logger);
+  AppObj.config = require('js/app/config/config');
+  AppObj.logger = require('js/app/logger/logger_builder')(AppObj.config.logger);
   var logger = AppObj.logger.get('root/js/app/obj');
   logger.debug('require:lambda -- entered, AppObj built, config loaded, logger initialised');
 

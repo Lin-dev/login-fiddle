@@ -4,7 +4,7 @@ define(function(require) {
   var q = require('q');
 
   var AppObj = require('js/app/obj');
-  var Display = require('js/app/display/obj');
+  var Display = require('js/display/obj');
   var logger = AppObj.logger.get('root/js/apps/entry/list/controller');
   logger.trace('require:lambda -- enter');
 

@@ -7,8 +7,6 @@ define(function(require) {
 
   AppObj.module('Common.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
-    require('js/common/backbone_extensions');
-
     Entities.ServerModel = Backbone.Model.extend({ __name: 'ServerModel' });
     Entities.AppObjDatabaseCollection = Backbone.Collection.extend({ __name: 'AppObjDatabaseCollection' });
 

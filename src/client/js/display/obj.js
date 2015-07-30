@@ -4,7 +4,7 @@ define(function(require) {
   var AppObj = require('js/app/obj');
 
   AppObj.module('Display', function(Display, AppObj, Backbone, Marionette, $, _) {
-    var Views = require('js/app/display/views');
+    var Views = require('js/display/views');
     Display.tainer = new Views.AppLayoutContainer({
       el: 'div#app-region'
     });

@@ -4,7 +4,7 @@ define(function(require) {
   var q = require('q');
 
   var AppObj = require('js/app/obj');
-  var Display = require('js/app/display/obj');
+  var Display = require('js/display/obj');
   var logger = AppObj.logger.get('root/js/apps/user/profile/controller');
 
   AppObj.module('UserApp.Profile', function(Profile, AppObj, Backbone, Marionette, $, _) {

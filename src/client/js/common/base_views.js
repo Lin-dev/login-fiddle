@@ -6,8 +6,6 @@ define(function(require) {
   logger.trace('require:lambda -- enter');
 
   AppObj.module('Common.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
-    require('js/common/backbone_extensions');
-
     Views.AppObjItemView = Marionette.ItemView.extend({ __name: 'AppObjItemView' });
     Views.AppObjCollectionView = Marionette.CollectionView.extend({ __name: 'AppObjCollectionView' });
     Views.AppObjCompositeView = Marionette.CompositeView.extend({ __name: 'AppObjCompositeView' });

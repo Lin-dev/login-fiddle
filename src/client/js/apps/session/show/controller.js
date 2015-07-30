@@ -2,7 +2,7 @@ define(function(require) {
   'use strict';
 
   var AppObj = require('js/app/obj');
-  var Display = require('js/app/display/obj');
+  var Display = require('js/display/obj');
   var logger = AppObj.logger.get('root/js/apps/session/show/controller');
 
   AppObj.module('SessionApp.Show', function(Show, AppObj, Backbone, Marionette, $, _) {

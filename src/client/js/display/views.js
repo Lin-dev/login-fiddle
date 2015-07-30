@@ -2,7 +2,7 @@ define(function(require) {
   'use strict';
 
   var AppObj = require('js/app/obj');
-  var logger = AppObj.logger.get('root/js/app/display/views');
+  var logger = AppObj.logger.get('root/js/display/views');
 
   AppObj.module('Display.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
@@ -13,7 +13,7 @@ define(function(require) {
      * @type {Object}
      */
     Views.AppLayoutContainer = AppObj.Common.Views.AppObjLayout.extend({
-      template: _.template(require('text!js/app/display/templates/app_layout_container.html')),
+      template: _.template(require('text!js/display/templates/app_layout_container.html')),
       regions: {
         'app': 'div#app'
       },
@@ -55,7 +55,7 @@ define(function(require) {
      * @type {Object}
      */
     Views.AppMenuBarLayout = AppObj.Common.Views.AppObjLayout.extend({
-      template: _.template(require('text!js/app/display/templates/header_bar_layout.html')),
+      template: _.template(require('text!js/display/templates/header_bar_layout.html')),
       regions: {
         'navbar': 'div#region_navbar',
         'main': 'div#region_main',
