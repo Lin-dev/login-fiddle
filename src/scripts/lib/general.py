@@ -31,6 +31,8 @@ def prompt_for_text(prompt='Data? ', default_string=None, validator_regexp_strin
       continue
     return ans
 
+
+
 def prompt_for_confirm(prompt=None, resp=None):
   '''
   prompts for yes or no response from the user. Returns True for yes and

@@ -8,6 +8,7 @@ edit any files. Does not make any database changes. Does not restart the web app
 #!/usr/bin/python
 
 import os.path as path
+import yaml as yaml
 import lib.general as general
 import lib.configure as configure
 
@@ -17,6 +18,79 @@ def prompt_for_configure_directories():
   output_value_install_dir = \
     general.prompt_for_text('Please enter the directory location of the currently installed app to write to:  ').strip()
   return (current_value_install_dir, output_value_install_dir)
+
+
+
+def load_inputs_outputs(current_value_install_dir, output_value_install_dir):
+  '''
+  Loads inputs and outputs to be used from configure.yaml
+  Outputs is a list and inputs is a map of {valkey: Input}
+  '''
+  configure_yaml = open('configure.yaml', 'r')
+  config_data = yaml.load(configure_yaml)
+  inputs = build_input_map(config_data['inputs'], current_value_install_dir)
+  outputs = build_output_array(config_data['outputs'], inputs, output_value_install_dir)
+  return (inputs, outputs)
+
+def build_input_map(yaml_inputs, current_value_install_dir):
+  '''
+  Builds a map of valkey -> Input objects from a yaml object map, checks no duplicate valkeys
+  '''
+  inputs = {}
+  for ival in yaml_inputs:
+    if ival['valkey'] in inputs:
+      raise Exception(
+        'Error:\n' +
+        '"' + ival['valkey'] + '" already defined in inputs'
+      )
+    inputs[ival['valkey']] = configure.Input(
+      valkey = ival['valkey'],
+      name = ival['name'],
+      desc = ival['desc'],
+      current_val_filepath = current_value_install_dir + ival['current_val_rel_filepath'],
+      current_val_regex = ival['current_val_regex'],
+      validation_regex = ival['validation_regex']
+    )
+  return inputs
+
+def build_output_array(yaml_outputs, inputs_map, output_value_install_dir):
+  '''
+  Builds a list of Output objects from a yaml object map, checks all input_valkey's exist in inputs_map
+  '''
+  outputs = []
+  for oval in yaml_outputs:
+    if oval['input_valkey'] not in inputs_map:
+      raise Exception(
+        'Error:\n' +
+        '"' + oval['input_valkey'] + '" does not exist in inputs'
+      )
+    outputs.append(configure.Output(
+      output_filepath = output_value_install_dir + oval['output_rel_filepath'],
+      output_regex_string = oval['output_regex_string'],
+      input_valkey = oval['input_valkey']
+    ))
+  return outputs
+
+
+
+def read_inputs(inputs_map):
+  '''
+  Reads inputs, returns map of {valkey: value}
+  '''
+  input_values = {}
+  for input in inputs_map.values():
+    input_values[input.get_valkey()] = input.read_value()
+  return input_values
+
+
+
+def write_outputs(input_values, outputs_list):
+  '''
+  Iterates over [Output] outputs_list, getting the value to write from the input_values {valkey: value string} map
+  '''
+  for output in outputs_list:
+    value_to_write = input_values[output.get_input_valkey()]
+    output.write_output(value_to_write)
 
 
 
@@ -316,10 +390,12 @@ if __name__ == '__main__':
   print('- to write the updated configuration to: ' + output_value_install_dir)
   if general.prompt_for_confirm('Is this correct?', None):
     print('')
-    configure_app(
+    (inputs_map, outputs_list) = load_inputs_outputs(
       current_value_install_dir=current_value_install_dir,
       output_value_install_dir=output_value_install_dir
     )
+    input_values = read_inputs(inputs_map)
+    write_outputs(input_values, outputs_list)
     print('')
     print('')
     print('')
