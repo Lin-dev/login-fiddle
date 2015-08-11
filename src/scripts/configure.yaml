@@ -1,0 +1,21 @@
+---
+inputs:
+  - valkey                   : 'http_port'
+    name                     : 'HTTP port'
+    desc                     : 'The HTTP port that the server listens on [number]'
+    current_val_rel_filepath : './server/app/config/server.js'
+    current_val_regex        : 'http_port: (\d+), // configure.py: server'
+    validation_regex         : '^(\d+)$'
+  - valkey                   : 'https_port'
+    name                     : 'HTTPs port'
+    desc                     : 'The HTTPS port that the server listens on [number]'
+    current_val_rel_filepath : './server/app/config/server.js'
+    current_val_regex        : 'https_port: (\d+), // configure.py: server'
+    validation_regex         : '(\d+)'
+outputs:
+  - output_rel_filepath : './server/app/config/server.js'
+    output_regex_string : 'http_port: (\d+), // configure.py: server'
+    input_valkey        : 'http_port'
+  - output_rel_filepath : './server/app/config/server.js'
+    output_regex_string : 'https_port: (\d+), // configure.py: server'
+    input_valkey        : 'https_port'
