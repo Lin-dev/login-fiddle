@@ -1,5 +1,5 @@
 import os.path as path
-import re
+import re as re
 
 import general as general
 
@@ -28,9 +28,9 @@ class Input:
   def get_valkey(self):
     return self.valkey
 
-  def read_value(self):
+  def read_and_return_value(self):
     '''
-    Loads current value as default and reads value from user, storing it in self.value and returning it to the caller
+    Loads current value as default and reads value from user, returning it to the caller - the object does not cache it
     '''
     with open(self.current_val_filepath, 'r') as current_value_file:
       current_file_as_string = current_value_file.read()
@@ -42,12 +42,12 @@ class Input:
     )
     print(self.name + ': ')
     print(self.desc)
-    self.value = self.__get_value_input(current_value)
-    while not re.match(self.validation_regex, self.value) or not general.prompt_for_confirm('Is this correct?', True):
-      if not re.match(self.validation_regex, self.value):
-        print('Error: ' + self.value + ' does not match validation regex: ' + self.validation_regex)
-      self.value = self.__get_value_input(current_value)
-    return self.value
+    new_value = self.__get_value_input(current_value)
+    while not re.match(self.validation_regex, new_value) or not general.prompt_for_confirm('Is this correct?', True):
+      if not re.match(self.validation_regex, new_value):
+        print('Error: ' + new_value + ' does not match validation regex: ' + self.validation_regex)
+      new_value = self.__get_value_input(current_value)
+    return new_value
 
   def __get_value_input(self, current_value):
     '''
@@ -61,13 +61,12 @@ class Input:
 
 
 
-
-
 class Output:
   '''
-  Represents a single place a configuration value is written to, the value key used by an Output may be used by several
+  Represents a single place a configuration value is written to, the Input valkeys used by an Output to assemble its
+  value may be used by more than one Output object
   '''
-  def __init__(self, output_filepath, output_regex_string, input_valkey):
+  def __init__(self, output_filepath, output_regex_string, value_template):
     if path.isfile(output_filepath) is not True:
       raise Exception(
         'Error:\n' +
@@ -75,19 +74,22 @@ class Output:
       )
     self.output_filepath = output_filepath
     self.output_regex_string = output_regex_string
-    self.input_valkey = input_valkey
+    self.value_template = value_template
 
   def __repr__(self):
     return 'output_filepath=' + repr(self.output_filepath) + ',output_regex_string=' + repr(self.output_regex_string) \
-      + ',input_valkey=' + repr(self.input_valkey)
+      + ',value_template=' + repr(self.value_template)
 
-  def get_input_valkey(self):
-    return self.input_valkey
+  def get_value_template(self):
+    return self.value_template
 
-  def write_output(self, value):
+  def write_output(self, inputs_dict):
+    '''
+    Writes this output to file, assembling its value using the attached dict of {valkey: input-string}
+    '''
     with open(self.output_filepath, 'r') as output_value_file:
       output_file_as_string = output_value_file.read()
-    replacement_string = re.sub(r'\([^\)]*\)', value, self.output_regex_string)
+    replacement_string = re.sub(r'\([^\)]*\)', self.value_template % inputs_dict, self.output_regex_string)
     updated_file_as_str_count_tuple = re.subn(self.output_regex_string, replacement_string, output_file_as_string)
     if updated_file_as_str_count_tuple[1] == 1:
       with open(self.output_filepath, 'w') as destination_value_file:
