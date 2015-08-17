@@ -97,8 +97,8 @@ class Output:
     else:
       raise Exception(
         'Error:\n' +
-        self.name + ' was expecting just one substitution from ' + self.output_regex_string + ' in ' +
-        self.output_filepath + ', but ' + updated_file_as_str_count_tuple[1] + ' were made'
+        'Was expecting 1 substitution from /' + self.output_regex_string + '/ in ' + self.output_filepath +
+        ', but ' + str(updated_file_as_str_count_tuple[1]) + ' were made'
       )
 
 
