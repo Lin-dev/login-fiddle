@@ -13,7 +13,8 @@
  */
 define(function(require) {
   'use strict';
-  require('backbone');
+  var _ = require('underscore');
+  var Backbone = require('backbone');
 
   function createNamedConstructor(name, constructor) {
     // Explicitly allow use of Function constructor here

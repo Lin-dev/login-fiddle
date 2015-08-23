@@ -5,7 +5,9 @@
  */
 define(function(require) {
   'use strict';
-  require('marionette');
+  var _ = require('underscore');
+  var $ = require('jquery');
+  var Marionette = require('marionette');
 
   /**
    * Returns the client browser window scale (mobile, tablet, smalldesk or bigdesk) based on dummy DOM elements
