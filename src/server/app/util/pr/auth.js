@@ -1,6 +1,7 @@
 'use strict';
 
 var bcrypt = require('bcrypt');
+var q = require('q');
 
 var user_config = require('app/config/user');
 var database_config = require('app/config/database');
@@ -37,6 +38,10 @@ module.exports = function(sequelize, DataTypes) {
           is: /^[A-Za-z0-9.\/$]+$/, // regex matches a bcrypt hash, which is how password is stored
           len: [60, 60]
         }
+      },
+      local_unsuccessful_logins: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
       },
       // Facebook
       fb_id: {
@@ -272,8 +277,85 @@ module.exports = function(sequelize, DataTypes) {
          * @param  {String}  unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
          * @return {Boolean}                   True if the unhashed_password hash matches the stored hash
          */
-        check_password: function check_password(unhashed_password) {
+        check_password_sync: function check_password_sync(unhashed_password) {
           return bcrypt.compareSync(unhashed_password, this.local_password);
+        },
+
+        /**
+         * Waits for (2^local_unsuccessful_logins)-1 half-seconds
+         * @return {Object} A promise for completion of the wait
+         */
+        do_unsuccessful_login_wait: function do_unsuccessful_login_wait() {
+          var delay_time = 500 * (Math.pow(2, this.get('local_unsuccessful_logins')) - 1);
+          logger.trace('exports.do_unsuccessful_login_wait -- waiting for ' + delay_time + 'ms');
+          var result = q.defer();
+          setTimeout(function() {
+            result.resolve();
+          }, delay_time);
+          return result.promise;
+        },
+
+        /**
+         * Resets `local_unsuccessful_logins` to 0 on the server but does not reload client-side copy
+         * @return {Object} A promise for saving the updated user
+         */
+        reset_local_unsuccessful_logins: function reset_local_unsuccessful_logins() {
+          return this.update({ local_unsuccessful_logins: 0 });
+        },
+
+        /**
+         * Increments `local_unsuccessful_logins` by 1 but does not reload client-side copy
+         * @return {Object} A promise for saving the updated user
+         */
+        increment_local_unsuccessful_logins: function increment_local_unsuccessful_logins() {
+          return this.increment({ local_unsuccessful_logins: 1});
+        },
+
+        /**
+         * Compares a submitted (unhashed) password with the expected password hash for this user by hashing it. Also
+         * increments or resets `local_unsuccesful_logins` column appropriately.
+         *
+         * @param  {String}  unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
+         * @return {Object}                    A promise that resolves to  true if the password is correct else false
+         */
+        check_password_with_rate_limiting: function check_password_with_rate_limiting(unhashed_password) {
+          var that = this;
+          var catch_error_in_reset = function catch_error_in_reset(err) {
+            logger.error('exports.check_password_with_rate_limiting -- failed to reset unsuc logins, err: ' + err);
+          };
+          var catch_error_in_increment = function catch_error_in_increment(err) {
+            logger.error('exports.check_password_with_rate_limiting -- failed to increment unsuc logins, err: ' + err);
+          };
+          var catch_error_in_get_password_check = function catch_error_in_get_password_check(err) {
+            logger.error('exports.check_password_with_rate_limiting -- failed to check password, err: ' + err);
+          };
+          var get_password_check_promise = function get_password_check_promise() {
+            return q(that.check_password_sync(unhashed_password))
+              .then(function(is_pw_correct) {
+                if(is_pw_correct) {
+                  logger.trace('exports.check_password_with_rate_limiting -- is_pw_correct: ' + is_pw_correct);
+                  return q(that.reset_local_unsuccessful_logins())
+                    .thenResolve(is_pw_correct)
+                    .fail(catch_error_in_reset);
+                }
+                else {
+                  logger.trace('exports.check_password_with_rate_limiting -- is_pw_correct: ' + is_pw_correct);
+                  return q(that.increment_local_unsuccessful_logins())
+                    .thenResolve(is_pw_correct)
+                    .fail(catch_error_in_increment);
+                }
+              })
+              .fail(catch_error_in_get_password_check);
+          };
+          var reload_and_return_password_check = function reload_and_return_password_check(is_pw_correct) {
+            return q(that.reload({paranoid: false})) // must have paranoid: false in case user is deactivated
+              .thenResolve(is_pw_correct);
+          };
+
+          return q(this.do_unsuccessful_login_wait)
+            .then(get_password_check_promise)
+            .then(reload_and_return_password_check)
+            .fail(catch_error_in_get_password_check);
         },
 
         /**
