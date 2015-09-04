@@ -82,7 +82,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               profile_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
             .fail(AppObj.make_on_promise_fail('UserApp.Profile - private.proc_connect_local_submitted'));
           }

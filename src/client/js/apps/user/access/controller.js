@@ -195,7 +195,7 @@ define(function(require) {
                 AppObj.trigger('user:access:reactivate', form_data.local_email);
               });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
             .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_login'));
           }
@@ -207,7 +207,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
             .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_signup'));
           }
@@ -252,7 +252,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
             .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_signup'));
           }
@@ -264,7 +264,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
             .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_signup'));
           }
@@ -329,7 +329,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
             .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_reactivate'));
           }
@@ -341,7 +341,7 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
             .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_reactivate'));
           }
