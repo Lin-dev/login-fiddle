@@ -401,36 +401,50 @@ passport.use('local-login', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_login_strategy_callback(req, email, password, done) {
-  email = email.trim();
-  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
-  .then(function(user) {
-    if(user !== null) {
-      if(user.check_password(password)) {
+  var make_process_user_login = function make_process_user_login(user) {
+    return function process_user_login(is_pw_correct) {
+      if(is_pw_correct) {
         if(user.is_active()) {
           logger.debug('local-login -- logged in: ' + email);
           return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
         }
         else {
           logger.debug('local-login -- deactivated login successful: ' + email);
-          return done(null, false, req.flash(api_util_config.flash_message_key,
-            'Account currently deactivated, to reactivate click <a href="' + user_config.client_reactivate_path +
-            '" class="js-action-link">here</a>'));
+          return done(null, false, req.flash(api_util_config.flash_message_key, 'Account currently deactivated, to ' +
+            ' reactivate click <a href="' + user_config.client_reactivate_path + '" class="js-action-link">here</a>'));
         }
       }
       else {
         logger.debug('local-login -- incorrect password: ' + email);
         return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
       }
+    };
+  };
+
+  var catch_error_in_password_check = function catch_error_in_password_check(err) {
+    logger.error('local-login - user.check_password_with_rate_limiting failed with error: ' + err);
+    return done(null, false, req.flash(api_util_config.flash_message_key, 'Server error'));
+  };
+
+  var catch_error_in_find = function catch_error_in_find(err) {
+    logger.error('local-login -- callback for ' + email + ' failed while querying for user: ' + JSON.stringify(err));
+    return done(err, false, req.flash(api_util_config.flash_message_key, 'Server error'));
+  };
+
+  email = email.trim();
+  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
+  .then(function(user) {
+    if(user !== null) {
+      q(user.check_password_with_rate_limiting(password))
+      .then(make_process_user_login(user))
+      .fail(catch_error_in_password_check);
     }
     else {
       logger.debug('local-login -- unknown email: ' + email);
       return done(null, false, req.flash(api_util_config.flash_message_key, 'No user with that email address found'));
     }
   })
-  .fail(function(err) {
-    logger.error('local-login -- callback for ' + email + ' failed while querying for user: ' + JSON.stringify(err));
-    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-  });
+  .fail(catch_error_in_find);
 }));
 
 /**
@@ -446,28 +460,35 @@ passport.use('local-reactivate', new LocalStrategy({
   q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(function(user) {
     if(user !== null) {
-      if(user.check_password(password)) {
-        if(!user.is_active()) {
-          q(user.reactivate_and_save())
-          .then(function(activated_user) {
-            logger.debug('local-reactivate -- reactivated user and logged in: ' + email);
-            return done(null, activated_user, req.flash(api_util_config.flash_message_key,
-              'Reactivated and logged in'));
-          })
-          .fail(function(err) {
-            logger.error('local-reactivate -- failed to reactivate user: ' + err);
-            return done(null, false, req.flash('Server error - failed to reactivate account'));
-          });
+      q(user.check_password_with_rate_limiting(password))
+      .then(function(is_pw_correct) {
+        if(is_pw_correct) {
+          if(!user.is_active()) {
+            q(user.reactivate_and_save())
+            .then(function(activated_user) {
+              logger.debug('local-reactivate -- reactivated user and logged in: ' + email);
+              return done(null, activated_user, req.flash(api_util_config.flash_message_key,
+                'Reactivated and logged in'));
+            })
+            .fail(function(err) {
+              logger.error('local-reactivate -- failed to reactivate user: ' + err);
+              return done(null, false, req.flash('Server error - failed to reactivate account'));
+            });
+          }
+          else {
+            logger.debug('local-reactivate -- user already active, logged in: ' + email);
+            return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
+          }
         }
         else {
-          logger.debug('local-reactivate -- user already active, logged in: ' + email);
-          return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
+          logger.debug('local-reactivate -- incorrect password: ' + email);
+          return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
         }
-      }
-      else {
-        logger.debug('local-reactivate -- incorrect password: ' + email);
-        return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
-      }
+      })
+      .fail(function(err) {
+        logger.error('local-reactivate - user.check_password_with_rate_limiting failed with error: ' + err);
+        return done(null, false, req.flash(api_util_config.flash_message_key, 'Server error'));
+      });
     }
     else {
       logger.debug('local-reactivate -- unknown email: ' + email);
