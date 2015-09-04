@@ -225,7 +225,7 @@ module.exports = function(sequelize, DataTypes) {
           scope = scope || 'all';
           if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           var where_object = {};
-          where_object[user_config.local.username_field] = { ilike: username_value };
+          where_object[user_config.local.username_field] = { ilike: username_value }; // case insensitive
           return this.scope(scope).find({ where: where_object, paranoid: false });
         },
 
