@@ -8,8 +8,8 @@ define(function(require) {
     /**
      * Returns a collection decorated with filtering functionality, does not need to be called with 'new'
      *
-     * @param {Object} options.collection The original backbone collection to filter
-     * @param {Function} options.filter_generator A function that takes a criterion and returns a filtering function
+     * @param {Object}   options.collection            The original backbone collection to filter
+     * @param {Function} options.make_filter_predicate A function that takes a criterion and returns a predicate fn
      */
     Entities.FilteringWrapperCollection = function FilteringWrapperCollection(options) {
       var original = options.collection;
@@ -18,7 +18,7 @@ define(function(require) {
       var current_strategy; // used to cache the current strategy, for use on original:reset or :add
 
       filtered.add(original.models);
-      filtered.filter_generator = options.filter_generator;
+      filtered.make_filter_predicate = options.make_filter_predicate;
 
       // Create private reset function for filtered, wrap public methods w/ warning logs
       // NB: add is used by reset and set is used by add so their warns are conditional
@@ -83,12 +83,12 @@ define(function(require) {
         var items = [];
         if(criterion) {
           if(filter_strategy === 'filter') {
-            if(!filtered.filter_generator)  {
+            if(!filtered.make_filter_predicate)  {
               logger.error('Attempted to use "filter" function, but none was defined');
               throw('Attempted to use "filter" function, but none was defined');
             }
-            var filter_generator = filtered.filter_generator(criterion);
-            items = collection_to_filter.filter(filter_generator);
+            var filter_predicate = filtered.make_filter_predicate(criterion);
+            items = collection_to_filter.filter(filter_predicate);
           }
           else {
             items = collection_to_filter.where(criterion);

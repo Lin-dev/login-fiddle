@@ -197,7 +197,7 @@ define(function(require) {
               access_view.region_message.show(msg_view);
               AppObj.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_login'));
+            .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_login'));
           }
           else {
             q(AppObj.request('common:entities:flashmessage'))
@@ -209,7 +209,7 @@ define(function(require) {
               access_view.region_message.show(msg_view);
               AppObj.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
+            .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_signup'));
           }
         });
       }
@@ -254,7 +254,7 @@ define(function(require) {
               access_view.region_message.show(msg_view);
               AppObj.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
+            .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_signup'));
           }
           else {
             q(AppObj.request('common:entities:flashmessage'))
@@ -266,7 +266,7 @@ define(function(require) {
               access_view.region_message.show(msg_view);
               AppObj.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
+            .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_signup'));
           }
         });
       }
@@ -331,7 +331,7 @@ define(function(require) {
               access_view.region_message.show(msg_view);
               AppObj.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_reactivate'));
+            .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_reactivate'));
           }
           else {
             q(AppObj.request('common:entities:flashmessage'))
@@ -343,7 +343,7 @@ define(function(require) {
               access_view.region_message.show(msg_view);
               AppObj.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_reactivate'));
+            .fail(AppObj.make_on_promise_fail('UserApp.Access - private.proc_local_reactivate'));
           }
         });
       }
@@ -395,7 +395,7 @@ define(function(require) {
           });
           Display.tainer.show_in('main', access_view);
         })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_access_form'));
+        .fail(AppObj.make_on_promise_fail('UserApp.Access.controller.show_access_form'));
       },
 
       /**
@@ -435,7 +435,7 @@ define(function(require) {
           });
           Display.tainer.show_in('main', access_view);
         })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_signup_form'));
+        .fail(AppObj.make_on_promise_fail('UserApp.Access.controller.show_signup_form'));
       },
 
       /**
@@ -479,7 +479,7 @@ define(function(require) {
           });
           Display.tainer.show_in('main', access_layout);
         })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_reactivate_form'));
+        .fail(AppObj.make_on_promise_fail('UserApp.Access.controller.show_reactivate_form'));
       }
     };
   });

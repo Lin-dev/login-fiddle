@@ -238,26 +238,26 @@ module.exports = {
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local login are present - log if not
    */
-  local_check_login: auth.mw_gen.check_post_has_req_fields(keys_required_for_login),
+  local_check_login: auth.mw_gen.make_check_post_has_req_fields(keys_required_for_login),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local reactivation are present (the same as for login) -
    * log if they are not
    */
-  local_check_reactivate: auth.mw_gen.check_post_has_req_fields(keys_required_for_login),
+  local_check_reactivate: auth.mw_gen.make_check_post_has_req_fields(keys_required_for_login),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local signup are present - log if not
    */
-  local_check_signup: auth.mw_gen.check_post_has_req_fields(keys_required_for_signup),
+  local_check_signup: auth.mw_gen.make_check_post_has_req_fields(keys_required_for_signup),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local connect are present - log if not
    */
-  local_check_connect: auth.mw_gen.check_post_has_req_fields(keys_required_for_connect),
+  local_check_connect: auth.mw_gen.make_check_post_has_req_fields(keys_required_for_connect),
 
   /**
    * Handles requests for local access account login

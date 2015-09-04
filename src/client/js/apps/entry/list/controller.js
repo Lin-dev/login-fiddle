@@ -30,8 +30,8 @@ define(function(require) {
           var FWC = require('js/common/filtering_wrapper_collection').FilteringWrapperCollection;
           var filterable_entries = FWC({
             collection: entries,
-            filter_generator: function filter_generator() {
-              return function(entry) {
+            make_filter_predicate: function make_filter_predicate() {
+              return function filter_predicate_tags(entry) {
                 return _.any(entry.get('tags'), function(tag) { return tag.value === tag_string; });
               };
             }
@@ -47,7 +47,7 @@ define(function(require) {
 
           Display.tainer.show_in('main', view);
         })
-        .fail(AppObj.on_promise_fail_gen('EntryApp.List.controller.show_list'));
+        .fail(AppObj.make_on_promise_fail('EntryApp.List.controller.show_list'));
         logger.trace('show_list -- exit');
       }
     };

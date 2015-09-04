@@ -77,7 +77,7 @@ describe('app/util - exported properties', function() {
     module.mw.set_session_start_date.should.be.a.function;
     num_nonfuncs[name]++;
     module.mw_gen.should.be.an.Object;
-    module.mw_gen.check_post_has_req_fields.should.be.a.function;
+    module.mw_gen.make_check_post_has_req_fields.should.be.a.function;
     num_nonfuncs[name]++;
   });
 

@@ -28,7 +28,7 @@ define(function(require) {
           Display.tainer.show_in('main', home_layout);
           logger.trace('show_home -- done');
         })
-        .fail(AppObj.on_promise_fail_gen('HomeApp.Show.controller.show_home'));
+        .fail(AppObj.make_on_promise_fail('HomeApp.Show.controller.show_home'));
       }
     };
     logger.trace('AppObj.module -- exit');

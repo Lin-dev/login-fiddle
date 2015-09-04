@@ -683,11 +683,11 @@ module.exports = {
      * @param  {Array} required_fields An array of strings
      * @return {Function}              A middleware function that can be passed to an Express router
      */
-    check_post_has_req_fields: function check_post_has_req_fields(required_fields) {
-      return function(req, res, next) {
+    make_check_post_has_req_fields: function make_check_post_has_req_fields(required_fields) {
+      return function check_post_has_req_fields(req, res, next) {
         _.each(required_fields, function(req_field) {
           if(req.body[req_field] === undefined) {
-            logger.warn('exports.mw_gen.check_post_has_req_fields -- Required post variable undefined: ' + req_field);
+            logger.warn('exports.mw_gen.check_post_has_req_fields -- req. post variable undefined: ' + req_field);
           }
         });
         next();

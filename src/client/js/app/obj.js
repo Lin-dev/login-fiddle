@@ -54,7 +54,7 @@ define(function(require) {
    * @param  {String}   caller The function name used in logs to describe the calling location
    * @return {Function}        A function that can be passed in to a promise's fail method
    */
-  AppObj.on_promise_fail_gen = function on_promise_fail_gen(caller) {
+  AppObj.make_on_promise_fail = function make_on_promise_fail(caller) {
     return function on_promise_fail(err) {
       logger.error(caller + ' -- promise failed, error: ' + err);
     };
