@@ -320,55 +320,6 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         /**
-         * DEPRECATED - NOT USED
-         *
-         * Compares a submitted (unhashed) password with the expected password hash for this user by hashing it. Also
-         * increments or resets `local_unsuccesful_logins` column appropriately.
-         *
-         * @param  {String}  unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
-         * @return {Object}                    A promise that resolves to  true if the password is correct else false
-         */
-        check_password_with_rate_limiting: function check_password_with_rate_limiting(unhashed_password) {
-          var that = this;
-          var catch_error_in_reset = function catch_error_in_reset(err) {
-            logger.error('exports.check_password_with_rate_limiting -- failed to reset unsuc logins, err: ' + err);
-          };
-          var catch_error_in_increment = function catch_error_in_increment(err) {
-            logger.error('exports.check_password_with_rate_limiting -- failed to increment unsuc logins, err: ' + err);
-          };
-          var catch_error_in_get_password_check = function catch_error_in_get_password_check(err) {
-            logger.error('exports.check_password_with_rate_limiting -- failed to check password, err: ' + err);
-          };
-          var get_password_check_promise = function get_password_check_promise() {
-            return q(that.check_password_sync(unhashed_password))
-              .then(function(is_pw_correct) {
-                if(is_pw_correct) {
-                  logger.trace('exports.check_password_with_rate_limiting -- is_pw_correct: ' + is_pw_correct);
-                  return q(that.reset_local_unsuccessful_logins())
-                    .thenResolve(is_pw_correct)
-                    .fail(catch_error_in_reset);
-                }
-                else {
-                  logger.trace('exports.check_password_with_rate_limiting -- is_pw_correct: ' + is_pw_correct);
-                  return q(that.increment_local_unsuccessful_logins())
-                    .thenResolve(is_pw_correct)
-                    .fail(catch_error_in_increment);
-                }
-              })
-              .fail(catch_error_in_get_password_check);
-          };
-          var reload_and_return_password_check = function reload_and_return_password_check(is_pw_correct) {
-            return q(that.reload({paranoid: false})) // must have paranoid: false in case user is deactivated
-              .thenResolve(is_pw_correct);
-          };
-
-          return q(this.do_unsuccessful_login_wait)
-            .then(get_password_check_promise)
-            .then(reload_and_return_password_check)
-            .fail(catch_error_in_get_password_check);
-        },
-
-        /**
          * Returns an array of connected auth providers (e.g. ['google', 'fb', 'twitter', 'local']) for this user
          */
         connected_auth_providers: function connected_auth_providers() {
