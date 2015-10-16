@@ -273,12 +273,20 @@ module.exports = function(sequelize, DataTypes) {
 
       instanceMethods: {
         /**
-         * Compares a submitted (unhashed) password with the expected password hash for this user by hashing it
+         * Compares a submitted (unhashed) password with the expected password hash for this user by hashing it. Throws
+         * and logs an error if unhashed_password is undefined.
+         *
          * @param  {String}  unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
          * @return {Boolean}                   True if the unhashed_password hash matches the stored hash
          */
         check_password_sync: function check_password_sync(unhashed_password) {
-          return bcrypt.compareSync(unhashed_password, this.local_password);
+          if(unhashed_password === undefined) {
+            logger.error('exports.check_password_sync -- unhashed_password undefined, returning false');
+            throw new Error('exports.check_password_sync -- unhashed_password undefined, returning false');
+          }
+          else {
+            return bcrypt.compareSync(unhashed_password, this.local_password);
+          }
         },
 
         /**
@@ -312,6 +320,8 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         /**
+         * DEPRECATED - NOT USED
+         *
          * Compares a submitted (unhashed) password with the expected password hash for this user by hashing it. Also
          * increments or resets `local_unsuccesful_logins` column appropriately.
          *
@@ -534,30 +544,26 @@ module.exports = function(sequelize, DataTypes) {
 
         /**
          * Deactivates an account, marking it as inactive (current implementation: Sequelize `destroy`, which sets the
-         * delete-at field to the time of deletion)
+         * delete-at field to the time of deletion). Can be called on an already-deactivated user.
          * @return {Object} A promise for completion of the user instance save
          */
         deactivate_and_save: function deactivate_and_save() {
           if(!this.is_active()) {
-            throw new Error('Attempted to deactivate inactive user model: ' + JSON.stringify(this));
+            logger.warn('Inactive user model unnecessarily set to inactive again: ' + JSON.stringify(this));
           }
-          else {
-            return this.destroy();
-          }
+          return this.destroy();
         },
 
         /**
          * Restores an account, marking it as active (current implementation: Sequelize `restore`, which sets the
-         * delete-at field null)
+         * delete-at field null). Can be called on an already activated user.
          * @return {Object} A promise for completion of the user instance save
          */
         reactivate_and_save: function restore_and_save() {
           if(this.is_active()) {
-            throw new Error('Attempted to reactivate active user model: ' + JSON.stringify(this));
+            logger.warn('Active user model unnecessarily set to active again: ' + JSON.stringify(this));
           }
-          else {
-            return this.restore();
-          }
+          return this.restore();
         }
       }
     })
