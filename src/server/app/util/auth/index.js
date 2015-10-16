@@ -385,38 +385,31 @@ passport.use('local-signup', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_signup_strategy_callback(req, email, password, done) {
+  var handle_signup_request = function handle_signup_request(user) {
+    if(user === null) { // email not found, create the user
+      var user_attrs = {};
+      user_attrs[user_config.local.username_field] = email;
+      user_attrs[user_config.local.password_field] = pr.pr.auth.user.hash_password(password);
+      q(pr.pr.auth.user.create(user_attrs))
+      .then(function(user) {
+        logger.info('handle_signup_request -- created user with email: ' + email);
+        return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
+      })
+      .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
+      // ^^ rejection could be DB or validation - don't distinguish these because validation is also done client side
+    }
+    else {
+      logger.warn('handle_signup_request -- account creation requested for existing account: ' + email);
+      return done(null, false,
+        req.flash(api_util_config.flash_message_key, 'An account with that email address already exists'));
+    }
+  };
+
+  logger.trace('local_signup_strategy_callback -- enter');
   email = email.trim();
-  // Why process.nextTick nec? (copied from https://scotch.io/tutorials/easy-node-authentication-setup-and-local)
-  // Prob: "Quora: What does process.nextTick(callback) actually do in Node.js?" - answer by Aran Mulholland, bullet 3
-  process.nextTick(function() {
-    q(pr.pr.auth.user.find_with_local_username(email, 'all'))
-    .then(function(user) {
-      if(user === null) { // email not found, create the user
-        var user_attrs = {};
-        user_attrs[user_config.local.username_field] = email;
-        user_attrs[user_config.local.password_field] = pr.pr.auth.user.hash_password(password);
-        q(pr.pr.auth.user.create(user_attrs))
-        .then(function(user) {
-          logger.info('local-signup -- callback created user with email: ' + email);
-          return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
-        })
-        .fail(function(err) {
-          // DB or validation error - do not distinguish validation or set flash because val. is also done client side
-          logger.warn('local-signup -- callback for ' + email + ' failed user creation, error: ' + err);
-          return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-        });
-      }
-      else {
-        logger.warn('local-signup -- callback failed, account creation requested for existing account: ' + email);
-        return done(null, false,
-          req.flash(api_util_config.flash_message_key, 'An account with that email address already exists'));
-      }
-    })
-    .fail(function(err) {
-      logger.error('local-signup -- callback for ' + email + ' failed while checking if email already used: ' + err);
-      return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-    });
-  });
+  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
+  .then(handle_signup_request)
+  .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
 }));
 
 /**
