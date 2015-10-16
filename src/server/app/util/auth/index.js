@@ -92,6 +92,28 @@ var local = {
   },
 
   /**
+   * This function is for handling rejected promises in a passport strategy callback. It takes `done` as its first
+   * argument and a req object as its second. The promise rejection error is the final argument. Intended usage in a
+   * passport callback is:
+   *     `promise.fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));`
+   *
+   * @param  {Function} done A Passport callback's `done` function
+   * @param  {[type]}   err  This is the rejected promise's error value
+   * @return {[type]}        The `err` parameter
+   */
+  handle_passport_callback_rejected_promise: function handle_passport_callback_rejected_promise(done, req, err) {
+    if(err && err.stack) {
+      logger.error('local.handle_passport_callback_rejected_promise -- ' + err);
+      logger.error(err.stack);
+    }
+    else {
+      logger.error('local.handle_passport_callback_rejected_promise -- ' + err + ' (no stack)');
+    }
+    done(null, false, req.flash(api_util_config.flash_message_key, 'Server error'));
+    return err;
+  },
+
+  /**
    * Returns a function which can be executed as a passport.js strategy callback for site access and account creation.
    *
    * The returned method checks if the user is already present in the DB. If they are and they are active then they are
@@ -405,50 +427,40 @@ passport.use('local-login', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_login_strategy_callback(req, email, password, done) {
-  var make_process_user_login = function make_process_user_login(user) {
-    return function process_user_login(is_pw_correct) {
-      if(is_pw_correct) {
-        if(user.is_active()) {
-          logger.debug('local-login -- logged in: ' + email);
-          return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
-        }
-        else {
-          logger.debug('local-login -- deactivated login successful: ' + email);
-          return done(null, false, req.flash(api_util_config.flash_message_key, 'Account currently deactivated, to ' +
-            ' reactivate click <a href="' + user_config.client_reactivate_path + '" class="js-action-link">here</a>'));
-        }
-      }
-      else {
-        logger.debug('local-login -- incorrect password: ' + email);
-        return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
-      }
-    };
-  };
-
-  var catch_error_in_password_check = function catch_error_in_password_check(err) {
-    logger.error('local-login - user.check_password_with_rate_limiting failed with error: ' + err);
-    return done(null, false, req.flash(api_util_config.flash_message_key, 'Server error'));
-  };
-
-  var catch_error_in_find = function catch_error_in_find(err) {
-    logger.error('local-login -- callback for ' + email + ' failed while querying for user: ' + JSON.stringify(err));
-    return done(err, false, req.flash(api_util_config.flash_message_key, 'Server error'));
-  };
-
-  email = email.trim();
-  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
-  .then(function(user) {
+  var handle_login_request = function handle_login_request(user) {
     if(user !== null) {
-      q(user.check_password_with_rate_limiting(password))
-      .then(make_process_user_login(user))
-      .fail(catch_error_in_password_check);
+      return q(user.do_unsuccessful_login_wait())
+        .then(function() {
+          if(user.check_password_sync(password)) {
+            if(user.is_active()) {
+              logger.debug('handle_login_request -- logged in: ' + email);
+              return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
+            }
+            else {
+              logger.debug('handle_login_request -- deactivated login successful: ' + email);
+              return done(null, false, req.flash(api_util_config.flash_message_key, 'Account currently deactivated,' +
+                ' to reactivate click <a href="' + user_config.client_reactivate_path +
+                '" class="js-action-link">here</a>'));
+            }
+          }
+          else {
+            logger.debug('handle_login_request -- incorrect password: ' + email);
+            return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
+          }
+        })
+        .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
     }
     else {
-      logger.debug('local-login -- unknown email: ' + email);
+      logger.debug('handle_login_request -- unknown email: ' + email);
       return done(null, false, req.flash(api_util_config.flash_message_key, 'No user with that email address found'));
     }
-  })
-  .fail(catch_error_in_find);
+  };
+
+  logger.trace('local_login_strategy_callback -- enter');
+  email = email.trim();
+  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
+  .then(handle_login_request)
+  .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
 }));
 
 /**
@@ -459,50 +471,41 @@ passport.use('local-reactivate', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_reactivate_strategy_callback(req, email, password, done) {
-  logger.trace('local-reactivate callback -- enter');
-  email = email.trim();
-  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
-  .then(function(user) {
+  var handle_reactivation_request = function handle_reactivation_request(user) {
     if(user !== null) {
-      q(user.check_password_with_rate_limiting(password))
-      .then(function(is_pw_correct) {
-        if(is_pw_correct) {
-          if(!user.is_active()) {
-            q(user.reactivate_and_save())
-            .then(function(activated_user) {
-              logger.debug('local-reactivate -- reactivated user and logged in: ' + email);
-              return done(null, activated_user, req.flash(api_util_config.flash_message_key,
-                'Reactivated and logged in'));
+      return q(user.do_unsuccessful_login_wait())
+        .then(function() {
+          if(user.check_password_sync(password)) {
+            q(user.reset_local_unsuccessful_logins())
+            .then(user.reactivate_and_save())
+            .then(function(active_user) {
+              logger.debug('handle_reactivation_request -- reactivated user and logged in: ' + email);
+              return done(null, active_user, req.flash(api_util_config.flash_message_key, 'Reactivated and logged in'));
             })
-            .fail(function(err) {
-              logger.error('local-reactivate -- failed to reactivate user: ' + err);
-              return done(null, false, req.flash('Server error - failed to reactivate account'));
-            });
+            .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
           }
           else {
-            logger.debug('local-reactivate -- user already active, logged in: ' + email);
-            return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
+            q(user.increment_local_unsuccessful_logins())
+            .then(function() {
+              logger.debug('handle_reactivation_request -- incorrect password: ' + email);
+              return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
+            })
+            .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
           }
-        }
-        else {
-          logger.debug('local-reactivate -- incorrect password: ' + email);
-          return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
-        }
-      })
-      .fail(function(err) {
-        logger.error('local-reactivate - user.check_password_with_rate_limiting failed with error: ' + err);
-        return done(null, false, req.flash(api_util_config.flash_message_key, 'Server error'));
-      });
+        })
+        .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
     }
     else {
-      logger.debug('local-reactivate -- unknown email: ' + email);
+      logger.debug('handle_reactivation_request -- unknown email: ' + email);
       return done(null, false, req.flash(api_util_config.flash_message_key, 'No user with that email address found'));
     }
-  })
-  .fail(function(err) {
-    logger.error('local-reactivate -- callback for ' + email + ' failed while querying for user: ' + err);
-    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-  });
+  };
+
+  logger.trace('local_reactivate_strategy_callback -- enter');
+  email = email.trim();
+  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
+  .then(handle_reactivation_request)
+  .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
 }));
 
 /**
@@ -513,33 +516,30 @@ passport.use('local-connect', new LocalStrategy({
   passwordField: user_config.local.password_field,
   passReqToCallback: true
 }, function local_connect_strategy_callback(req, email, password, done) {
-  email = email.trim();
-  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
-  .then(function(user_with_email) {
+  var handle_connect_request = function handle_connect_request(user_with_email) {
     if(user_with_email === null) { // that email address is not used - add it to logged in a/c along with the password
       var user_attrs = {};
       user_attrs[user_config.local.username_field] = email;
       user_attrs[user_config.local.password_field] = pr.pr.auth.user.hash_password(password);
       q(req.user.connect_local_and_save(user_attrs))
       .then(function(updated_user) {
-        logger.debug('local-connect -- email added to user: ' + JSON.stringify(updated_user));
+        logger.debug('handle_connect_request -- email added to user: ' + JSON.stringify(updated_user));
         done(null, updated_user, req.flash(api_util_config.flash_message_key, 'Email address added'));
       })
-      .fail(function(err) {
-        logger.warn('local-connect -- callback for ' + JSON.stringify(req.user) + ' failed to save updated user to DB');
-        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-      });
+      .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
     }
     else {
-      logger.debug('local-connect -- email already in use by user: ' + JSON.stringify(user_with_email));
+      logger.debug('handle_connect_request -- email already in use by user: ' + JSON.stringify(user_with_email));
       return done(null, false, req.flash(api_util_config.flash_message_key,
         'Email address already in use by another profile'));
     }
-  })
-  .fail(function(err) {
-    logger.error('local-connect -- callback for ' + email + ' failed while query\'ing for user: ' + err);
-    return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-  });
+  };
+
+  logger.trace('local_connect_strategy_callback -- enter');
+  email = email.trim();
+  q(pr.pr.auth.user.find_with_local_username(email, 'all'))
+  .then(handle_connect_request)
+  .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
 }));
 
 /**
