@@ -291,7 +291,7 @@ module.exports = function(sequelize, DataTypes) {
 
         /**
          * Waits for (2^local_unsuccessful_logins)-1 half-seconds
-         * @return {Object} A promise for completion of the wait
+         * @return {Object} A promise for completion of the wait, resolved with undefined
          */
         do_unsuccessful_login_wait: function do_unsuccessful_login_wait() {
           var delay_time = 500 * (Math.pow(2, this.get('local_unsuccessful_logins')) - 1);
@@ -305,18 +305,19 @@ module.exports = function(sequelize, DataTypes) {
 
         /**
          * Resets `local_unsuccessful_logins` to 0 on the server but does not reload client-side copy
-         * @return {Object} A promise for saving the updated user
+         * @return {Object} A promise for the saving of the updated user
          */
         reset_local_unsuccessful_logins: function reset_local_unsuccessful_logins() {
           return this.update({ local_unsuccessful_logins: 0 });
         },
 
         /**
-         * Increments `local_unsuccessful_logins` by 1 but does not reload client-side copy
-         * @return {Object} A promise for saving the updated user
+         * Increments `local_unsuccessful_logins` by 1 and reloads client-side copy (so that it has the updated value)
+         * @return {Object} A promise for the reloading of the updated user
          */
         increment_local_unsuccessful_logins: function increment_local_unsuccessful_logins() {
-          return this.increment({ local_unsuccessful_logins: 1});
+          return this.increment({ local_unsuccessful_logins: 1})
+            .then(this.reload.bind(this, undefined));
         },
 
         /**
