@@ -296,11 +296,7 @@ module.exports = function(sequelize, DataTypes) {
         do_unsuccessful_login_wait: function do_unsuccessful_login_wait() {
           var delay_time = 500 * (Math.pow(2, this.get('local_unsuccessful_logins')) - 1);
           logger.trace('exports.do_unsuccessful_login_wait -- waiting for ' + delay_time + 'ms');
-          var result = q.defer();
-          setTimeout(function() {
-            result.resolve();
-          }, delay_time);
-          return result.promise;
+          return q.delay(delay_time);
         },
 
         /**
