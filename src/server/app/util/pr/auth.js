@@ -120,7 +120,7 @@ module.exports = function(sequelize, DataTypes) {
 
       scopes: {
         /**
-         * Include activated and deactivated users in the query scope
+         * Include activated and deactivated users in the query scope, this is also the default scope
          * @type {Object}
          */
         all: {
@@ -300,7 +300,7 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         /**
-         * Resets `local_unsuccessful_logins` to 0 on the server but does not reload client-side copy
+         * Resets `local_unsuccessful_logins` to 0 on the client instance and server
          * @return {Object} A promise for the saving of the updated user
          */
         reset_local_unsuccessful_logins: function reset_local_unsuccessful_logins() {
