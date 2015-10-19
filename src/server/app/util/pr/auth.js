@@ -504,10 +504,10 @@ module.exports = function(sequelize, DataTypes) {
 
         /**
          * Restores an account, marking it as active (current implementation: Sequelize `restore`, which sets the
-         * delete-at field null). Can be called on an already activated user.
+         * delete-at field null). Can be called on an active user and makes no changes to the user in this case.
          * @return {Object} A promise for completion of the user instance save
          */
-        reactivate_and_save: function restore_and_save() {
+        reactivate_and_save: function reactivate_and_save() {
           if(this.is_active()) {
             logger.warn('Active user model unnecessarily set to active again: ' + JSON.stringify(this));
           }
