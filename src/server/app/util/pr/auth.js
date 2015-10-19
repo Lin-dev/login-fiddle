@@ -313,7 +313,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         increment_local_unsuccessful_logins: function increment_local_unsuccessful_logins() {
           return this.increment({ local_unsuccessful_logins: 1})
-            .then(this.reload.bind(this, undefined));
+            .then(this.reload.bind(this, { paranoid: false }));
         },
 
         /**
