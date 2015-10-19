@@ -149,44 +149,66 @@ var local = {
     }
 
     return function passport_access_strategy_callback(req, token, refresh_token, profile, done) {
-      q(options.user_find_fn(profile.id))
-      .then(function(user) {
-        if(user !== null) { // user found - log in or offer to reactivate
-          if(user.is_active()) {
-            logger.debug('make_passport_access_strategy_callback -- found existing user, logging in: ' +
-              JSON.stringify(user));
-            return done(null, user, req.flash(api_util_config.flash_message_key, options.login_message));
-          }
-          else {
-            logger.debug('make_passport_access_strategy_callback -- deactivated login was successful: ' +
-              JSON.stringify(user));
-            return done(null, false, req.flash(api_util_config.flash_message_key,
-              'Account currently deactivated, to reactivate click <a href="' + user_config.client_reactivate_path +
-              '" class="js-action-link">here</a>'));
-          }
+      /**
+       * Logs a user in if they are active, or displays a reactivation flash message if they are inactive. The result
+       * of calling the passport done callback (appropriately parameterised in each case) is returned. Has no async ops.
+       *
+       * @param  {Object} user The user object which results from a call to `options.user_find_fn`
+       * @param  {Object} req  The request object passed to the callback by passport.js
+       * @return {Object}      The result of calling the passport strategy's done function (may be undefined)
+       */
+      var login_user = function login_user(user, req) {
+       if(user.is_active()) {
+          logger.debug('login_user -- found existing user, logging in: ' + JSON.stringify(user));
+          return done(null, user, req.flash(api_util_config.flash_message_key, options.login_message));
         }
-        else { // user not found - create account
-          logger.debug('make_passport_access_strategy_callback -- user not found, creating from: ' +
-            JSON.stringify(profile));
-          q(options.user_create_fn(profile, token))
+        else {
+          logger.debug('login_user -- deactivated login was successful: ' + JSON.stringify(user));
+          return done(null, false, req.flash(api_util_config.flash_message_key,
+            'Account currently deactivated, to reactivate click <a href="' + user_config.client_reactivate_path +
+            '" class="js-action-link">here</a>'));
+        }
+      };
+
+      /**
+       * Creates a user using the profile and token passed to the passport_access_strategy_callback, returning a
+       * promise chain for this creation and then calling done.
+       *
+       * @param  {Object}  profile The profile object passed to the callback by passport.js
+       * @param  {String}  token   The token passed to the callback by passport.js
+       * @param  {Object}  req     The request object passed to the callback by passport.js
+       * @return {Promise}         The result of calling `option.user_create_fn` and then the strategy's done function
+       */
+      var create_user = function create_user(profile, token, req) {
+        logger.debug('create_user -- user not found, creating from: ' + JSON.stringify(profile));
+        return q(options.user_create_fn(profile, token))
           .then(function(user) {
-            logger.info('make_passport_access_strategy_callback -- user created: ' + profile.id + ' / ' +
-              profile.displayName);
+            logger.info('create_user -- user created: ' + profile.id + ' / ' + profile.displayName);
             return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
           })
-          .fail(function(err) {
-            // DB or validation error - do not distinguish validation or set flash because that is also done client side
-            logger.warn('make_passport_access_strategy_callback -- user_create_fn for ' + profile.id + ' / ' +
-              profile.displayName + ' failed user creation, error: ' + err);
-            return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-          });
+          .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
+          // ^^ rejection could be DB or validation - don't distinguish these because val. is also done client side
+      };
+
+      /**
+       * A promise handler for a login request from an external provider, to be called with the result of attempting
+       * to find that user
+       *
+       * @param  {Object}            user A user object, as returned by a find function for a user
+       * @return {Object or Promise}      The result of calling `login_user` or `create_user`
+       */
+      var handle_login_request = function handle_login_request(user) {
+        if(user !== null) { // user found - log in or offer to reactivate
+          return login_user(user, req);
         }
-      })
-      .fail(function(err) {
-        logger.error('make_passport_access_strategy_callback -- callback for token ' + token +
-          ' failed while querying for user, error: ' + err);
-        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-      });
+        else { // user not found - create account
+          return create_user(profile, token, req);
+        }
+      };
+
+      q(options.user_find_fn(profile.id))
+      .then(handle_login_request)
+      .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
     };
   },
 
@@ -203,7 +225,6 @@ var local = {
    * - user_create_fn: A function which takes the normalised profile object and token from passport and returns a promise
    *                   for saving the user
    * - react_message:  The flash message to set for display in the client application on successful reactivation
-   * - login_message:  The flash message to set for display in the client application on successful login
    *
    * @param  {Object}   options An options object as described in the function summary above
    * @return {Function}         A function which can be executed as a passport.js strategy callback.
@@ -223,57 +244,67 @@ var local = {
     if(!options.react_message) {
       logger.error('make_passport_reactivate_strategy_callback -- options.react_message: ' + options.react_message);
     }
-    if(!options.login_message) {
-      logger.error('make_passport_reactivate_strategy_callback -- options.login_message: ' + options.login_message);
-    }
     if(fatal_error) {
       throw new Error('make_passport_reactivate_strategy_callback -- fatal error, aborting - see logs');
     }
 
     return function passport_reactivate_strategy_callback(req, token, refresh_token, profile, done) {
-      q(options.user_find_fn(profile.id))
-      .then(function(user) {
-        if(user !== null) {
-          if(!user.is_active()) {
-            q(user.reactivate_and_save())
-            .then(function(activated_user) {
-              logger.debug('passport_reactivate_strategy_callback -- reactivated user and logged in: ' +
-                JSON.stringify(activated_user));
-              return done(null, activated_user, req.flash(api_util_config.flash_message_key, options.react_message));
-            })
-            .fail(function(err) {
-              logger.error('passport_reactivate_strategy_callback -- failed to reactivate user: ' + err);
-              return done(null, false, req.flash('Server error - failed to reactivate account'));
-            });
-          }
-          else {
-            logger.debug('passport_reactivate_strategy_callback -- user already active, logging in: ' +
-              JSON.stringify(user));
-            return done(null, user, req.flash(api_util_config.flash_message_key, options.login_message));
-          }
-        }
-        else { // user not found - create account
-          logger.debug('passport_reactivate_strategy_callback -- user not found, creating from: ' +
-            JSON.stringify(profile));
-          q(options.user_create_fn(profile, token))
+      /**
+       * Reactivates a user and logs them in. Calls reactivate_and_save on the `user` object then the passport.js `done`
+       * function and returns the return value of this function call to the promise chain.
+       *
+       * @param  {Object} user The user object which results from a call to `options.user_find_fn`
+       * @param  {Object} req  The request object passed to the callback by passport.js
+       * @return {Object}      The result of calling the passport strategy's done function (may be undefined)
+       */
+      var reactivate_user = function reactivate_user(user, req) {
+        return q(user.reactivate_and_save())
+          .then(function(active_user) {
+            logger.debug('reactivate_user -- reactivated user and logged in: ' + JSON.stringify(active_user));
+            return done(null, active_user, req.flash(api_util_config.flash_message_key, options.react_message));
+          })
+          .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
+      };
+
+      /**
+       * Creates a user using the profile and token passed to the passport_reactivate_strategy_callback, returning a
+       * promise chain for this creation and then calling done.
+       *
+       * @param  {Object}  profile The profile object passed to the callback by passport.js
+       * @param  {String}  token   The token passed to the callback by passport.js
+       * @param  {Object}  req     The request object passed to the callback by passport.js
+       * @return {Promise}         The result of calling `option.user_create_fn` and then the strategy's done function
+       */
+      var create_user = function create_user(profile, token, req) {
+        logger.debug('create_user -- user not found, creating from: ' + JSON.stringify(profile));
+        return q(options.user_create_fn(profile, token))
           .then(function(user) {
-            logger.info('passport_reactivate_strategy_callback -- user created: ' + profile.id + ' / ' +
-              profile.name.givenName + ' / ' + profile.name.familyName);
+            var name = profile.name.givenName + ' / ' + profile.name.familyName;
+            logger.info('create_user -- user created: ' + profile.id + ' / ' + name);
             return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
           })
-          .fail(function(err) {
-            // DB or validation error - do not distinguish validation or set flash because that is also done client side
-            logger.warn('passport_reactivate_strategy_callback -- failed for ' + profile.id + ' / ' +
-              profile.name.givenName + ' / ' + profile.name.familyName + ' user creation, error: ' + err);
-            return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-          });
+          .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
+      };
+
+      /**
+       * A promise handler for a reactivate request from an external provider, to be called with the result of
+       * attempting to find that user
+       *
+       * @param  {Object}            user A user object, as returned by a find function for a user
+       * @return {Object or Promise}      The result of calling `reactivate_user` or `create_user`
+       */
+      var handle_reactivate_request = function handle_reactivate_request(user) {
+        if(user !== null) { // user found - reactivate
+          return reactivate_user(user, req);
         }
-      })
-      .fail(function(err) {
-        logger.error('passport_reactivate_strategy_callback -- failed for token ' + token +
-          ' while querying for user, error: ' + err);
-        return done(err, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
-      });
+        else { // user not found - create account
+          return create_user(profile, token, req);
+        }
+      };
+
+      q(options.user_find_fn(profile.id))
+      .then(handle_reactivate_request)
+      .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
     };
   },
 
@@ -319,31 +350,35 @@ var local = {
     }
 
     return function passport_connect_strategy_callback(req, token, token_secret, profile, done) {
-      if(req.user) {
+      /**
+       * Handles a request to connect this user account to another external authentication provider. Calls passport's
+       * `done` callback but does not return anything.
+       *
+       * @param  {Object}  profile The profile object passed to the callback by passport.js
+       * @param  {Object}  req     The request object passed to the callback by passport.js
+       * @return {undefined} Nothing is returned from this function
+       */
+      var handle_connect_request = function handle_connect_request(profile, req) {
         q(options.provider_find_fn(profile.id))
         .then(function(user_from_provider) {
-          if(user_from_provider === null) { // no account for this provicer id so update user account with provider info
+          if(user_from_provider === null) { // no account for this provicer id so update user account w/ provider info
             q(options.user_connect_fn(profile, token))
             .then(function(updated_user) {
               logger.debug('passport_connect_strategy_callback -- updated user, redirecting to profile');
               done(null, updated_user, req.flash(api_util_config.flash_message_key, options.connect_message));
             })
-            .fail(function(err) {
-              logger.error('passport_connect_strategy_callback -- ' +
-                'failed to save updated user object to DB, error: ' + err);
-              done(null, req.user, req.flash(api_util_config.flash_message_key, 'Server error'));
-            });
+            .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
           }
           else { // there is already a LF account for this provider
             logger.warn('passport_connect_strategy_callback -- provider id ' + profile.id + ' already in use');
             done(null, req.user, req.flash(api_util_config.flash_message_key, options.already_message));
           }
         })
-        .fail(function(err) {
-          logger.error('passport_connect_strategy_callback -- ' +
-            ' query for provider id ' + profile.id + ' failed w/ server error: ' + err);
-          done(null, req.user, req.flash(api_util_config.flash_message_key, 'Server error'));
-        });
+        .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
+      };
+
+      if(req.user) {
+        handle_connect_request(profile, req);
       }
       else {
         logger.error('passport_connect_strategy_callback -- ' +
@@ -373,7 +408,7 @@ passport.deserializeUser(function(id, done) {
   })
   .fail(function(err) {
     logger.error('pr.pr.auth.user.find(' + id + ') failed with error: ' + err);
-    done(err , undefined);
+    done(err, undefined);
   });
 });
 
@@ -574,7 +609,6 @@ passport.use('fb-reactivate', new FacebookStrategy({
     user_find_fn: function(id) { return pr.pr.auth.user.find_with_fb_id(id, 'all'); },
     user_create_fn: function(profile, token) { return pr.pr.auth.user.create_from_fb_and_save(profile, token); },
     react_message: 'Reactivated and logged in via Facebook',
-    login_message: 'Logged in via Facebook'
   }))(req, token, refresh_token, profile, done);
 }));
 
@@ -625,7 +659,6 @@ passport.use('google-reactivate', new GoogleStrategy({
     user_find_fn: function(id) { return pr.pr.auth.user.find_with_google_id(id, 'all'); },
     user_create_fn: function(profile, token) { return pr.pr.auth.user.create_from_google_and_save(profile, token); },
     react_message: 'Reactivated and logged in via Google',
-    login_message: 'Logged in via Google'
   }))(req, token, refresh_token, profile, done);
 }));
 
@@ -675,7 +708,6 @@ passport.use('twitter-reactivate', new TwitterStrategy({
     user_find_fn: function(id) { return pr.pr.auth.user.find_with_twitter_id(id, 'all'); },
     user_create_fn: function(profile, token) { return pr.pr.auth.user.create_from_twitter_and_save(profile, token); },
     react_message: 'Reactivated and logged in via Twitter',
-    login_message: 'Logged in via Twitter'
   }))(req, token, token_secret, profile, done);
 }));
 
