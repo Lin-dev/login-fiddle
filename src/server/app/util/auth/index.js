@@ -194,12 +194,13 @@ var local = {
        * A promise handler for a login request from an external provider, to be called with the result of attempting
        * to find that user
        *
-       * @param  {Object}            user A user object, as returned by a find function for a user
-       * @return {Object or Promise}      The result of calling `login_user` or `create_user`
+       * @param  {Object}  user A user object, as returned by a find function for a user
+       * @return {Promise}      The result of calling `login_user` or `create_user`
        */
       var handle_login_request = function handle_login_request(user) {
         if(user !== null) { // user found - log in or offer to reactivate
-          return login_user(user, req);
+          return q(user.reset_local_unsuccessful_logins())
+            .then(login_user.bind(this, user, req));
         }
         else { // user not found - create account
           return create_user(profile, token, req);
@@ -255,10 +256,11 @@ var local = {
        *
        * @param  {Object} user The user object which results from a call to `options.user_find_fn`
        * @param  {Object} req  The request object passed to the callback by passport.js
-       * @return {Object}      The result of calling the passport strategy's done function (may be undefined)
+       * @return {Promise}     Promise resolved with the return value of the strategy's done function (may be undefined)
        */
       var reactivate_user = function reactivate_user(user, req) {
         return q(user.reactivate_and_save())
+          .then(user.reset_local_unsuccessful_logins.bind(user))
           .then(function(active_user) {
             logger.debug('reactivate_user -- reactivated user and logged in: ' + JSON.stringify(active_user));
             return done(null, active_user, req.flash(api_util_config.flash_message_key, options.react_message));
@@ -290,8 +292,8 @@ var local = {
        * A promise handler for a reactivate request from an external provider, to be called with the result of
        * attempting to find that user
        *
-       * @param  {Object}            user A user object, as returned by a find function for a user
-       * @return {Object or Promise}      The result of calling `reactivate_user` or `create_user`
+       * @param  {Object}  user A user object, as returned by a find function for a user
+       * @return {Promise}      A promise resolved with the result of calling `reactivate_user` or `create_user`
        */
       var handle_reactivate_request = function handle_reactivate_request(user) {
         if(user !== null) { // user found - reactivate
