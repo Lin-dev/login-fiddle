@@ -459,34 +459,32 @@ passport.use('local-login', new LocalStrategy({
 }, function local_login_strategy_callback(req, email, password, done) {
   var handle_login_request = function handle_login_request(user) {
     if(user !== null) {
-      return q(user.do_unsuccessful_login_wait())
-        .then(function() {
-          if(user.check_password_sync(password)) {
-            q(user.reset_local_unsuccessful_logins())
-            .then(function() {
-              if(user.is_active()) {
-                logger.debug('handle_login_request -- logged in: ' + email);
-                return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
-              }
-              else {
-                logger.debug('handle_login_request -- deactivated login successful for: ' + email);
-                return done(null, false, req.flash(api_util_config.flash_message_key, 'Account currently deactivated,' +
-                  ' to reactivate click <a href="' + user_config.client_reactivate_path +
-                  '" class="js-action-link">here</a>'));
-              }
-            })
-            .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
-          }
-          else {
-            q(user.increment_local_unsuccessful_logins())
-            .then(function() {
-              logger.debug('handle_login_request -- incorrect password for: ' + email);
-              return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
-            })
-            .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
-          }
-        })
-        .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+      if(user.check_password_sync(password)) {
+        return q(user.do_unsuccessful_login_wait())
+          .then(user.reset_local_unsuccessful_logins.bind(user))
+          .then(function() {
+            if(user.is_active()) {
+              logger.debug('handle_login_request -- logged in: ' + email);
+              return done(null, user, req.flash(api_util_config.flash_message_key, 'Logged in'));
+            }
+            else {
+              logger.debug('handle_login_request -- deactivated login successful for: ' + email);
+              return done(null, false, req.flash(api_util_config.flash_message_key, 'Account currently deactivated,' +
+                ' to reactivate click <a href="' + user_config.client_reactivate_path +
+                '" class="js-action-link">here</a>'));
+            }
+          })
+          .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+      }
+      else {
+        return q(user.increment_local_unsuccessful_logins())
+          .then(user.do_unsuccessful_login_wait.bind(user))
+          .then(function() {
+            logger.debug('handle_login_request -- incorrect password for: ' + email);
+            return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
+          })
+          .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+      }
     }
     else {
       logger.debug('handle_login_request -- unknown email: ' + email);
@@ -511,27 +509,25 @@ passport.use('local-reactivate', new LocalStrategy({
 }, function local_reactivate_strategy_callback(req, email, password, done) {
   var handle_reactivation_request = function handle_reactivation_request(user) {
     if(user !== null) {
-      return q(user.do_unsuccessful_login_wait())
-        .then(function() {
-          if(user.check_password_sync(password)) {
-            q(user.reset_local_unsuccessful_logins())
-            .then(user.reactivate_and_save())
-            .then(function(active_user) {
-              logger.debug('handle_reactivation_request -- reactivated user and logged in: ' + email);
-              return done(null, active_user, req.flash(api_util_config.flash_message_key, 'Reactivated and logged in'));
-            })
-            .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
-          }
-          else {
-            q(user.increment_local_unsuccessful_logins())
-            .then(function() {
-              logger.debug('handle_reactivation_request -- incorrect password: ' + email);
-              return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
-            })
-            .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
-          }
-        })
-        .fail(local.handle_passport_callback_rejected_promise.bind(null, done, req));
+      if(user.check_password_sync(password)) {
+        return q(user.do_unsuccessful_login_wait())
+          .then(user.reset_local_unsuccessful_logins.bind(user))
+          .then(user.reactivate_and_save.bind(user))
+          .then(function(active_user) {
+            logger.debug('handle_reactivation_request -- reactivated user and logged in: ' + email);
+            return done(null, active_user, req.flash(api_util_config.flash_message_key, 'Reactivated and logged in'));
+          })
+          .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req))
+      }
+      else {
+        return q(user.increment_local_unsuccessful_logins())
+          .then(user.do_unsuccessful_login_wait.bind(user))
+          .then(function() {
+            logger.debug('handle_reactivation_request -- incorrect password: ' + email);
+            return done(null, false, req.flash(api_util_config.flash_message_key, 'Incorrect password'));
+          })
+          .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+      }
     }
     else {
       logger.debug('handle_reactivation_request -- unknown email: ' + email);
