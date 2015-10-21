@@ -47,7 +47,8 @@ define(function(require) {
 
           Display.tainer.show_in('main', view);
         })
-        .fail(AppObj.make_on_promise_fail('EntryApp.List.controller.show_list'));
+        .fail(AppObj.make_on_promise_fail('EntryApp.List.controller.show_list'))
+        .done();
         logger.trace('show_list -- exit');
       }
     };

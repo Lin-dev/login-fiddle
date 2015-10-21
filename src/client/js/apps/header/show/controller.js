@@ -31,7 +31,8 @@ define(function(require) {
 
           Display.tainer.show_in('navbar', view);
         })
-        .fail(AppObj.make_on_promise_fail('HeaderApp.Show.controller.show_header'));
+        .fail(AppObj.make_on_promise_fail('HeaderApp.Show.controller.show_header'))
+        .done();
         logger.trace('show_header -- exit');
       },
 
@@ -57,7 +58,8 @@ define(function(require) {
             navitem_collection.trigger('reset');
           }
         })
-        .fail(AppObj.make_on_promise_fail('HeaderApp.Show.controller.set_active_navitem'));
+        .fail(AppObj.make_on_promise_fail('HeaderApp.Show.controller.set_active_navitem'))
+        .done();
         logger.trace('set_active_navitem -- exit');
       }
     };

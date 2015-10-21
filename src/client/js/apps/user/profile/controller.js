@@ -84,7 +84,8 @@ define(function(require) {
               profile_view.region_message.show(msg_view);
               AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.make_on_promise_fail('UserApp.Profile - private.proc_connect_local_submitted'));
+            .fail(AppObj.make_on_promise_fail('UserApp.Profile - private.proc_connect_local_submitted'))
+            .done();
           }
           else {
             logger.error('private.proc_connect_local_submitted - server API call response -- ' +
@@ -132,7 +133,8 @@ define(function(require) {
         });
         Display.tainer.show_in('main', profile_view);
       })
-      .fail(AppObj.make_on_promise_fail('UserApp.Profile -- private.proc_disconnect'));
+      .fail(AppObj.make_on_promise_fail('UserApp.Profile -- private.proc_disconnect'))
+      .done();
     }
 
     Profile.controller = {
@@ -184,7 +186,8 @@ define(function(require) {
             });
             Display.tainer.show_in('main', profile_view);
           })
-          .fail(AppObj.make_on_promise_fail('UserApp.Profile.controller.show_user_profile'));
+          .fail(AppObj.make_on_promise_fail('UserApp.Profile.controller.show_user_profile'))
+          .done();
         }
         else {
           AppObj.trigger('user:access', 'user:profile');
@@ -228,7 +231,8 @@ define(function(require) {
           });
           Display.tainer.show_in('main', profile_view);
         })
-        .fail(AppObj.make_on_promise_fail('UserApp.Profile.controller.proc_logout'));
+        .fail(AppObj.make_on_promise_fail('UserApp.Profile.controller.proc_logout'))
+        .done();
       },
 
       /**
@@ -268,7 +272,8 @@ define(function(require) {
           });
           Display.tainer.show_in('main', profile_view);
         })
-        .fail(AppObj.make_on_promise_fail('UserApp.Profile.controller.proc_deactivate'));
+        .fail(AppObj.make_on_promise_fail('UserApp.Profile.controller.proc_deactivate'))
+        .done();
       },
 
       /**
