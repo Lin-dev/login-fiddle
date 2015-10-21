@@ -10,24 +10,51 @@ var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/api/user/router_impl');
 
-//var keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
-var keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
-var keys_required_for_signup = keys_required_for_login.concat(
-  _.map(keys_required_for_login, function(field) { return field + '_check'; })
-);
-var keys_required_for_connect = keys_required_for_login.concat(
-  _.map(keys_required_for_login, function(field) { return field + '_check'; })
-);
 
-/**
- * Logs the user out, clears their log in cookie, then redirects to the success util endpoint - does not destroy session
- */
-function do_logout_and_redirect_to_success(req, res, flash_message) {
-  req.logout();
-  res.clearCookie(user_config.logged_in_cookie_name);
-  req.flash(api_util_config.flash_message_key, flash_message);
-  res.redirect(server_config.util_route_success);
-}
+
+// Define `local` object via IIFE because `keys_required_for_signup` and `keys_required_for_connect` depend on value of
+// `keys_required_for_login`
+var local = (function make_local() {
+  var result = {};
+
+  /**
+   * Specifies the POST variables that must be sent when a user is logging in using a local account
+   * @type {Array}
+   */
+  result.keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
+
+  /**
+   * Specifies the POST variables that must be sent when a user is requesting signup for a local account
+   * @type {Array}
+   */
+  result.keys_required_for_signup = result.keys_required_for_login.concat(
+    _.map(result.keys_required_for_login, function(field) { return field + '_check'; })
+  );
+
+  /**
+   * Specifies the POST variables that must be sent when a user is requesting to connect a local account
+   * @type {Array}
+   */
+  result.keys_required_for_connect = result.keys_required_for_login.concat(
+    _.map(result.keys_required_for_login, function(field) { return field + '_check'; })
+  );
+
+  /**
+   * Logs the user out, clears their log in cookie, then redirects to the success util endpoint - does not destroy
+   * session
+   * @type {Function}
+   */
+  result.do_logout_and_redirect_to_success = function do_logout_and_redirect_to_success(req, res, flash_message) {
+    req.logout();
+    res.clearCookie(user_config.logged_in_cookie_name);
+    req.flash(api_util_config.flash_message_key, flash_message);
+    res.redirect(server_config.util_route_success);
+  };
+
+  return result;
+})();
+
+
 
 module.exports = {
   /**
@@ -54,7 +81,7 @@ module.exports = {
    * Logs user out but does not destroy user's sessions
    */
   logout: function logout(req, res, next) {
-    do_logout_and_redirect_to_success(req, res, 'Logged out');
+    local.do_logout_and_redirect_to_success(req, res, 'Logged out');
   },
 
   /**
@@ -63,7 +90,7 @@ module.exports = {
   deactivate: function deactivate(req, res, next) {
     q(req.user.deactivate_and_save())
     .then(function() {
-      do_logout_and_redirect_to_success(req, res, 'Account deactivated, to reactivate it just log back in');
+      local.do_logout_and_redirect_to_success(req, res, 'Account deactivated, to reactivate it just log back in');
     })
     .fail(function(err) {
       logger.error('exports.deactivate -- error: ' + err);
@@ -238,26 +265,26 @@ module.exports = {
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local login are present - log if not
    */
-  local_check_login: auth.mw_gen.make_check_post_has_req_fields(keys_required_for_login),
+  local_check_login: auth.mw_gen.make_check_post_has_req_fields(local.keys_required_for_login),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local reactivation are present (the same as for login) -
    * log if they are not
    */
-  local_check_reactivate: auth.mw_gen.make_check_post_has_req_fields(keys_required_for_login),
+  local_check_reactivate: auth.mw_gen.make_check_post_has_req_fields(local.keys_required_for_login),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local signup are present - log if not
    */
-  local_check_signup: auth.mw_gen.make_check_post_has_req_fields(keys_required_for_signup),
+  local_check_signup: auth.mw_gen.make_check_post_has_req_fields(local.keys_required_for_signup),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local connect are present - log if not
    */
-  local_check_connect: auth.mw_gen.make_check_post_has_req_fields(keys_required_for_connect),
+  local_check_connect: auth.mw_gen.make_check_post_has_req_fields(local.keys_required_for_connect),
 
   /**
    * Handles requests for local access account login
