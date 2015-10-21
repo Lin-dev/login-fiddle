@@ -95,7 +95,7 @@ var local = {
    * This function is for handling rejected promises in a passport strategy callback. It takes `done` as its first
    * argument and a req object as its second. The promise rejection error is the final argument. Intended usage in a
    * passport callback is:
-   *     `promise.fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));`
+   *     `promise.fail(local.handle_passport_callback_rejected_promise.bind(this, done, req)).done();`
    *
    * @param  {Function} done A Passport callback's `done` function
    * @param  {Object}   err  The rejected promise's error value
@@ -209,7 +209,8 @@ var local = {
 
       q(options.user_find_fn(profile.id))
       .then(handle_login_request)
-      .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+      .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req))
+      .done();
     };
   },
 
@@ -306,7 +307,8 @@ var local = {
 
       q(options.user_find_fn(profile.id))
       .then(handle_reactivate_request)
-      .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+      .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req))
+      .done();
     };
   },
 
@@ -364,27 +366,28 @@ var local = {
         q(options.provider_find_fn(profile.id))
         .then(function(user_from_provider) {
           if(user_from_provider === null) { // no account for this provicer id so update user account w/ provider info
-            q(options.user_connect_fn(profile, token))
-            .then(function(updated_user) {
-              logger.debug('passport_connect_strategy_callback -- updated user, redirecting to profile');
-              done(null, updated_user, req.flash(api_util_config.flash_message_key, options.connect_message));
-            })
-            .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+            return q(options.user_connect_fn(profile, token))
+              .then(function(updated_user) {
+                logger.debug('passport_connect_strategy_callback -- updated user, redirecting to profile');
+                done(null, updated_user, req.flash(api_util_config.flash_message_key, options.connect_message));
+              })
+              .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
           }
           else { // there is already a LF account for this provider
             logger.warn('passport_connect_strategy_callback -- provider id ' + profile.id + ' already in use');
-            done(null, req.user, req.flash(api_util_config.flash_message_key, options.already_message));
+            return done(null, req.user, req.flash(api_util_config.flash_message_key, options.already_message));
           }
         })
-        .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+        .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req))
+        .done();
       };
 
       if(req.user) {
         handle_connect_request(profile, req);
       }
       else {
-        logger.error('passport_connect_strategy_callback -- ' +
-          'callback failed for provider id ' + profile.id + ' - no user on req');
+        logger.error('passport_connect_strategy_callback -- ' + 'callback failed for provider id ' + profile.id +
+          ' - no user on req');
         return done(null, undefined, req.flash(api_util_config.flash_message_key, 'Server error'));
       }
     };
@@ -411,7 +414,8 @@ passport.deserializeUser(function(id, done) {
   .fail(function(err) {
     logger.error('pr.pr.auth.user.find(' + id + ') failed with error: ' + err);
     done(err, undefined);
-  });
+  })
+  .done();
 });
 
 /**
@@ -427,13 +431,13 @@ passport.use('local-signup', new LocalStrategy({
       var user_attrs = {};
       user_attrs[user_config.local.username_field] = email;
       user_attrs[user_config.local.password_field] = pr.pr.auth.user.hash_password(password);
-      q(pr.pr.auth.user.create(user_attrs))
-      .then(function(user) {
-        logger.info('handle_signup_request -- created user with email: ' + email);
-        return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
-      })
-      .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
-      // ^^ rejection could be DB or validation - don't distinguish these because validation is also done client side
+      return q(pr.pr.auth.user.create(user_attrs))
+        .then(function(user) {
+          logger.info('handle_signup_request -- created user with email: ' + email);
+          return done(null, user, req.flash(api_util_config.flash_message_key, 'Account created'));
+        })
+        .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+        // ^^ rejection could be DB or validation - don't distinguish these because validation is also done client side
     }
     else {
       logger.warn('handle_signup_request -- account creation requested for existing account: ' + email);
@@ -446,7 +450,8 @@ passport.use('local-signup', new LocalStrategy({
   email = email.trim();
   q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(handle_signup_request)
-  .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+  .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req))
+  .done();
 }));
 
 /**
@@ -496,7 +501,8 @@ passport.use('local-login', new LocalStrategy({
   email = email.trim();
   q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(handle_login_request)
-  .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+  .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req))
+  .done();
 }));
 
 /**
@@ -539,7 +545,8 @@ passport.use('local-reactivate', new LocalStrategy({
   email = email.trim();
   q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(handle_reactivation_request)
-  .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+  .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req))
+  .done();
 }));
 
 /**
@@ -555,12 +562,12 @@ passport.use('local-connect', new LocalStrategy({
       var user_attrs = {};
       user_attrs[user_config.local.username_field] = email;
       user_attrs[user_config.local.password_field] = pr.pr.auth.user.hash_password(password);
-      q(req.user.connect_local_and_save(user_attrs))
-      .then(function(updated_user) {
-        logger.debug('handle_connect_request -- email added to user: ' + JSON.stringify(updated_user));
-        done(null, updated_user, req.flash(api_util_config.flash_message_key, 'Email address added'));
-      })
-      .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+      return q(req.user.connect_local_and_save(user_attrs))
+        .then(function(updated_user) {
+          logger.debug('handle_connect_request -- email added to user: ' + JSON.stringify(updated_user));
+          done(null, updated_user, req.flash(api_util_config.flash_message_key, 'Email address added'));
+        })
+        .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
     }
     else {
       logger.debug('handle_connect_request -- email already in use by user: ' + JSON.stringify(user_with_email));
@@ -573,7 +580,8 @@ passport.use('local-connect', new LocalStrategy({
   email = email.trim();
   q(pr.pr.auth.user.find_with_local_username(email, 'all'))
   .then(handle_connect_request)
-  .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
+  .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req))
+  .done();
 }));
 
 /**

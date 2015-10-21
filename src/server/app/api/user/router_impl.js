@@ -55,7 +55,7 @@ var local = (function make_local() {
    * This function is for handling rejected promises in a User router callback. It takes the Express request and
    * response objects as its first and second paramters. Its third parameter is the flash message to set. The fourth and
    * final parameter is the rejected promise's error value. Intended usage in a router implementation function is:
-   *     `promise.fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'A message'));`
+   *     `promise.fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'A message')).done();`
    *
    * Note that this function and signature may be usable in other API modules in the future, but in the current
    * application its is only used in the User API module.
@@ -124,7 +124,8 @@ module.exports = {
     .then(function() {
       local.do_logout_and_redirect_to_success(req, res, 'Account deactivated, to reactivate it just log back in');
     })
-    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error deactivating account'));
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error deactivating account'))
+    .done();
   },
 
   /**
@@ -201,7 +202,8 @@ module.exports = {
       req.flash(api_util_config.flash_message_key, 'Google disconnected');
       res.redirect(server_config.util_route_success);
     })
-    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error disconnecting Google'));
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error disconnecting Google'))
+    .done();
   },
 
   /**
@@ -278,7 +280,8 @@ module.exports = {
       req.flash(api_util_config.flash_message_key, 'Facebook disconnected');
       res.redirect(server_config.util_route_success);
     })
-    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error disconnecting Facebook'));
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error disconnecting Facebook'))
+    .done();
   },
 
   /**
@@ -356,7 +359,8 @@ module.exports = {
       res.redirect(server_config.util_route_success);
     })
     .fail(local.handle_route_function_rejected_promise.bind(this, req, res,
-      'Error disconnecting local email and password'));
+      'Error disconnecting local email and password'))
+    .done();
   },
 
   /**
@@ -418,6 +422,7 @@ module.exports = {
       req.flash(api_util_config.flash_message_key, 'Twitter disconnected');
       res.redirect(server_config.util_route_success);
     })
-    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error disconnecting Twitter'));
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error disconnecting Twitter'))
+    .done();
   }
 };

@@ -13,7 +13,7 @@ var local = {
    * This function is for handling rejected promises in an Entry router callback. It takes the response object as its
    * first argument and the promise rejection error as its final argument. Intended usage in a router implementation
    * function is:
-   *     `promise.fail(local.handle_route_function_rejected_promise.bind(this, res));`
+   *     `promise.fail(local.handle_route_function_rejected_promise.bind(this, res)).done();`
    *
    * Note that this function and signature may be usable in other API modules in the future, but in the current
    * application its is only used in the Entry API module.
