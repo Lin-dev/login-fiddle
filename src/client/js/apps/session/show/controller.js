@@ -19,7 +19,7 @@ define(function(require) {
           Display.tainer.show_in('main', session_info_view);
           logger.debug('show_session_info -- show complete');
         })
-        .fail(AppObj.make_on_promise_fail('SessionApp.Show.controller.show_session_info'))
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'SessionApp.Show.controller.show_session_info'))
         .done();
       }
     };

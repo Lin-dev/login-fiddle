@@ -84,7 +84,7 @@ define(function(require) {
               profile_view.region_message.show(msg_view);
               AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.make_on_promise_fail('UserApp.Profile - private.proc_connect_local_submitted'))
+            .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile - private.proc_connect_local_submitted'))
             .done();
           }
           else {
@@ -133,7 +133,7 @@ define(function(require) {
         });
         Display.tainer.show_in('main', profile_view);
       })
-      .fail(AppObj.make_on_promise_fail('UserApp.Profile -- private.proc_disconnect'))
+      .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile - private.proc_disconnect'))
       .done();
     }
 
@@ -186,7 +186,7 @@ define(function(require) {
             });
             Display.tainer.show_in('main', profile_view);
           })
-          .fail(AppObj.make_on_promise_fail('UserApp.Profile.controller.show_user_profile'))
+          .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile.controller.show_user_profile'))
           .done();
         }
         else {
@@ -231,7 +231,7 @@ define(function(require) {
           });
           Display.tainer.show_in('main', profile_view);
         })
-        .fail(AppObj.make_on_promise_fail('UserApp.Profile.controller.proc_logout'))
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile.controller.proc_logout'))
         .done();
       },
 
@@ -272,7 +272,7 @@ define(function(require) {
           });
           Display.tainer.show_in('main', profile_view);
         })
-        .fail(AppObj.make_on_promise_fail('UserApp.Profile.controller.proc_deactivate'))
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile.proc_deactivate.show_user_profile'))
         .done();
       },
 
