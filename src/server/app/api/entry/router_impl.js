@@ -15,8 +15,8 @@ var local = {
    * function is:
    *     `promise.fail(local.handle_route_function_rejected_promise.bind(this, res));`
    *
-   * Note that this function may be usable in other API modules in the future, but in the current application its
-   * functionality is only used in the Entry API module.
+   * Note that this function and signature may be usable in other API modules in the future, but in the current
+   * application its is only used in the Entry API module.
    *
    * @param  {Object} res The response object passed to the router implementation (Express middleware)
    * @param  {Object} err The rejected promise's error value
