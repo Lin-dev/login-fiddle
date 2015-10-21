@@ -6,6 +6,37 @@ var q = require('q');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/api/entry/router_impl');
 
+
+
+var local = {
+  /**
+   * This function is for handling rejected promises in an Entry router callback. It takes the response object as its
+   * first argument and the promise rejection error as its final argument. Intended usage in a router implementation
+   * function is:
+   *     `promise.fail(local.handle_route_function_rejected_promise.bind(this, res));`
+   *
+   * Note that this function may be usable in other API modules in the future, but in the current application its
+   * functionality is only used in the Entry API module.
+   *
+   * @param  {Object} res The response object passed to the router implementation (Express middleware)
+   * @param  {Object} err The rejected promise's error value
+   * @return {Object}     The `err` parameter
+   */
+  handle_route_function_rejected_promise: function handle_route_function_rejected_promise(res, err) {
+    if(err && err.stack) {
+      logger.error('local.handle_route_function_rejected_promise -- ' + err);
+      logger.error(err.stack);
+    }
+    else {
+      logger.error('local.handle_route_function_rejected_promise -- ' + err + ' (no stack)');
+    }
+    res.status(500).end();
+    return err;
+  }
+};
+
+
+
 module.exports = {
   /**
    * Returns JSON for all entries which match an (optional) tag string, does not call next()
@@ -22,10 +53,7 @@ module.exports = {
           return entry.get({ plain: true});
         }));
       })
-      .fail(function(err) {
-        logger.error('exports.get_entries -- promise fail: ' + err);
-        res.status(500).end();
-      })
+      .fail(local.handle_route_function_rejected_promise.bind(this, res))
       .done();
     }
     else {
@@ -33,10 +61,7 @@ module.exports = {
       .then(function(entry_instances) {
         res.status(200).send(_.map(entry_instances, function(entry) { return entry.get({ plain: true }); }));
       }))
-      .fail(function(err) {
-        logger.error('exports.get_entries -- promise fail: ' + err);
-        res.status(500).end();
-      })
+      .fail(local.handle_route_function_rejected_promise.bind(this, res))
       .done();
     }
   },
@@ -50,9 +75,7 @@ module.exports = {
     .then(function(tag_instances) {
       res.status(200).send(_.map(tag_instances, function(tag) { return tag.get({ plain: true}); }));
     })
-    .fail(function(err) {
-      logger.error('exports.get_tags -- promise fail: ' + err);
-      res.status(500).end();
-    });
+    .fail(local.handle_route_function_rejected_promise.bind(this, res))
+    .done();
   }
 };
