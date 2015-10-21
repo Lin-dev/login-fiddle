@@ -12,9 +12,9 @@ var logger = logger_module.get('app/api/user/router_impl');
 
 
 
-// Define `local` object via IIFE because `keys_required_for_signup` and `keys_required_for_connect` depend on value of
+// Build `local` object via IIFE because `keys_required_for_signup` and `keys_required_for_connect` depend on value of
 // `keys_required_for_login`
-var local = (function make_local() {
+var local = (function build_local() {
   var result = {};
 
   /**
