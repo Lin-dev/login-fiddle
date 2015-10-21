@@ -51,12 +51,19 @@ define(function(require) {
   /**
    * Returns a function that can be passed into a promise fail handler to log promise failure and do other cleanup.
    * Method is currently simple but makes avoiding silent failure due to promise failure a one-liner.
-   * @param  {String}   caller The function name used in logs to describe the calling location
+   * @param  {String}   caller The function name where the promise chain that has failed is declared (optional)
    * @return {Function}        A function that can be passed in to a promise's fail method
    */
   AppObj.make_on_promise_fail = function make_on_promise_fail(caller) {
+    caller = caller || 'Unspecified Promise Chain';
     return function on_promise_fail(err) {
-      logger.error(caller + ' -- promise failed, error: ' + err);
+      if(err && err.stack) {
+        logger.error(caller + ' -- promise failed, error: ' + err);
+        logger.error(err.stack);
+      }
+      else {
+        logger.error(caller + ' -- promise failed (no stack)');
+      }
     };
   };
 
