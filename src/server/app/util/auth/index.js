@@ -738,31 +738,30 @@ module.exports = {
   passport: passport,
 
   /**
-   * Middleware generator functions relating to authentication
-   */
-  mw_gen: {
-    /**
-     * Generates a middleware function that checks req.body has keys for all strings in required_fields, an array
-     * TODO: Is this middleware general? Should it be moved into some sort of general middleware library?
-     * @param  {Array} required_fields An array of strings
-     * @return {Function}              A middleware function that can be passed to an Express router
-     */
-    make_check_post_has_req_fields: function make_check_post_has_req_fields(required_fields) {
-      return function check_post_has_req_fields(req, res, next) {
-        _.each(required_fields, function(req_field) {
-          if(req.body[req_field] === undefined) {
-            logger.warn('exports.mw_gen.check_post_has_req_fields -- req. post variable undefined: ' + req_field);
-          }
-        });
-        next();
-      };
-    }
-  },
-
-  /**
    * Middleware relating to authentication
    */
   mw: {
+    /**
+     * Checks req.body has keys for entries in required_fields, an array of Strings. Logs a warning for any not present.
+     * Intended usage:
+     *     `check_post_has_req_fields.bind(undefined, ['array', 'of', 'strings']))`
+     *
+     * TODO: Is this middleware general? Should it be moved into some sort of general middleware library?
+     *
+     * @param  {Array}    required_fields An array of strings
+     * @param  {[type]}   req             Express's request object - passed in by Express when used as middleware
+     * @param  {[type]}   res             Express's response object - passed in by Express when used as middleware
+     * @param  {Function} next            Express's next function - passed in by Express when used as middleware
+     */
+    check_post_has_req_fields: function check_post_has_req_fields(required_fields, req, res, next) {
+      _.each(required_fields, function(req_field) {
+        if(req.body[req_field] === undefined) {
+          logger.warn('exports.mw_gen.check_post_has_req_fields -- req. post variable undefined: ' + req_field);
+        }
+      });
+      next();
+    },
+
     /**
      * Call next if the requester is authenticated otherwise send 403
      */
