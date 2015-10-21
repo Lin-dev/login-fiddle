@@ -98,8 +98,8 @@ var local = {
    *     `promise.fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));`
    *
    * @param  {Function} done A Passport callback's `done` function
-   * @param  {[type]}   err  This is the rejected promise's error value
-   * @return {[type]}        The `err` parameter
+   * @param  {Object}   err  The rejected promise's error value
+   * @return {Object}        The `err` parameter
    */
   handle_passport_callback_rejected_promise: function handle_passport_callback_rejected_promise(done, req, err) {
     if(err && err.stack) {
@@ -517,7 +517,7 @@ passport.use('local-reactivate', new LocalStrategy({
             logger.debug('handle_reactivation_request -- reactivated user and logged in: ' + email);
             return done(null, active_user, req.flash(api_util_config.flash_message_key, 'Reactivated and logged in'));
           })
-          .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req))
+          .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
       }
       else {
         return q(user.increment_local_unsuccessful_logins())
