@@ -56,7 +56,6 @@ describe('app/util - exported methods', function() {
 
 
 
-
 describe('app/util - exported properties', function() {
   /**
    * Map of module name to the number of non-functions that module exports
