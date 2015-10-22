@@ -8,8 +8,6 @@ var database_config = require('app/config/database');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/util/pr/auth');
 
-var user_find_scopes = ['all', 'activated', 'deactivated'];
-
 module.exports = function(sequelize, DataTypes) {
   var models = {
     user: sequelize.define('user', {
@@ -148,6 +146,10 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       classMethods: {
+        get_scope_names: function get_scope_names() {
+          return Object.keys(this.options.scopes);
+        },
+
         /**
          * Generates a password hash to write to the DB so that the unhashed password is never stored
          * @param  {String} unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
@@ -216,7 +218,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_id: function find_with_id(primary_id, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           return this.scope(scope).find({ where: { id: primary_id }, paranoid: false });
         },
 
@@ -228,7 +230,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_local_username: function find_with_local_username(username_value, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           var where_object = {};
           where_object[user_config.local.username_field] = { ilike: username_value }; // case insensitive
           return this.scope(scope).find({ where: where_object, paranoid: false });
@@ -242,7 +244,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_fb_id: function find_with_fb_id(fb_id, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           return this.scope(scope).find({ where: { fb_id: fb_id }, paranoid: false });
         },
 
@@ -254,7 +256,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_google_id: function find_with_google_id(google_id, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           return this.scope(scope).find({ where: { google_id: google_id }, paranoid: false });
         },
 
@@ -266,7 +268,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_twitter_id: function find_with_twitter_id(twitter_id, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           return this.scope(scope).find({ where: { twitter_id: twitter_id }, paranoid: false });
         }
       },
