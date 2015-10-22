@@ -32,23 +32,14 @@ module.exports = function(grunt) {
     },
 
     mochaTest: {
-      unit: {
-        options: {
-          clearRequireCache: true,
-          reporter: 'spec'
-        },
-        src: [
-          './**/*_utest.js',
-          '!./build/**/*.js'
-        ]
-      },
-      integration: {
+      integration_and_unit: {
         options: {
           clearRequireCache: true,
           reporter: 'spec'
         },
         src: [
           './**/*_itest.js',
+          './**/*_utest.js',
           '!./build/**/*.js'
         ]
       }
