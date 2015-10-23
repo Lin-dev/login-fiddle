@@ -310,7 +310,7 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         /**
-         * Increments `local_unsuccessful_logins` by 1 and reloads client-side copy (so that it has the updated value)
+         * Increments `local_unsuccessful_logins` by 1 and reloads app-side copy (so that it is in sync with the DB)
          * @return {Object} A promise for the reloading of the updated user
          */
         increment_local_unsuccessful_logins: function increment_local_unsuccessful_logins() {
