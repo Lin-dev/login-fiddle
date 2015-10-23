@@ -198,7 +198,8 @@ module.exports = {
    */
   connect_google_disconnect: function connect_google_disconnect(req, res, next) {
     q(req.user.disconnect_google_and_save())
-    .then(function(updated_user) {
+    .then(q.nbind(req.login, req)) // call req.login to update serialized user in redis
+    .then(function login_done() {
       req.flash(api_util_config.flash_message_key, 'Google disconnected');
       res.redirect(server_config.util_route_success);
     })
@@ -276,7 +277,8 @@ module.exports = {
    */
   connect_fb_disconnect: function connect_fb_disconnect(req, res, next) {
     q(req.user.disconnect_fb_and_save())
-    .then(function(updated_user) {
+    .then(q.nbind(req.login, req)) // call req.login to update serialized user in redis
+    .then(function login_done() {
       req.flash(api_util_config.flash_message_key, 'Facebook disconnected');
       res.redirect(server_config.util_route_success);
     })
@@ -354,12 +356,12 @@ module.exports = {
    */
   connect_local_disconnect: function connect_twitter_disconnect(req, res, next) {
     q(req.user.disconnect_local_and_save())
-    .then(function(updated_user) {
+    .then(q.nbind(req.login, req)) // call req.login to update serialized user in redis
+    .then(function login_done() {
       req.flash(api_util_config.flash_message_key, 'Email and password removed');
       res.redirect(server_config.util_route_success);
     })
-    .fail(local.handle_route_function_rejected_promise.bind(this, req, res,
-      'Error disconnecting local email and password'))
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error removing local email and password'))
     .done();
   },
 
@@ -418,7 +420,8 @@ module.exports = {
    */
   connect_twitter_disconnect: function connect_twitter_disconnect(req, res, next) {
     q(req.user.disconnect_twitter_and_save())
-    .then(function(updated_user) {
+    .then(q.nbind(req.login, req)) // call req.login to update serialized user in redis
+    .then(function login_done() {
       req.flash(api_util_config.flash_message_key, 'Twitter disconnected');
       res.redirect(server_config.util_route_success);
     })

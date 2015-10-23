@@ -367,9 +367,12 @@ var local = {
         .then(function(user_from_provider) {
           if(user_from_provider === null) { // no account for this provicer id so update user account w/ provider info
             return q(options.user_connect_fn(profile, token))
-              .then(function(updated_user) {
+              .then(q.nbind(req.login, req))  // call req.login to update serialized user in redis
+              .then(function login_done() {
                 logger.debug('passport_connect_strategy_callback -- updated user, redirecting to profile');
-                done(null, updated_user, req.flash(api_util_config.flash_message_key, options.connect_message));
+                // It's OK to pass req.user object into done here as passport already updated req.user in the
+                // promisified call to req.login, passing undefined or null causes passport to fail the connect request
+                done(null, req.user, req.flash(api_util_config.flash_message_key, options.connect_message));
               })
               .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
           }
@@ -397,25 +400,19 @@ var local = {
 
 
 /**
- * Serialise user id only to session
+ * Serialise full user object (not just user id) to session store. This reduces DB load, which can otherwise be queried
+ * for the user details several times per page request.
  */
 passport.serializeUser(function(user, done) {
-  done(null, user.id);
+  done(null, user);
 });
 
 /**
- * Read all user information (as a Sequelize instance) from the main database to populate the session info
+ * Use the cached user information from the session store to build a Sequelize instance
  */
-passport.deserializeUser(function(id, done) {
-  q(pr.pr.auth.user.find_with_id(id, 'all'))
-  .then(function(user) {
-    done(undefined, user);
-  })
-  .fail(function(err) {
-    logger.error('pr.pr.auth.user.find(' + id + ') failed with error: ' + err);
-    done(err, undefined);
-  })
-  .done();
+passport.deserializeUser(function(user_data, done) {
+  var user = pr.pr.auth.user.build(user_data, { isNewRecord: false });
+  done(undefined, user);
 });
 
 /**
@@ -563,9 +560,12 @@ passport.use('local-connect', new LocalStrategy({
       user_attrs[user_config.local.username_field] = email;
       user_attrs[user_config.local.password_field] = pr.pr.auth.user.hash_password(password);
       return q(req.user.connect_local_and_save(user_attrs))
-        .then(function(updated_user) {
-          logger.debug('handle_connect_request -- email added to user: ' + JSON.stringify(updated_user));
-          done(null, updated_user, req.flash(api_util_config.flash_message_key, 'Email address added'));
+        .then(q.nbind(req.login, req)) // call req.login to update serialized user in redis
+        .then(function login_done() {
+          logger.debug('handle_connect_request -- email added to user: ' + JSON.stringify(req.user));
+          // It's OK to pass req.user object into done here as passport already updated req.user in the nbind call to
+          // req.login, passing null or undefined causes passport to fail the connect request and stop the page refresh
+          done(null, req.user, req.flash(api_util_config.flash_message_key, 'Email and password added'));
         })
         .fail(local.handle_passport_callback_rejected_promise.bind(this, done, req));
     }
