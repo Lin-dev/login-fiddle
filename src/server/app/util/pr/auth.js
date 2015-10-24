@@ -292,6 +292,28 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         /**
+         * Updates the local password for this instance to a hash of `new_password`. Throws and logs an Error if
+         * `new_password` is undefined or if the user does not already have an email associated with them.
+         * @param  {String} new_password The new user password to hash and store
+         */
+        changepassword: function changepassword(new_password) {
+          if(new_password === undefined) {
+            logger.error('exports.changepassword -- new_password is undefined, throwing Error');
+            throw new Error('exports.changepassword -- new_password is undefined');
+          }
+          else if(this.connected_auth_providers().indexOf('local') === -1) {
+            logger.error('exports.changepassword -- local is not an auth provider for user ' + this.get('id') +
+              ', throwing Error');
+            throw new Error('exports.changepassword -- local is not an auth provider for user ' + this.get('id'));
+          }
+          else {
+            var hashed_new_password = this.Model.hash_password(new_password);
+            logger.debug('Updating password for ' + this.get('id') + ' to hash: ' + hashed_new_password);
+            return this.update({ local_password: hashed_new_password });
+          }
+        },
+
+        /**
          * Waits for (2^local_unsuccessful_logins)-1 half-seconds
          * @return {Object} A promise for completion of the wait, resolved with undefined
          */

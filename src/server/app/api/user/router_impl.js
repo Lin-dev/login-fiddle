@@ -129,6 +129,34 @@ module.exports = {
   },
 
   /**
+   * Changes a user's local password
+   */
+  changepassword: function changepassword(req, res, next) {
+    logger.warn('BODY: ' + JSON.stringify(req.body));
+    if(req.body.new_password === req.body.old_password) { // shoudl have been checked on client...
+      req.flash(api_util_config.flash_message_key, 'New password must be different');
+      res.redirect(server_config.util_route_failure);
+    }
+    else if(req.body.new_password !== req.body.new_password_check) { // should have been checked on client...
+      req.flash(api_util_config.flash_message_key, 'New password fields must match');
+      res.redirect(server_config.util_route_failure);
+    }
+    else if(!req.user.check_password_sync(req.body.old_password)) {
+      req.flash(api_util_config.flash_message_key, 'Old password incorrect');
+      res.redirect(server_config.util_route_failure);
+    }
+    else { // valid submission
+      q(req.user.changepassword(req.body.new_password))
+      .then(function() {
+        req.flash(api_util_config.flash_message_key, 'Changed password');
+        res.redirect(server_config.util_route_success);
+      })
+      .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error changing password'))
+      .done();
+    }
+  },
+
+  /**
    * Initiates requests for Google authentication, using passport to redirect to Google - this API endpoint should
    * be access directly by the browser, not via AJAX
    */
