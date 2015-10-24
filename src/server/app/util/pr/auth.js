@@ -20,6 +20,10 @@ module.exports = function(sequelize, DataTypes) {
         },
         primaryKey: true
       },
+      signup_date: { // track separately from sq_created_at because that is metadata and under sq's control
+        type: DataTypes.DATE,
+        defaultValue: sequelize.fn('NOW')
+      },
       // Local
       local_email: {
         type: DataTypes.STRING(user_config.local.username_max_length),

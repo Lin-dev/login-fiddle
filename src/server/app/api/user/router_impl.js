@@ -95,7 +95,7 @@ module.exports = {
   get_user: function get_user(pr, req, res, next) {
     var result = {
       local_email: req.user.local_email,
-      signup_date: req.user.sq_created_at,
+      signup_date: req.user.signup_date,
       fb_id: req.user.fb_id,
       fb_email: req.user.fb_email,
       fb_name: req.user.fb_name,
