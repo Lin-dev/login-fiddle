@@ -13,7 +13,7 @@ define(function(require) {
         'profile': 'show_user_profile',
         'profile/logout': 'proc_logout',
         'profile/deactivate': 'proc_deactivate',
-        'profile/changepassword': 'proc_changepassword',
+        'profile/change/password': 'proc_change_password',
         'profile/connect/local': 'proc_conn_local',
         'profile/connect/facebook': 'proc_conn_fb',
         'profile/connect/google': 'proc_conn_google',
@@ -73,10 +73,10 @@ define(function(require) {
         AppObj.execute('headerapp:set_active_navitem', 'user');
       },
 
-      proc_changepassword: function proc_changepassword() {
-        logger.trace('API.proc_changepassword -- enter');
+      proc_change_password: function proc_change_password() {
+        logger.trace('API.proc_change_password -- enter');
         var controller = require('js/apps/user/profile/controller');
-        controller.proc_changepassword();
+        controller.proc_change_password();
         AppObj.execute('headerapp:set_active_navitem', 'user');
       },
 
@@ -162,9 +162,9 @@ define(function(require) {
       API.proc_logout();
     });
 
-    AppObj.on('user:profile:changepassword', function() {
-      AppObj.navigate('profile/changepassword');
-      API.proc_changepassword();
+    AppObj.on('user:profile:change:password', function() {
+      AppObj.navigate('profile/change/password');
+      API.proc_change_password();
     });
 
     AppObj.on('user:profile:deactivate', function() {

@@ -14,7 +14,7 @@ var router = new express.Router();
 router.get('/user', auth.mw.ensure_auth, helpers.inject_pr_into_router_impl(router_impl.get_user, pr));
 router.get('/logout', auth.mw.ensure_auth, router_impl.logout);
 router.get('/deactivate', auth.mw.ensure_auth, router_impl.deactivate);
-router.post('/changepassword', auth.mw.ensure_auth, router_impl.changepassword);
+router.post('/change/password', auth.mw.ensure_auth, router_impl.change_password);
 ////////
 
 // Local access, reactivation, connecting, disconnecting

@@ -131,7 +131,7 @@ module.exports = {
   /**
    * Changes a user's local password
    */
-  changepassword: function changepassword(req, res, next) {
+  change_password: function change_password(req, res, next) {
     logger.warn('BODY: ' + JSON.stringify(req.body));
     if(req.body.new_password === req.body.old_password) { // shoudl have been checked on client...
       req.flash(api_util_config.flash_message_key, 'New password must be different');
@@ -146,7 +146,7 @@ module.exports = {
       res.redirect(server_config.util_route_failure);
     }
     else { // valid submission
-      q(req.user.changepassword(req.body.new_password))
+      q(req.user.change_password(req.body.new_password))
       .then(function() {
         req.flash(api_util_config.flash_message_key, 'Changed password');
         res.redirect(server_config.util_route_success);

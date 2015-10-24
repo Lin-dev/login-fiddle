@@ -296,15 +296,15 @@ module.exports = function(sequelize, DataTypes) {
          * `new_password` is undefined or if the user does not already have an email associated with them.
          * @param  {String} new_password The new user password to hash and store
          */
-        changepassword: function changepassword(new_password) {
+        change_password: function change_password(new_password) {
           if(new_password === undefined) {
-            logger.error('exports.changepassword -- new_password is undefined, throwing Error');
-            throw new Error('exports.changepassword -- new_password is undefined');
+            logger.error('exports.change_password -- new_password is undefined, throwing Error');
+            throw new Error('exports.change_password -- new_password is undefined');
           }
           else if(this.connected_auth_providers().indexOf('local') === -1) {
-            logger.error('exports.changepassword -- local is not an auth provider for user ' + this.get('id') +
+            logger.error('exports.change_password -- local is not an auth provider for user ' + this.get('id') +
               ', throwing Error');
-            throw new Error('exports.changepassword -- local is not an auth provider for user ' + this.get('id'));
+            throw new Error('exports.change_password -- local is not an auth provider for user ' + this.get('id'));
           }
           else {
             var hashed_new_password = this.Model.hash_password(new_password);

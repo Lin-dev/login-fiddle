@@ -195,7 +195,7 @@ define(function(require) {
         client_disc_twitter_path: '/profile/disconnect/twitter',
         client_logout_path: '/profile/logout',
         client_deactivate_path: '/profile/deactivate',
-        client_changepassword_path: '/profile/changepassword'
+        client_change_password_path: '/profile/change/password'
       }
     });
 

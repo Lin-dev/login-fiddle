@@ -39,7 +39,7 @@ define(function(require) {
       triggers: {
         'click a.js-logout': 'logout-clicked',
         'click a.js-deactivate': 'deactivate-clicked',
-        'click a.js-changepassword': 'changepassword-clicked',
+        'click a.js-change-password': 'change-password-clicked',
         'click a.js-local-connect': 'local-connect-clicked',
         'click a.js-local-disconnect': 'local-disc-clicked',
         'click a.js-fb-connect': 'fb-connect-clicked',
@@ -106,7 +106,7 @@ define(function(require) {
         var data = Backbone.Syphon.serialize(this);
         this.model.set(data, { silent: true });
         logger.debug('Change password submitted with: ' + JSON.stringify(data));
-        this.trigger('changepassword-submitted', data);
+        this.trigger('change-password-submitted', data);
       }
     });
   });

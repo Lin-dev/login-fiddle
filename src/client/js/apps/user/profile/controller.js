@@ -57,7 +57,7 @@ define(function(require) {
      * @param {Object} form_data    The submitted form data serialised as an object using syphon
      * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
      */
-    function proc_changepassword_submitted(form_data, profile_view) {
+    function proc_change_password_submitted(form_data, profile_view) {
       require('js/apps/user/entities');
       // UserPasswordChange just for validation
       var ucp = new AppObj.UserApp.Entities.UserChangePassword({
@@ -67,28 +67,29 @@ define(function(require) {
       });
       var val_errs = ucp.validate(ucp.attributes);
       if(_.isEmpty(val_errs)) {
-        logger.debug('private.proc_changepassword_submitted -- form validation passed: ' + JSON.stringify(form_data));
-        logger.warn('POSTING TO: ' + AppObj.config.apps.user.changepassword_path);
-        $.post(AppObj.config.apps.user.changepassword_path, form_data, function(resp_data, textStatus, jqXhr) {
+        logger.debug('private.proc_change_password_submitted -- form validation passed: ' + JSON.stringify(form_data));
+        logger.warn('POSTING TO: ' + AppObj.config.apps.user.change_password_path);
+        $.post(AppObj.config.apps.user.change_password_path, form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
-            logger.debug('private.proc_changepassword_submitted - server API call response -- success');
+            logger.debug('private.proc_change_password_submitted - server API call response -- success');
             AppObj.trigger('user:profile'); // cleaner than manually updating profile data and displaying flash message
           }
           else if(resp_data.status === 'failure') {
             q(AppObj.request('common:entities:flashmessage'))
             .then(function(flash_message_model) {
-              logger.debug('private.proc_changepassword_submitted - server API call response -- connect failure: ' +
+              logger.debug('private.proc_change_password_submitted - server API call response -- connect failure: ' +
                 flash_message_model);
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               profile_view.region_message.show(msg_view);
               AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile - private.proc_changepassword_submitted'))
+            .fail(AppObj.handle_rejected_promise.bind(undefined,
+              'UserApp.Profile - private.proc_change_password_submitted'))
             .done();
           }
           else {
-            logger.error('private.proc_changepassword_submitted - server API call response -- unknown status: ' +
+            logger.error('private.proc_change_password_submitted - server API call response -- unknown status: ' +
               resp_data.status);
             logger.warn('RESP DATA: ' + JSON.stringify(resp_data));
             AppObj.trigger('user:profile'); // cleaner than manually updating profile data and displaying flash message
@@ -96,8 +97,8 @@ define(function(require) {
         });
       }
       else {
-        logger.debug('private.proc_changepassword_submitted -- form validation failed: ' + JSON.stringify(val_errs));
-        profile_view.trigger('changepassword_form:show_val_errs', val_errs);
+        logger.debug('private.proc_change_password_submitted -- form validation failed: ' + JSON.stringify(val_errs));
+        profile_view.trigger('change_password_form:show_val_errs', val_errs);
       }
     }
 
@@ -219,7 +220,7 @@ define(function(require) {
             var p_admin_view = new ProfileViews.UserProfileControlPanel({ model: up_admin });
             p_admin_view.on('logout-clicked', function() { AppObj.trigger('user:profile:logout'); });
             p_admin_view.on('deactivate-clicked', function() { AppObj.trigger('user:profile:deactivate'); });
-            p_admin_view.on('changepassword-clicked', function() { AppObj.trigger('user:profile:changepassword'); });
+            p_admin_view.on('change-password-clicked', function() { AppObj.trigger('user:profile:change:password'); });
             p_admin_view.on('local-connect-clicked', function() { AppObj.trigger('user:profile:connect:local'); });
             p_admin_view.on('fb-connect-clicked', function() { AppObj.trigger('user:profile:connect:fb'); });
             p_admin_view.on('google-connect-clicked', function() { AppObj.trigger('user:profile:connect:google'); });
@@ -330,28 +331,28 @@ define(function(require) {
        * Allow users which have a local email and password set to change the password. Display an error if no local
        * email or password is set.
        */
-      proc_changepassword: function proc_changepassword() {
-        logger.trace('controller.proc_changepassword');
+      proc_change_password: function proc_change_password() {
+        logger.trace('controller.proc_change_password');
         var CommonViews = require('js/common/views');
         var ProfileViews = require('js/apps/user/profile/views');
         var profile_view = new ProfileViews.UserProfileLayout();
         var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
           header_text: 'Change password'
         })});
-        var changepassword_form_view = new ProfileViews.ChangePasswordForm({
+        var change_password_form_view = new ProfileViews.ChangePasswordForm({
           model: new AppObj.UserApp.Entities.UserChangePassword()
         });
-        changepassword_form_view.on('profile-clicked', function() { AppObj.trigger('user:profile'); });
-        changepassword_form_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
-        changepassword_form_view.on('changepassword-submitted', function(form_data) {
-          proc_changepassword_submitted(form_data, profile_view);
+        change_password_form_view.on('profile-clicked', function() { AppObj.trigger('user:profile'); });
+        change_password_form_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
+        change_password_form_view.on('change-password-submitted', function(form_data) {
+          proc_change_password_submitted(form_data, profile_view);
         });
-        profile_view.on('changepassword_form:show_val_errs', function(val_errs) {
-          changepassword_form_view.show_val_errs.call(changepassword_form_view, val_errs);
+        profile_view.on('change_password_form:show_val_errs', function(val_errs) {
+          change_password_form_view.show_val_errs.call(change_password_form_view, val_errs);
         });
         profile_view.on('render', function() {
           profile_view.region_header.show(header_view);
-          profile_view.region_profile_main.show(changepassword_form_view);
+          profile_view.region_profile_main.show(change_password_form_view);
         });
         Display.tainer.show_in('main', profile_view);
       },
