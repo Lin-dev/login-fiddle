@@ -101,6 +101,19 @@ def write_outputs(input_values, outputs_list):
 
 
 
+def configure_app(current_value_install_dir, output_value_install_dir):
+  '''
+  Loads the inputs dictionary, reads the inputs, writes them to the configuration files
+  '''
+  (inputs_dict, outputs_list) = load_inputs_outputs(
+    current_value_install_dir=current_value_install_dir,
+    output_value_install_dir=output_value_install_dir
+  )
+  input_values = read_inputs(inputs_dict)
+  write_outputs(input_values, outputs_list)
+
+
+
 if __name__ == '__main__':
   (current_value_install_dir, output_value_install_dir) = prompt_for_configure_directories()
   while not general.prompt_for_confirm('Is this correct?', False):
@@ -111,12 +124,7 @@ if __name__ == '__main__':
   print('- to write the updated configuration to: ' + output_value_install_dir)
   if general.prompt_for_confirm('Is this correct?', None):
     print('')
-    (inputs_dict, outputs_list) = load_inputs_outputs(
-      current_value_install_dir=current_value_install_dir,
-      output_value_install_dir=output_value_install_dir
-    )
-    input_values = read_inputs(inputs_dict)
-    write_outputs(input_values, outputs_list)
+    configure_app(current_value_install_dir, output_value_install_dir)
     print('')
     print('')
     print('')
