@@ -35,5 +35,8 @@
   <p>
     <a class="js-logout" href="<%= data.client_logout_path %>">Logout</a>
     <a class="js-deactivate" href="<%= data.client_deactivate_path %>">Deactivate</a>
+    <% if(data.email_connected) { %>
+      or <a class="js-changepassword" href="<%= data.client_changepassword_path %>">Change password</a>
+    <% } %>
   </p>
 </div>
