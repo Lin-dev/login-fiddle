@@ -276,15 +276,15 @@ module.exports = function(sequelize, DataTypes) {
       instanceMethods: {
         /**
          * Compares a submitted (unhashed) password with the expected password hash for this user by hashing it. Throws
-         * and logs an error if unhashed_password is undefined.
+         * and logs an Error if unhashed_password is undefined.
          *
          * @param  {String}  unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
          * @return {Boolean}                   True if the unhashed_password hash matches the stored hash
          */
         check_password_sync: function check_password_sync(unhashed_password) {
           if(unhashed_password === undefined) {
-            logger.error('exports.check_password_sync -- unhashed_password undefined, returning false');
-            throw new Error('exports.check_password_sync -- unhashed_password undefined, returning false');
+            logger.error('exports.check_password_sync -- unhashed_password undefined, throwing Error');
+            throw new Error('exports.check_password_sync -- unhashed_password undefined');
           }
           else {
             return bcrypt.compareSync(unhashed_password, this.local_password);

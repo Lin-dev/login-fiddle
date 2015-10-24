@@ -115,7 +115,7 @@ define(function(require) {
      * requirements
      */
     Entities.UserLocalConnect = Entities.LocalDataForValidation.extend({
-      __name: 'LocalConnect'
+      __name: 'UserLocalConnect'
     });
 
     Entities.UserChangePassword = AppObj.Base.Entities.TransientModel.extend({

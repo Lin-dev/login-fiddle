@@ -132,7 +132,6 @@ module.exports = {
    * Changes a user's local password
    */
   change_password: function change_password(req, res, next) {
-    logger.warn('BODY: ' + JSON.stringify(req.body));
     if(req.body.new_password === req.body.old_password) { // shoudl have been checked on client...
       req.flash(api_util_config.flash_message_key, 'New password must be different');
       res.redirect(server_config.util_route_failure);

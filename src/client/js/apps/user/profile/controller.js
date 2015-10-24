@@ -68,7 +68,6 @@ define(function(require) {
       var val_errs = ucp.validate(ucp.attributes);
       if(_.isEmpty(val_errs)) {
         logger.debug('private.proc_change_password_submitted -- form validation passed: ' + JSON.stringify(form_data));
-        logger.warn('POSTING TO: ' + AppObj.config.apps.user.change_password_path);
         $.post(AppObj.config.apps.user.change_password_path, form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_change_password_submitted - server API call response -- success');
@@ -91,7 +90,6 @@ define(function(require) {
           else {
             logger.error('private.proc_change_password_submitted - server API call response -- unknown status: ' +
               resp_data.status);
-            logger.warn('RESP DATA: ' + JSON.stringify(resp_data));
             AppObj.trigger('user:profile'); // cleaner than manually updating profile data and displaying flash message
           }
         });
@@ -118,7 +116,7 @@ define(function(require) {
       });
       var val_errs = ulc.validate(ulc.attributes);
       if(_.isEmpty(val_errs)) {
-        logger.debug('private.proc_connect_local_submitted -- form validatin passed: ' + JSON.stringify(form_data));
+        logger.debug('private.proc_connect_local_submitted -- form validation passed: ' + JSON.stringify(form_data));
         $.post(AppObj.config.apps.user.local_connect_path, form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_connect_local_submitted - server API call response -- success');
@@ -323,7 +321,7 @@ define(function(require) {
           });
           Display.tainer.show_in('main', profile_view);
         })
-        .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile.proc_deactivate.show_user_profile'))
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile.controller.proc_deactivate'))
         .done();
       },
 
