@@ -14,6 +14,7 @@ define(function(require) {
         local_password_max_length: 256,
         logout_path: '/api/user/logout',
         deactivate_path: '/api/user/deactivate',
+        changepassword_path: '/api/user/changepassword',
         local_login_path: '/api/user/access/local/login',
         local_signup_path: '/api/user/access/local/signup',
         local_reactivate_path: '/api/user/reactivate/local/login',
