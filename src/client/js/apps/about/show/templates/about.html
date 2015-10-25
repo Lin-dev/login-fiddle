@@ -1,1 +1,36 @@
-ABOUT THIS WEBSITE GOES HERE
+<div class="container">
+  <h1>What is login-fiddle?</h1>
+
+  <p>
+    <div class="text-center"><em>login-fiddle is a single page web app that demonstrates authentication, sessions and data persistence</em></div>
+  </p>
+  <p>
+    login-fiddle is a simple web app that integrates a Marionette single-page frontend with Node.JS and passport.js. It demonstrates how an app with user accounts can work. Users can sign up and log in using their email address, Facebook, Google or Twitter. Client requests are automatically redirected to use HTTPS and the github repository includes self signed certificates that can be replaced with others.
+  </p>
+  <p>
+    Users can also connect an existing account to any of these providers, using it to log in in the future, and they can disconnect from any provider as well. Users can deactivate their account as a whole, soft deleting it, and a user who logs in to a soft-deleted account is prompted to reactivate it if they want to.
+  </p>
+  <p>
+    Internally, the application uses postgres and redis for data persistence. Sequelize is used as an ORM. Application constants and configuration are factored out into client and server-side configuration modules. Q is used for asynchronous code and Mocha, Should.JS and Sinon are used for server side testing. Client side testing is done using Jasmine and PhantomJS.
+  </p>
+  <p>
+    Linting, testing, [code provenance](https://www.npmjs.com/package/grunt-version-file) (plug!), copyright banners and building deployable archives is done with Grunt. The deployable archives can be installed, configured and updated using the included python scripts. Application activity is logged on the server and client using a custom logging framework on the client and log4js on the server. Logging can be configured in a log4j-like hierarchical manner and messages can be logged at all standard levels. The server logs can also be written to file on disk.
+  </p>
+  <p>
+    The application can be run in the source directory using nodemon during development. It has a pm2 configuration for production, allowing clustering, monitoring and uptime management.
+  </p>
+  <p>
+    The source code can be found on GitHub <a href="https://github.com/cfogelberg/login-fiddle">here</a>
+  </p>
+  <h1>Who is Christo Fogelberg?</h1>
+  <p>
+    I am a software engineer who lives near London. If you have any questions about login-fiddle please email me: <a href="mailto:cfogelberg@gmail.com">cfogelberg@gmail.com</a>. Here are some links I think you might be interested in:
+
+    <ul>
+    <li><a href="https://github.com/cfogelberg/">my github</a></li>
+    <li><a href="https://qualocustech.wordpress.com">Qua Locus Tech</a>, my tech blog</li>
+    <li><a href="http://syntilect.com/cgf/">www..--..net</a>, my website</li>
+    <li><a href="https://stackoverflow.com/users/1149568/cfogelberg">my stack overflow profile</a></li>
+    </ul>
+  </p>
+</div>
