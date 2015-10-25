@@ -15,6 +15,7 @@ define(function(require) {
       regions: {
         region_message: 'div.js-flash-message',
         region_home_main: 'div.js-home-main',
+        region_version_info: 'div.js-version-info'
       }
     });
 
