@@ -124,6 +124,8 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.flash_message.should.be.a.function;
     num_funcs[name]++;
+    module.version_info.should.be.a.function;
+    num_funcs[name]++;
     module.redirect_to.should.be.a.function;
     num_funcs[name]++;
     module.redirect_to_profile.should.be.a.function;

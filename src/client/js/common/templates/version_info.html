@@ -1,0 +1,17 @@
+<div>
+  <h3>Application Version Info</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <td>Key</td>
+        <td>Value</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Build date:</td><td><%= data.datestring %></td></tr>
+      <tr><td>Version:</td><td><%= data.npm_version %></td></tr>
+      <tr><td>Git commit:</td><td><%= data.git_describe %></td></tr>
+    </tbody>
+    <caption>(generated with <a href="https://www.npmjs.com/package/grunt-version-file/">grunt-version-file</a>)</caption>
+  </table>
+</div>

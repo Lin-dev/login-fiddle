@@ -116,6 +116,12 @@ describe('requires', function() {
       result.should.not.be.undefined;
     });
 
+    it('app/config/version', function() {
+      tests_executed++;
+      var result = require('app/config/version');
+      result.should.not.be.undefined;
+    });
+
     // This test must be last in its suite
     it('all config js files should be require-tested', function() {
       tests_executed.should.equal(test_lib.js_app_files_in_dir('./src/server/app/config/').length);

@@ -35,6 +35,14 @@ module.exports = {
   },
 
   /**
+   * Sends the code provenance (version file) information as at build time to the client
+   */
+  version_info: function version_info(req, res, next) {
+    var result = require('app/config/version');
+    res.status(200).send(result);
+  },
+
+  /**
    * Expects `req.session.redirect_to` to be set, unsets this session variable and then redirects to it. If the
    * session variable is not set the middleware logs an error and sends an internal server error. It does not call
    * next() as it always either redirects or sends a server error

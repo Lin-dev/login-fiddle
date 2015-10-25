@@ -64,6 +64,15 @@ define(function(require) {
     });
 
     /**
+     * A view component for displaying the version info. The template expects to receive: data.datestring,
+     * data.npm_version, data.git_describe
+     */
+    Views.VersionInfoView = AppObj.Base.Views.AppObjItemView.extend({
+      __name: 'VersionInfoView',
+      template: _.template(require('text!js/common/templates/version_info.html'), { variable: 'data' })
+    });
+
+    /**
      * Display a simple, static text header in an h1 element
      */
     Views.H1Header = AppObj.Base.Views.AppObjItemView.extend({
