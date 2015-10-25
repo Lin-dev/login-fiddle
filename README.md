@@ -4,9 +4,7 @@
 
 ## Introduction
 
-Welcome to login-fiddle, a single page web app that demonstrates authentication, sessions and data persistence
-
-As well as showing one way to implement these features to a release-ready, industry-grade level, this web app is also an attempt to showcase as many good software development habits as I can muster. It is released under the MIT license and I hope that it will be useful to others as an example and as code they can freely use.
+Welcome to login-fiddle. As well as showing one way to implement these features to a release-ready, industry-grade level, this web app is also an attempt to showcase as many good software development habits as I can muster. It is released under the MIT license and I hope that it will be useful to others as an example and as code they can freely use.
 
 With special thanks to David Sulc, the code architecture of the client component in login-fiddle is based on his excellent Marionette books [here](https://leanpub.com/u/davidsulc). If you'd like to learn more about Marionette I recommend these books.
 
