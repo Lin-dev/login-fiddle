@@ -12,19 +12,9 @@ define(function(require) {
     /**
      * Used to access a flash message stored on the server api_util_config.flash_message_key ('flash_message')
      */
-    Entities.FlashMessage = AppObj.Base.Entities.PersistentModel.extend({
+    Entities.FlashMessage = AppObj.Base.Entities.ROnlyPersistentModel.extend({
       __name: 'FlashMessage',
-      urlRoot: '/api/util/flash_message',
-
-      /** sync override - only allow `read`, no `create`, `update` or `delete` */
-      sync: function sync(method, model, options) {
-        if(method === 'read') {
-          return Backbone.Model.prototype.sync.call(this, method, model, options);
-        }
-        else {
-          logger.error('Entities.UserProfile.sync - invalid method, sync not executed: ' + method);
-        }
-      },
+      urlRoot: '/api/util/flash_message'
     });
 
     /**

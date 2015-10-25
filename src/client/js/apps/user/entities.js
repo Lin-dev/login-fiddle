@@ -138,17 +138,9 @@ define(function(require) {
      * Represents the information on a user profile - used for reading, updating and deleting the user profile but
      * not for creation
      */
-    Entities.UserProfileData = AppObj.Base.Entities.PersistentModel.extend({
+    Entities.UserProfileData = AppObj.Base.Entities.ROnlyPersistentModel.extend({
       __name: 'UserProfileData',
       urlRoot: '/api/user/user',
-      sync: function sync(method, model, options) {
-        if(method === 'read' || method === 'update' || method === 'delete') {
-          return Backbone.Model.prototype.sync.call(this, method, model, options);
-        }
-        else {
-          logger.error('Entities.UserProfile.sync - invalid method, sync not executed: ' + method);
-        }
-      },
 
       /**
        * Returns boolean true if this user profile is connected to their email address (and therefore has a password)
