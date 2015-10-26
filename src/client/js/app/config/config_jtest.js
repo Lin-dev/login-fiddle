@@ -1,9 +1,9 @@
 'use strict';
 
-describe('js/app/config', function() {
+describe('js/app/config/config', function() {
   beforeEach(function(done) {
     var that = this;
-    require(['js/app/config'], function(config) {
+    require(['js/app/config/config'], function(config) {
       that.config = config;
       done();
     });

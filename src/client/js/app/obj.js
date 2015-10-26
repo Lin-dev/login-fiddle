@@ -6,19 +6,17 @@ define(function(require) {
   var $ = require('jquery');
   var q = require('q'); // for setting long stack support
 
+  // Extensions
+  require('js/app/extensions/backbone');
+  require('js/app/extensions/marionette');
+  require('js/app/extensions/regexp');
+
   // Set up app object
   var AppObj = new Marionette.Application();
-  AppObj.config = require('js/app/config');
-  AppObj.logger = require('js/app/logger_builder')(AppObj.config.logger);
+  AppObj.config = require('js/app/config/config');
+  AppObj.logger = require('js/app/logger/logger_builder')(AppObj.config.logger);
   var logger = AppObj.logger.get('root/js/app/obj');
   logger.debug('require:lambda -- entered, AppObj built, config loaded, logger initialised');
-
-  // Set up regions
-  AppObj.addRegions({
-    'region_navbar': 'div#region_navbar',
-    'region_main': 'div#region_main',
-    'region_footer': 'div#region_footer'
-  });
 
   // Routing helpers
   /**
@@ -51,27 +49,27 @@ define(function(require) {
 
   // Promise helpers - putting them here is a bit hacky but not worth creating a separate module in common yet
   /**
-   * Returns a function that can be passed into a promise fail handler to log promise failure and do other cleanup.
-   * Method is currently simple but makes avoiding silent failure due to promise failure a one-liner.
-   * @param  {String}   caller The function name used in logs to describe the calling location
-   * @return {Function}        A function that can be passed in to a promise's fail method
+   * A common handler for a rejected promise. Logs the error and its stack (if any) to the console. Intended usage:
+   *     `promise.fail(AppObj.handle_rejected_promise.bind(undefined, 'an-optional-function-name')).done();`
+   * Or:
+   *     `promise.fail(AppObj.handle_rejected_promise.bind(undefined, undefined)).done();`
+   *
+   * @param  {String} caller The function name where the promise chain that has failed is declared (optional)
+   * @return {Object} err    The `err` parameter, i.e. the rejected promise's error value
    */
-  AppObj.on_promise_fail_gen = function on_promise_fail_gen(caller) {
-    return function on_promise_fail(err) {
+  AppObj.handle_rejected_promise = function handle_rejected_promise(caller, err) {
+    caller = caller || 'Unspecified Promise Chain';
+    if(err && err.stack) {
       logger.error(caller + ' -- promise failed, error: ' + err);
-    };
+      logger.error(err.stack);
+    }
+    else {
+      logger.error(caller + ' -- promise failed (no stack)');
+    }
+    return err;
   };
 
   q.longStackSupport = AppObj.config.app.q_longStackSupport;
-  ////////
-
-  // Display helpers
-  /**
-   * Scrolls the browser to the top
-   */
-  AppObj.scroll_to_top = function scroll_to_top() {
-    $('html, body').animate({ scrollTop: 0 }, 600);
-  };
   ////////
 
   // Log all events at trace

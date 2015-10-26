@@ -10,8 +10,8 @@ module.exports = {
    * @param  {Object}   pr          The PR module (to be injected)
    * @return {Function}             A router function which takes res, res and next and calls the impl param func
    */
-  inject_pr_into_router_impl: function (router_impl, pr) {
-    return function(req, res, next) {
+  inject_pr_into_router_impl: function inject_pr_into_router_impl(router_impl, pr) {
+    return function express_router_with_pr(req, res, next) {
       return router_impl(pr, req, res, next);
     };
   }

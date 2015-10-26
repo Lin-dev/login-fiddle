@@ -9,7 +9,7 @@ define(function(require) {
     logger.trace('AppObj.module -- enter');
     require('js/common/views');
 
-    Views.Footer = AppObj.Common.Views.AppObjItemView.extend({
+    Views.Footer = AppObj.Base.Views.AppObjItemView.extend({
       template: _.template(require('text!js/apps/footer/show/templates/footer.html')),
     });
     logger.trace('AppObj.module -- exit');

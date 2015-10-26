@@ -8,7 +8,10 @@
         value="<%= data.local_email_check %>">
     </div>
     <div class="form-group">
-      <label>Specify a password here*:</label>
+      <label>Specify a password here:</label>
+      <div class="form-group">
+        For best security, use a unique password here
+      </div>
     </div>
     <div class="form-group">
       <label class="control-label">Password:</label>
@@ -18,11 +21,8 @@
       <input type="password" class="form-control" name="local_password_check" id="local-connect-password-check"
         value="<%= data.local_password_check %>">
     </div>
-    <div class="form-group">
-      * For best security, use a different password than the one you use to access this email account
-    </div>
     <button class="btn btn-warning btn-lg js-submit">Add email and password</button>
 </form>
 
 <hr>
-<p>Or view your <a href="/home" class="js-profile">profile</a>.</p>
+<p>Or view your <a href="/profile" class="js-profile">profile</a>.</p>

@@ -2,6 +2,7 @@ define(function(require) {
   'use strict';
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/display/obj');
   var logger = AppObj.logger.get('root/js/apps/footer/show/controller');
   logger.trace('require:lambda -- enter');
 
@@ -12,7 +13,7 @@ define(function(require) {
         logger.trace('FooterApp.Show.controller.show_footer -- enter');
         var Views = require('js/apps/footer/show/views');
         var view = new Views.Footer();
-        AppObj.region_footer.show(view);
+        Display.tainer.show_in('footer', view);
         logger.trace('FooterApp.Show.controller.show_footer -- exit');
       }
     };

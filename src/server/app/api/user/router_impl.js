@@ -10,24 +10,83 @@ var server_config = require('app/config/server');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/api/user/router_impl');
 
-//var keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
-var keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
-var keys_required_for_signup = keys_required_for_login.concat(
-  _.map(keys_required_for_login, function(field) { return field + '_check'; })
-);
-var keys_required_for_connect = keys_required_for_login.concat(
-  _.map(keys_required_for_login, function(field) { return field + '_check'; })
-);
 
-/**
- * Logs the user out, clears their log in cookie, then redirects to the success util endpoint - does not destroy session
- */
-function do_logout_and_redirect_to_success(req, res, flash_message) {
-  req.logout();
-  res.clearCookie(user_config.logged_in_cookie_name);
-  req.flash(api_util_config.flash_message_key, flash_message);
-  res.redirect(server_config.util_route_success);
-}
+
+// Build `local` object via IIFE because `keys_required_for_signup` and `keys_required_for_connect` depend on value of
+// `keys_required_for_login`
+var local = (function build_local() {
+  var result = {};
+
+  /**
+   * Specifies the POST variables that must be sent when a user is logging in using a local account
+   * @type {Array}
+   */
+  result.keys_required_for_login = [user_config.local.username_field, user_config.local.password_field];
+
+  /**
+   * Specifies the POST variables that must be sent when a user is requesting signup for a local account
+   * @type {Array}
+   */
+  result.keys_required_for_signup = result.keys_required_for_login.concat(
+    _.map(result.keys_required_for_login, function(field) { return field + '_check'; })
+  );
+
+  /**
+   * Specifies the POST variables that must be sent when a user is requesting to connect a local account
+   * @type {Array}
+   */
+  result.keys_required_for_connect = result.keys_required_for_login.concat(
+    _.map(result.keys_required_for_login, function(field) { return field + '_check'; })
+  );
+
+  /**
+   * Logs the user out, clears their log in cookie, then redirects to the success util endpoint - does not destroy
+   * session
+   * @type {Function}
+   */
+  result.do_logout_and_redirect_to_success = function do_logout_and_redirect_to_success(req, res, flash_message) {
+    req.logout();
+    res.clearCookie(user_config.logged_in_cookie_name);
+    req.flash(api_util_config.flash_message_key, flash_message);
+    res.redirect(server_config.util_route_success);
+  };
+
+  /**
+   * This function is for handling rejected promises in a User router callback. It takes the Express request and
+   * response objects as its first and second paramters. Its third parameter is the flash message to set. The fourth and
+   * final parameter is the rejected promise's error value. Intended usage in a router implementation function is:
+   *     `promise.fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'A message')).done();`
+   *
+   * Note that this function and signature may be usable in other API modules in the future, but in the current
+   * application its is only used in the User API module.
+   *
+   * @param  {Object} res The response object passed to the router implementation (Express middleware)
+   * @param  {Object} err The rejected promise's error value
+   * @return {Object}     The `err` parameter
+   *
+   * @param  {Object} req The request object passed to the router implementation (Express middleware)
+   * @param  {Object} res The response object passed to the router implementation (Express middleware)
+   * @param  {String} msg The flash message to display in the client
+   * @param  {Object} err The rejected promise's error value
+   * @return {Object}     The `err` parameter
+   */
+  result.handle_route_function_rejected_promise = function handle_route_function_rejected_promise(req, res, msg, err) {
+    if(err && err.stack) {
+      logger.error('local.handle_route_function_rejected_promise -- ' + err);
+      logger.error(err.stack);
+    }
+    else {
+      logger.error('local.handle_route_function_rejected_promise -- ' + err + ' (no stack)');
+    }
+    req.flash(api_util_config.flash_message_key, msg);
+    res.redirect(server_config.util_route_failure);
+    return err;
+  };
+
+  return result;
+})();
+
+
 
 module.exports = {
   /**
@@ -36,7 +95,7 @@ module.exports = {
   get_user: function get_user(pr, req, res, next) {
     var result = {
       local_email: req.user.local_email,
-      signup_date: req.user.sq_created_at,
+      signup_date: req.user.signup_date,
       fb_id: req.user.fb_id,
       fb_email: req.user.fb_email,
       fb_name: req.user.fb_name,
@@ -54,7 +113,7 @@ module.exports = {
    * Logs user out but does not destroy user's sessions
    */
   logout: function logout(req, res, next) {
-    do_logout_and_redirect_to_success(req, res, 'Logged out');
+    local.do_logout_and_redirect_to_success(req, res, 'Logged out');
   },
 
   /**
@@ -63,13 +122,37 @@ module.exports = {
   deactivate: function deactivate(req, res, next) {
     q(req.user.deactivate_and_save())
     .then(function() {
-      do_logout_and_redirect_to_success(req, res, 'Account deactivated, to reactivate it just log back in');
+      local.do_logout_and_redirect_to_success(req, res, 'Account deactivated, to reactivate it just log back in');
     })
-    .fail(function(err) {
-      logger.error('exports.deactivate -- error: ' + err);
-      req.flash(api_util_config.flash_message_key, 'Error deactivating account');
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error deactivating account'))
+    .done();
+  },
+
+  /**
+   * Changes a user's local password
+   */
+  change_password: function change_password(req, res, next) {
+    if(req.body.new_password === req.body.old_password) { // shoudl have been checked on client...
+      req.flash(api_util_config.flash_message_key, 'New password must be different');
       res.redirect(server_config.util_route_failure);
-    });
+    }
+    else if(req.body.new_password !== req.body.new_password_check) { // should have been checked on client...
+      req.flash(api_util_config.flash_message_key, 'New password fields must match');
+      res.redirect(server_config.util_route_failure);
+    }
+    else if(!req.user.check_password_sync(req.body.old_password)) {
+      req.flash(api_util_config.flash_message_key, 'Old password incorrect');
+      res.redirect(server_config.util_route_failure);
+    }
+    else { // valid submission
+      q(req.user.change_password(req.body.new_password))
+      .then(function() {
+        req.flash(api_util_config.flash_message_key, 'Changed password');
+        res.redirect(server_config.util_route_success);
+      })
+      .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error changing password'))
+      .done();
+    }
   },
 
   /**
@@ -142,15 +225,13 @@ module.exports = {
    */
   connect_google_disconnect: function connect_google_disconnect(req, res, next) {
     q(req.user.disconnect_google_and_save())
-    .then(function(updated_user) {
+    .then(q.nbind(req.login, req)) // call req.login to update serialized user in redis
+    .then(function login_done() {
       req.flash(api_util_config.flash_message_key, 'Google disconnected');
       res.redirect(server_config.util_route_success);
     })
-    .fail(function(err) {
-      logger.error('exports.connect_google_disconnect -- error during disconnect: ' + err);
-      req.flash(api_util_config.flash_message_key, 'Error disconnecting Google');
-      res.redirect(server_config.util_route_failure);
-    });
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error disconnecting Google'))
+    .done();
   },
 
   /**
@@ -223,41 +304,39 @@ module.exports = {
    */
   connect_fb_disconnect: function connect_fb_disconnect(req, res, next) {
     q(req.user.disconnect_fb_and_save())
-    .then(function(updated_user) {
+    .then(q.nbind(req.login, req)) // call req.login to update serialized user in redis
+    .then(function login_done() {
       req.flash(api_util_config.flash_message_key, 'Facebook disconnected');
       res.redirect(server_config.util_route_success);
     })
-    .fail(function(err) {
-      logger.error('exports.connect_fb_disconnect -- error during disconnect: ' + err);
-      req.flash(api_util_config.flash_message_key, 'Error disconnecting Facebook');
-      res.redirect(server_config.util_route_failure);
-    });
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error disconnecting Facebook'))
+    .done();
   },
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local login are present - log if not
    */
-  local_check_login: auth.mw_gen.check_post_has_req_fields(keys_required_for_login),
+  local_check_login: auth.mw.check_post_has_req_fields.bind(undefined, local.keys_required_for_login),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local reactivation are present (the same as for login) -
    * log if they are not
    */
-  local_check_reactivate: auth.mw_gen.check_post_has_req_fields(keys_required_for_login),
+  local_check_reactivate: auth.mw.check_post_has_req_fields.bind(undefined, local.keys_required_for_login),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local signup are present - log if not
    */
-  local_check_signup: auth.mw_gen.check_post_has_req_fields(keys_required_for_signup),
+  local_check_signup: auth.mw.check_post_has_req_fields.bind(undefined, local.keys_required_for_signup),
 
   /**
    * Passport.js redirects without explanation on failure, this middleware should be run first to check that the
    * fields expected by the authentication strategy for local connect are present - log if not
    */
-  local_check_connect: auth.mw_gen.check_post_has_req_fields(keys_required_for_connect),
+  local_check_connect: auth.mw.check_post_has_req_fields.bind(undefined, local.keys_required_for_connect),
 
   /**
    * Handles requests for local access account login
@@ -304,15 +383,13 @@ module.exports = {
    */
   connect_local_disconnect: function connect_twitter_disconnect(req, res, next) {
     q(req.user.disconnect_local_and_save())
-    .then(function(updated_user) {
+    .then(q.nbind(req.login, req)) // call req.login to update serialized user in redis
+    .then(function login_done() {
       req.flash(api_util_config.flash_message_key, 'Email and password removed');
       res.redirect(server_config.util_route_success);
     })
-    .fail(function(err) {
-      logger.error('exports.connect_local_disconnect -- error during disconnect: ' + err);
-      req.flash(api_util_config.flash_message_key, 'Error disconnecting local email and password');
-      res.redirect(server_config.util_route_failure);
-    });
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error removing local email and password'))
+    .done();
   },
 
   /**
@@ -370,14 +447,12 @@ module.exports = {
    */
   connect_twitter_disconnect: function connect_twitter_disconnect(req, res, next) {
     q(req.user.disconnect_twitter_and_save())
-    .then(function(updated_user) {
+    .then(q.nbind(req.login, req)) // call req.login to update serialized user in redis
+    .then(function login_done() {
       req.flash(api_util_config.flash_message_key, 'Twitter disconnected');
       res.redirect(server_config.util_route_success);
     })
-    .fail(function(err) {
-      logger.error('exports.connect_twitter_disconnect -- error during disconnect: ' + err);
-      req.flash(api_util_config.flash_message_key, 'Error disconnecting Twitter');
-      res.redirect(server_config.util_route_failure);
-    });
+    .fail(local.handle_route_function_rejected_promise.bind(this, req, res, 'Error disconnecting Twitter'))
+    .done();
   }
 };

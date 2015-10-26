@@ -2,6 +2,7 @@ define(function(require) {
   'use strict';
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/display/obj');
   var logger = AppObj.logger.get('root/js/apps/session/show/controller');
 
   AppObj.module('SessionApp.Show', function(Show, AppObj, Backbone, Marionette, $, _) {
@@ -15,11 +16,11 @@ define(function(require) {
         .then(function(session_info) {
           logger.debug('show_session_info -- received: ' + JSON.stringify(session_info));
           var session_info_view = new Views.SessionInfoView({ model: session_info });
-          AppObj.region_main.show(session_info_view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', session_info_view);
           logger.debug('show_session_info -- show complete');
         })
-        .fail(AppObj.on_promise_fail_gen('SessionApp.Show.controller.show_session_info'));
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'SessionApp.Show.controller.show_session_info'))
+        .done();
       }
     };
   });

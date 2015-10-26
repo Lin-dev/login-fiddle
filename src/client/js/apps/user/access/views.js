@@ -7,7 +7,7 @@ define(function(require) {
   AppObj.module('UserApp.Access.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     require('js/common/views');
 
-    Views.AccessLayout = AppObj.Common.Views.AppObjLayout.extend({
+    Views.AccessLayout = AppObj.Base.Views.AppObjLayout.extend({
       __name: 'AccessLayout',
       template: _.template(require('text!js/apps/user/access/templates/access.html'), { variable: 'data' }),
       regions: {

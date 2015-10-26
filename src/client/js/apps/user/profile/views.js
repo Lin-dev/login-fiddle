@@ -10,7 +10,7 @@ define(function(require) {
     /**
      * @type {Object} View for containing profile-display sub views
      */
-    Views.UserProfileLayout = AppObj.Common.Views.AppObjLayout.extend({
+    Views.UserProfileLayout = AppObj.Base.Views.AppObjLayout.extend({
       __name: 'UserProfileLayout',
       template: _.template(require('text!js/apps/user/profile/templates/profile.html'), { variable: 'data' }),
       regions: {
@@ -24,7 +24,7 @@ define(function(require) {
     /**
      * @type {Object} View for displaying user profile data
      */
-    Views.UserProfileData = AppObj.Common.Views.AppObjItemView.extend({
+    Views.UserProfileData = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'UserProfileData',
       template: _.template(require('text!js/apps/user/profile/templates/profile_data.html'), { variable: 'data' })
     });
@@ -32,13 +32,14 @@ define(function(require) {
     /**
      * @type {Object} View for displaying user profile connect UI elements
      */
-    Views.UserProfileControlPanel = AppObj.Common.Views.AppObjItemView.extend({
+    Views.UserProfileControlPanel = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'UserProfileControlPanel',
       template: _.template(require('text!js/apps/user/profile/templates/profile_admin.html'), { variable: 'data' }),
 
       triggers: {
         'click a.js-logout': 'logout-clicked',
         'click a.js-deactivate': 'deactivate-clicked',
+        'click a.js-change-password': 'change-password-clicked',
         'click a.js-local-connect': 'local-connect-clicked',
         'click a.js-local-disconnect': 'local-disc-clicked',
         'click a.js-fb-connect': 'fb-connect-clicked',
@@ -78,6 +79,34 @@ define(function(require) {
         this.model.set(data, { silent: true });
         logger.debug('Local connect submitted with: ' + JSON.stringify(data));
         this.trigger('local-connect-submitted', data);
+      }
+    });
+
+    Views.ChangePasswordForm = AppObj.Common.Views.AppObjFormItemView.extend({
+      __name: 'ChangePasswordForm',
+      __form_element_id_prefix: 'cpw-',
+      template: _.template(require('text!js/apps/user/profile/templates/change_password.html'), { variable: 'data' }),
+
+      triggers: {
+        'click a.js-profile': 'profile-clicked',
+        'click a.js-home': 'home-clicked'
+      },
+
+      events: {
+        'click button.js-submit': 'submit_clicked'
+      },
+
+      modelEvents: {
+        'change': 'render' ///////////// IS THIS NEEDED HERE? IS IT VAL FORM RELATED?
+      },
+
+      submit_clicked: function submit_clicked(event) {
+        require('backbone_syphon');
+        event.preventDefault();
+        var data = Backbone.Syphon.serialize(this);
+        this.model.set(data, { silent: true });
+        logger.debug('Change password submitted with: ' + JSON.stringify(data));
+        this.trigger('change-password-submitted', data);
       }
     });
   });

@@ -32,23 +32,14 @@ module.exports = function(grunt) {
     },
 
     mochaTest: {
-      unit: {
-        options: {
-          clearRequireCache: true,
-          reporter: 'spec'
-        },
-        src: [
-          './**/*_utest.js',
-          '!./build/**/*.js'
-        ]
-      },
-      integration: {
+      integration_and_unit: {
         options: {
           clearRequireCache: true,
           reporter: 'spec'
         },
         src: [
           './**/*_itest.js',
+          './**/*_utest.js',
           '!./build/**/*.js'
         ]
       }
@@ -159,9 +150,16 @@ module.exports = function(grunt) {
     },
 
     version_file: {
-      main: {
+      build: {
         options: {
           out: 'build/out/<%= build_name %>/version.json',
+          generator_list: ['datestring', 'npm_version', 'git_describe'],
+          generator_dir: 'generators'
+        }
+      },
+      server: {
+        options: {
+          out: 'build/out/<%= build_name %>/server/app/config/version.json',
           generator_list: ['datestring', 'npm_version', 'git_describe'],
           generator_dir: 'generators'
         }

@@ -6,9 +6,9 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/apps/header/entities');
 
   AppObj.module('HeaderApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
-    require('js/common/base_entities');
+    require('js/base/entities');
 
-    Entities.NavItem = AppObj.Common.Entities.ClientModel.extend({
+    Entities.NavItem = AppObj.Base.Entities.TransientModel.extend({
       __name: 'NavItem',
       initialize: function initialize() {
         logger.trace('NavItem.initialize -- enter w/ url: ' + this.get('url'));
@@ -17,7 +17,7 @@ define(function(require) {
       }
     });
 
-    Entities.NavItemCollection = AppObj.Common.Entities.AppObjClientOnlyCollection.extend({
+    Entities.NavItemCollection = AppObj.Base.Entities.TransientCollection.extend({
       __name: 'NavItemCollection',
       model: Entities.NavItem,
 

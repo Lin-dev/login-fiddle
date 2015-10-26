@@ -50,6 +50,8 @@ describe('app/api - exported methods', function() {
     num_funcs[name]++;
     module.deactivate.should.be.a.function;
     num_funcs[name]++;
+    module.change_password.should.be.a.function;
+    num_funcs[name]++;
     module.local_check_login.should.be.a.function;
     num_funcs[name]++;
     module.local_check_reactivate.should.be.a.function;
@@ -121,6 +123,8 @@ describe('app/api - exported methods', function() {
     module.failure.should.be.a.function;
     num_funcs[name]++;
     module.flash_message.should.be.a.function;
+    num_funcs[name]++;
+    module.version_info.should.be.a.function;
     num_funcs[name]++;
     module.redirect_to.should.be.a.function;
     num_funcs[name]++;

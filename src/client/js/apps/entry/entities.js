@@ -6,20 +6,20 @@ define(function(require) {
   var logger = AppObj.logger.get('root/js/apps/entry/entities');
 
   AppObj.module('EntryApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
-    require('js/common/base_entities');
+    require('js/base/entities');
 
-    Entities.Entry = AppObj.Common.Entities.ServerModel.extend({
+    Entities.Entry = AppObj.Base.Entities.PersistentModel.extend({
       __name: 'Entry',
       urlRoot: '/api/entry/entry'
     });
 
-    Entities.EntryCollection = AppObj.Common.Entities.AppObjDatabaseCollection.extend({
+    Entities.EntryCollection = AppObj.Base.Entities.PersistentCollection.extend({
       __name: 'EntryCollection',
       url: '/api/entry/entry',
       model: Entities.Entry
     });
 
-    Entities.Tag = AppObj.Common.Entities.ServerModel.extend({
+    Entities.Tag = AppObj.Base.Entities.PersistentModel.extend({
       __name: 'Tag',
       urlRoot: '/api/entry/tag',
       initialize: function initialize() {
@@ -27,7 +27,7 @@ define(function(require) {
       }
     });
 
-    Entities.TagCollection = AppObj.Common.Entities.AppObjDatabaseCollection.extend({
+    Entities.TagCollection = AppObj.Base.Entities.PersistentCollection.extend({
       __name: 'TagCollection',
       url: '/api/entry/tag',
       model: Entities.Tag,

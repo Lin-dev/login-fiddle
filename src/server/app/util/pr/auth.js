@@ -1,13 +1,12 @@
 'use strict';
 
 var bcrypt = require('bcrypt');
+var q = require('q');
 
 var user_config = require('app/config/user');
 var database_config = require('app/config/database');
 var logger_module = require('app/util/logger');
 var logger = logger_module.get('app/util/pr/auth');
-
-var user_find_scopes = ['all', 'activated', 'deactivated'];
 
 module.exports = function(sequelize, DataTypes) {
   var models = {
@@ -20,6 +19,10 @@ module.exports = function(sequelize, DataTypes) {
           isUUID: 4
         },
         primaryKey: true
+      },
+      signup_date: { // track separately from sq_created_at because that is metadata and under sq's control
+        type: DataTypes.DATE,
+        defaultValue: sequelize.fn('NOW')
       },
       // Local
       local_email: {
@@ -37,6 +40,10 @@ module.exports = function(sequelize, DataTypes) {
           is: /^[A-Za-z0-9.\/$]+$/, // regex matches a bcrypt hash, which is how password is stored
           len: [60, 60]
         }
+      },
+      local_unsuccessful_logins: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
       },
       // Facebook
       fb_id: {
@@ -115,7 +122,7 @@ module.exports = function(sequelize, DataTypes) {
 
       scopes: {
         /**
-         * Include activated and deactivated users in the query scope
+         * Include activated and deactivated users in the query scope, this is also the default scope
          * @type {Object}
          */
         all: {
@@ -143,6 +150,10 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       classMethods: {
+        get_scope_names: function get_scope_names() {
+          return Object.keys(this.options.scopes);
+        },
+
         /**
          * Generates a password hash to write to the DB so that the unhashed password is never stored
          * @param  {String} unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
@@ -211,7 +222,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_id: function find_with_id(primary_id, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           return this.scope(scope).find({ where: { id: primary_id }, paranoid: false });
         },
 
@@ -223,9 +234,9 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_local_username: function find_with_local_username(username_value, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           var where_object = {};
-          where_object[user_config.local.username_field] = { ilike: username_value };
+          where_object[user_config.local.username_field] = { ilike: username_value }; // case insensitive
           return this.scope(scope).find({ where: where_object, paranoid: false });
         },
 
@@ -237,7 +248,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_fb_id: function find_with_fb_id(fb_id, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           return this.scope(scope).find({ where: { fb_id: fb_id }, paranoid: false });
         },
 
@@ -249,7 +260,7 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_google_id: function find_with_google_id(google_id, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           return this.scope(scope).find({ where: { google_id: google_id }, paranoid: false });
         },
 
@@ -261,19 +272,76 @@ module.exports = function(sequelize, DataTypes) {
          */
         find_with_twitter_id: function find_with_twitter_id(twitter_id, scope) {
           scope = scope || 'all';
-          if(user_find_scopes.indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
+          if(this.get_scope_names().indexOf(scope) === -1) { throw new Error('Unknown user find scope: ' + scope); }
           return this.scope(scope).find({ where: { twitter_id: twitter_id }, paranoid: false });
         }
       },
 
       instanceMethods: {
         /**
-         * Compares a submitted (unhashed) password with the expected password hash for this user by hashing it
+         * Compares a submitted (unhashed) password with the expected password hash for this user by hashing it. Throws
+         * and logs an Error if unhashed_password is undefined.
+         *
          * @param  {String}  unhashed_password The unhashed, user-submitted password (remember: use HTTPS!)
          * @return {Boolean}                   True if the unhashed_password hash matches the stored hash
          */
-        check_password: function check_password(unhashed_password) {
-          return bcrypt.compareSync(unhashed_password, this.local_password);
+        check_password_sync: function check_password_sync(unhashed_password) {
+          if(unhashed_password === undefined) {
+            logger.error('exports.check_password_sync -- unhashed_password undefined, throwing Error');
+            throw new Error('exports.check_password_sync -- unhashed_password undefined');
+          }
+          else {
+            return bcrypt.compareSync(unhashed_password, this.local_password);
+          }
+        },
+
+        /**
+         * Updates the local password for this instance to a hash of `new_password`. Throws and logs an Error if
+         * `new_password` is undefined or if the user does not already have an email associated with them.
+         * @param  {String} new_password The new user password to hash and store
+         */
+        change_password: function change_password(new_password) {
+          if(new_password === undefined) {
+            logger.error('exports.change_password -- new_password is undefined, throwing Error');
+            throw new Error('exports.change_password -- new_password is undefined');
+          }
+          else if(this.connected_auth_providers().indexOf('local') === -1) {
+            logger.error('exports.change_password -- local is not an auth provider for user ' + this.get('id') +
+              ', throwing Error');
+            throw new Error('exports.change_password -- local is not an auth provider for user ' + this.get('id'));
+          }
+          else {
+            var hashed_new_password = this.Model.hash_password(new_password);
+            logger.debug('Updating password for ' + this.get('id') + ' to hash: ' + hashed_new_password);
+            return this.update({ local_password: hashed_new_password });
+          }
+        },
+
+        /**
+         * Waits for (2^local_unsuccessful_logins)-1 half-seconds
+         * @return {Object} A promise for completion of the wait, resolved with undefined
+         */
+        do_unsuccessful_login_wait: function do_unsuccessful_login_wait() {
+          var delay_time = 500 * (Math.pow(2, this.get('local_unsuccessful_logins')) - 1);
+          logger.trace('exports.do_unsuccessful_login_wait -- waiting for ' + delay_time + 'ms');
+          return q.delay(delay_time);
+        },
+
+        /**
+         * Resets `local_unsuccessful_logins` to 0 on the client instance and server
+         * @return {Object} A promise for the saving of the updated user
+         */
+        reset_local_unsuccessful_logins: function reset_local_unsuccessful_logins() {
+          return this.update({ local_unsuccessful_logins: 0 });
+        },
+
+        /**
+         * Increments `local_unsuccessful_logins` by 1 and reloads app-side copy (so that it is in sync with the DB)
+         * @return {Object} A promise for the reloading of the updated user
+         */
+        increment_local_unsuccessful_logins: function increment_local_unsuccessful_logins() {
+          return this.increment({ local_unsuccessful_logins: 1})
+            .then(this.reload.bind(this, { paranoid: false }));
         },
 
         /**
@@ -452,30 +520,26 @@ module.exports = function(sequelize, DataTypes) {
 
         /**
          * Deactivates an account, marking it as inactive (current implementation: Sequelize `destroy`, which sets the
-         * delete-at field to the time of deletion)
+         * delete-at field to the time of deletion). Can be called on an already-deactivated user.
          * @return {Object} A promise for completion of the user instance save
          */
         deactivate_and_save: function deactivate_and_save() {
           if(!this.is_active()) {
-            throw new Error('Attempted to deactivate inactive user model: ' + JSON.stringify(this));
+            logger.warn('Inactive user model unnecessarily set to inactive again: ' + JSON.stringify(this));
           }
-          else {
-            return this.destroy();
-          }
+          return this.destroy();
         },
 
         /**
          * Restores an account, marking it as active (current implementation: Sequelize `restore`, which sets the
-         * delete-at field null)
+         * delete-at field null). Can be called on an active user and makes no changes to the user in this case.
          * @return {Object} A promise for completion of the user instance save
          */
-        reactivate_and_save: function restore_and_save() {
+        reactivate_and_save: function reactivate_and_save() {
           if(this.is_active()) {
-            throw new Error('Attempted to reactivate active user model: ' + JSON.stringify(this));
+            logger.warn('Active user model unnecessarily set to active again: ' + JSON.stringify(this));
           }
-          else {
-            return this.restore();
-          }
+          return this.restore();
         }
       }
     })

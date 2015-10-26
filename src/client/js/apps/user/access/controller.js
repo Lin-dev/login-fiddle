@@ -4,6 +4,7 @@ define(function(require) {
   var q = require('q');
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/display/obj');
   var logger = AppObj.logger.get('root/js/apps/user/access/controller');
 
   AppObj.module('UserApp.Access', function(Access, AppObj, Backbone, Marionette, $, _) {
@@ -194,9 +195,10 @@ define(function(require) {
                 AppObj.trigger('user:access:reactivate', form_data.local_email);
               });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_login'));
+            .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Access - private.proc_local_login'))
+            .done();
           }
           else {
             q(AppObj.request('common:entities:flashmessage'))
@@ -206,9 +208,10 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
+            .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Access - private.proc_local_signup'))
+            .done();
           }
         });
       }
@@ -251,9 +254,10 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
+            .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Access - private.proc_local_signup'))
+            .done();
           }
           else {
             q(AppObj.request('common:entities:flashmessage'))
@@ -263,9 +267,10 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_signup'));
+            .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Access - private.proc_local_signup'))
+            .done();
           }
         });
       }
@@ -328,9 +333,10 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_reactivate'));
+            .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Access - private.proc_local_reactivate'))
+            .done();
           }
           else {
             q(AppObj.request('common:entities:flashmessage'))
@@ -340,9 +346,10 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               access_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Access - private.proc_local_reactivate'));
+            .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Access - private.proc_local_reactivate'))
+            .done();
           }
         });
       }
@@ -369,10 +376,10 @@ define(function(require) {
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
           // Needed here because attempts to log in to a deactivated account reload the access form
           msg_view.on('action-link-clicked', function() { AppObj.trigger('user:access:reactivate'); });
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'Sign in'
           })});
-          var access_form = new AccessViews.AccessForm({ model: new AppObj.Common.Entities.ClientModel({
+          var access_form = new AccessViews.AccessForm({ model: new AppObj.Base.Entities.TransientModel({
             fb_url: get_fb_auth_url(),
             google_url: get_google_auth_url(),
             twitter_url: get_twitter_auth_url(),
@@ -392,10 +399,10 @@ define(function(require) {
             access_view.region_message.show(msg_view);
             access_view.region_form.show(access_form);
           });
-          AppObj.region_main.show(access_view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', access_view);
         })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_access_form'));
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Access.controller.show_access_form'))
+        .done();
       },
 
       /**
@@ -414,7 +421,7 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var access_view = new AccessViews.AccessLayout();
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'Sign up'
           })});
           var signup_form = new AccessViews.SignupForm({
@@ -433,10 +440,10 @@ define(function(require) {
             access_view.region_message.show(msg_view);
             access_view.region_form.show(signup_form);
           });
-          AppObj.region_main.show(access_view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', access_view);
         })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_signup_form'));
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Access.controller.show_signup_form'))
+        .done();
       },
 
       /**
@@ -454,10 +461,10 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var access_layout = new AccessViews.AccessLayout();
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'Reactivate and login'
           })});
-          var reactivate_form = new AccessViews.ReactivateForm({ model: new AppObj.Common.Entities.ClientModel({
+          var reactivate_form = new AccessViews.ReactivateForm({ model: new AppObj.Base.Entities.TransientModel({
             fb_url: get_fb_reactivate_url(),
             google_url: get_google_reactivate_url(),
             twitter_url: get_twitter_reactivate_url(),
@@ -478,10 +485,10 @@ define(function(require) {
             access_layout.region_message.show(msg_view);
             access_layout.region_form.show(reactivate_form);
           });
-          AppObj.region_main.show(access_layout);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', access_layout);
         })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Access.controller.show_reactivate_form'));
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Access.controller.show_reactivate_form'))
+        .done();
       }
     };
   });

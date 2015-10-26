@@ -4,6 +4,7 @@ define(function(require) {
   var q = require('q');
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/display/obj');
   var logger = AppObj.logger.get('root/js/apps/user/profile/controller');
 
   AppObj.module('UserApp.Profile', function(Profile, AppObj, Backbone, Marionette, $, _) {
@@ -52,6 +53,54 @@ define(function(require) {
     }
 
     /**
+     * Process form submission to change a user's local password
+     * @param {Object} form_data    The submitted form data serialised as an object using syphon
+     * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
+     */
+    function proc_change_password_submitted(form_data, profile_view) {
+      require('js/apps/user/entities');
+      // UserPasswordChange just for validation
+      var ucp = new AppObj.UserApp.Entities.UserChangePassword({
+        old_password: form_data.old_password,
+        new_password: form_data.new_password,
+        new_password_check: form_data.new_password_check
+      });
+      var val_errs = ucp.validate(ucp.attributes);
+      if(_.isEmpty(val_errs)) {
+        logger.debug('private.proc_change_password_submitted -- form validation passed: ' + JSON.stringify(form_data));
+        $.post(AppObj.config.apps.user.change_password_path, form_data, function(resp_data, textStatus, jqXhr) {
+          if(resp_data.status === 'success') {
+            logger.debug('private.proc_change_password_submitted - server API call response -- success');
+            AppObj.trigger('user:profile'); // cleaner than manually updating profile data and displaying flash message
+          }
+          else if(resp_data.status === 'failure') {
+            q(AppObj.request('common:entities:flashmessage'))
+            .then(function(flash_message_model) {
+              logger.debug('private.proc_change_password_submitted - server API call response -- connect failure: ' +
+                flash_message_model);
+              var CommonViews = require('js/common/views');
+              var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
+              profile_view.region_message.show(msg_view);
+              AppObj.Display.tainer.scroll_to_top();
+            })
+            .fail(AppObj.handle_rejected_promise.bind(undefined,
+              'UserApp.Profile - private.proc_change_password_submitted'))
+            .done();
+          }
+          else {
+            logger.error('private.proc_change_password_submitted - server API call response -- unknown status: ' +
+              resp_data.status);
+            AppObj.trigger('user:profile'); // cleaner than manually updating profile data and displaying flash message
+          }
+        });
+      }
+      else {
+        logger.debug('private.proc_change_password_submitted -- form validation failed: ' + JSON.stringify(val_errs));
+        profile_view.trigger('change_password_form:show_val_errs', val_errs);
+      }
+    }
+
+    /**
      * Process form submission to connect user to their separate email account
      * @param {Object} form_data    The submitted form data serialised as an object using syphon
      * @param {Object} profile_view The profile layout view in which the profile component subviews are rendered
@@ -67,7 +116,7 @@ define(function(require) {
       });
       var val_errs = ulc.validate(ulc.attributes);
       if(_.isEmpty(val_errs)) {
-        logger.debug('private.proc_connect_local_submitted -- form validatin passed: ' + JSON.stringify(form_data));
+        logger.debug('private.proc_connect_local_submitted -- form validation passed: ' + JSON.stringify(form_data));
         $.post(AppObj.config.apps.user.local_connect_path, form_data, function(resp_data, textStatus, jqXhr) {
           if(resp_data.status === 'success') {
             logger.debug('private.proc_connect_local_submitted - server API call response -- success');
@@ -81,9 +130,10 @@ define(function(require) {
               var CommonViews = require('js/common/views');
               var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
               profile_view.region_message.show(msg_view);
-              AppObj.scroll_to_top();
+              AppObj.Display.tainer.scroll_to_top();
             })
-            .fail(AppObj.on_promise_fail_gen('UserApp.Profile - private.proc_connect_local_submitted'));
+            .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile - private.proc_connect_local_submitted'))
+            .done();
           }
           else {
             logger.error('private.proc_connect_local_submitted - server API call response -- ' +
@@ -112,7 +162,7 @@ define(function(require) {
         var CommonViews = require('js/common/views');
         var ProfileViews = require('js/apps/user/profile/views');
         var profile_view = new ProfileViews.UserProfileLayout();
-        var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+        var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
           header_text: 'User profile'
         })});
         var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
@@ -129,10 +179,10 @@ define(function(require) {
           profile_view.region_message.show(msg_view);
           profile_view.region_profile_main.show(confirm_view);
         });
-        AppObj.region_main.show(profile_view);
-        AppObj.scroll_to_top();
+        Display.tainer.show_in('main', profile_view);
       })
-      .fail(AppObj.on_promise_fail_gen('UserApp.Profile -- private.proc_disconnect'));
+      .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile - private.proc_disconnect'))
+      .done();
     }
 
     Profile.controller = {
@@ -160,7 +210,7 @@ define(function(require) {
             up_admin.set('google_connected', up_data.is_google_connected());
             up_admin.set('twitter_connected', up_data.is_twitter_connected());
             var profile_view = new ProfileViews.UserProfileLayout();
-            var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+            var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
               header_text: 'User profile'
             })});
             var msg_view = new CommonViews.FlashMessageView({ model: msg });
@@ -168,6 +218,7 @@ define(function(require) {
             var p_admin_view = new ProfileViews.UserProfileControlPanel({ model: up_admin });
             p_admin_view.on('logout-clicked', function() { AppObj.trigger('user:profile:logout'); });
             p_admin_view.on('deactivate-clicked', function() { AppObj.trigger('user:profile:deactivate'); });
+            p_admin_view.on('change-password-clicked', function() { AppObj.trigger('user:profile:change:password'); });
             p_admin_view.on('local-connect-clicked', function() { AppObj.trigger('user:profile:connect:local'); });
             p_admin_view.on('fb-connect-clicked', function() { AppObj.trigger('user:profile:connect:fb'); });
             p_admin_view.on('google-connect-clicked', function() { AppObj.trigger('user:profile:connect:google'); });
@@ -182,10 +233,10 @@ define(function(require) {
               profile_view.region_profile_main.show(p_data_view);
               profile_view.region_profile_control_panel.show(p_admin_view);
             });
-            AppObj.region_main.show(profile_view);
-            AppObj.scroll_to_top();
+            Display.tainer.show_in('main', profile_view);
           })
-          .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.show_user_profile'));
+          .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile.controller.show_user_profile'))
+          .done();
         }
         else {
           AppObj.trigger('user:access', 'user:profile');
@@ -203,7 +254,7 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var ProfileViews = require('js/apps/user/profile/views');
           var profile_view = new ProfileViews.UserProfileLayout();
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'User profile'
           })});
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
@@ -227,10 +278,10 @@ define(function(require) {
             profile_view.region_message.show(msg_view);
             profile_view.region_profile_main.show(confirm_view);
           });
-          AppObj.region_main.show(profile_view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', profile_view);
         })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_logout'));
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile.controller.proc_logout'))
+        .done();
       },
 
       /**
@@ -244,7 +295,7 @@ define(function(require) {
           var CommonViews = require('js/common/views');
           var ProfileViews = require('js/apps/user/profile/views');
           var profile_view = new ProfileViews.UserProfileLayout();
-          var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+          var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
             header_text: 'User profile'
           })});
           var msg_view = new CommonViews.FlashMessageView({ model: flash_message_model });
@@ -268,10 +319,40 @@ define(function(require) {
             profile_view.region_message.show(msg_view);
             profile_view.region_profile_main.show(confirm_view);
           });
-          AppObj.region_main.show(profile_view);
-          AppObj.scroll_to_top();
+          Display.tainer.show_in('main', profile_view);
         })
-        .fail(AppObj.on_promise_fail_gen('UserApp.Profile.controller.proc_deactivate'));
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'UserApp.Profile.controller.proc_deactivate'))
+        .done();
+      },
+
+      /**
+       * Allow users which have a local email and password set to change the password. Display an error if no local
+       * email or password is set.
+       */
+      proc_change_password: function proc_change_password() {
+        logger.trace('controller.proc_change_password');
+        var CommonViews = require('js/common/views');
+        var ProfileViews = require('js/apps/user/profile/views');
+        var profile_view = new ProfileViews.UserProfileLayout();
+        var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
+          header_text: 'Change password'
+        })});
+        var change_password_form_view = new ProfileViews.ChangePasswordForm({
+          model: new AppObj.UserApp.Entities.UserChangePassword()
+        });
+        change_password_form_view.on('profile-clicked', function() { AppObj.trigger('user:profile'); });
+        change_password_form_view.on('home-clicked', function() { AppObj.trigger('home:show'); });
+        change_password_form_view.on('change-password-submitted', function(form_data) {
+          proc_change_password_submitted(form_data, profile_view);
+        });
+        profile_view.on('change_password_form:show_val_errs', function(val_errs) {
+          change_password_form_view.show_val_errs.call(change_password_form_view, val_errs);
+        });
+        profile_view.on('render', function() {
+          profile_view.region_header.show(header_view);
+          profile_view.region_profile_main.show(change_password_form_view);
+        });
+        Display.tainer.show_in('main', profile_view);
       },
 
       /**
@@ -282,7 +363,7 @@ define(function(require) {
         var CommonViews = require('js/common/views');
         var ProfileViews = require('js/apps/user/profile/views');
         var profile_view = new ProfileViews.UserProfileLayout();
-        var header_view = new CommonViews.H1Header({ model: new AppObj.Common.Entities.ClientModel({
+        var header_view = new CommonViews.H1Header({ model: new AppObj.Base.Entities.TransientModel({
           header_text: 'Add email'
         })});
         var connect_form_view = new ProfileViews.LocalConnectForm({
@@ -299,8 +380,7 @@ define(function(require) {
           profile_view.region_header.show(header_view);
           profile_view.region_profile_main.show(connect_form_view);
         });
-        AppObj.region_main.show(profile_view);
-        AppObj.scroll_to_top();
+        Display.tainer.show_in('main', profile_view);
       },
 
       /**

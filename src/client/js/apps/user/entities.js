@@ -42,14 +42,14 @@ define(function(require) {
   };
 
   AppObj.module('UserApp.Entities', function(Entities, AppObj, Backbone, Marionette, $, _) {
-    require('js/common/base_entities');
+    require('js/base/entities');
 
     /**
      * Represents a local access form submission (email and possibly a password), They are client side only and used
      * for validating form inputs client-side. There is no reqres handler because they're so simple and should be
      * referenced directly via the AppObj object.
      */
-    Entities.UserLocalAccess = AppObj.Common.Entities.ClientModel.extend({
+    Entities.UserLocalAccess = AppObj.Base.Entities.TransientModel.extend({
       __name: 'UserLocalAccess',
       validate: function validate(attrs, options) {
         var errs = {};
@@ -66,7 +66,7 @@ define(function(require) {
      * used for validating form inputs client-side. There is no reqres handler because they're so simple and should be
      * referenced directly via the AppObj object.
      */
-    Entities.UserLocalReactivate = AppObj.Common.Entities.ClientModel.extend({
+    Entities.UserLocalReactivate = AppObj.Base.Entities.TransientModel.extend({
       __name: 'UserLocalReactivate',
       validate: function validate(attrs, options) {
         var errs = {};
@@ -81,7 +81,7 @@ define(function(require) {
      * is client side only because they are used for client-side validation only. There is no reqres handler because
      * they're so simple and should be referenced directly via the AppObj object.
      */
-    Entities.LocalDataForValidation = AppObj.Common.Entities.ClientModel.extend({
+    Entities.LocalDataForValidation = AppObj.Base.Entities.TransientModel.extend({
       __name: 'LocalDataForValidation',
       validate: function validate(attrs, options) {
         var errs = {};
@@ -115,24 +115,32 @@ define(function(require) {
      * requirements
      */
     Entities.UserLocalConnect = Entities.LocalDataForValidation.extend({
-      __name: 'LocalConnect'
+      __name: 'UserLocalConnect'
+    });
+
+    Entities.UserChangePassword = AppObj.Base.Entities.TransientModel.extend({
+      __name: 'UserChangePassword',
+      validate: function validate(attrs, options) {
+        var errs = {};
+        errs['old-password'] = val_checks.password(attrs.old_password);
+        errs['new-password-check'] = val_checks.password(attrs.new_password_check);
+        if(errs['new-password-check'] === undefined && attrs.new_password !== attrs.new_password_check) {
+          errs['new-password-check'] = 'Passwords must match';
+        }
+        if(errs['new-password-check'] === undefined && attrs.old_password === attrs.new_password) {
+          errs['new-password-check'] = 'New password must be different';
+        }
+        return _.pick(errs, _.identity); // remove undefined keys
+      }
     });
 
     /**
      * Represents the information on a user profile - used for reading, updating and deleting the user profile but
      * not for creation
      */
-    Entities.UserProfileData = AppObj.Common.Entities.ServerModel.extend({
+    Entities.UserProfileData = AppObj.Base.Entities.ROnlyPersistentModel.extend({
       __name: 'UserProfileData',
       urlRoot: '/api/user/user',
-      sync: function sync(method, model, options) {
-        if(method === 'read' || method === 'update' || method === 'delete') {
-          return Backbone.Model.prototype.sync.call(this, method, model, options);
-        }
-        else {
-          logger.error('Entities.UserProfile.sync - invalid method, sync not executed: ' + method);
-        }
-      },
 
       /**
        * Returns boolean true if this user profile is connected to their email address (and therefore has a password)
@@ -166,7 +174,7 @@ define(function(require) {
     /**
      * Stores the client (browser accessible) URL's used in the profile control panel
      */
-    Entities.UserProfileControlPanel = AppObj.Common.Entities.ClientModel.extend({
+    Entities.UserProfileControlPanel = AppObj.Base.Entities.TransientModel.extend({
       __name: 'UserProfileControlPanel',
       defaults: {
         client_conn_local_path: '/profile/connect/local',
@@ -178,7 +186,8 @@ define(function(require) {
         client_disc_google_path: '/profile/disconnect/google',
         client_disc_twitter_path: '/profile/disconnect/twitter',
         client_logout_path: '/profile/logout',
-        client_deactivate_path: '/profile/deactivate'
+        client_deactivate_path: '/profile/deactivate',
+        client_change_password_path: '/profile/change/password'
       }
     });
 

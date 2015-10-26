@@ -56,7 +56,6 @@ describe('app/util - exported methods', function() {
 
 
 
-
 describe('app/util - exported properties', function() {
   /**
    * Map of module name to the number of non-functions that module exports
@@ -71,13 +70,11 @@ describe('app/util - exported properties', function() {
     module.passport.should.be.an.Object;
     num_nonfuncs[name]++;
     module.mw.should.be.an.Object;
+    module.mw.check_post_has_req_fields.should.be.a.function;
     module.mw.ensure_auth.should.be.a.function;
     module.mw.ensure_unauth.should.be.a.function;
     module.mw.set_client_auth_status_cookie.should.be.a.function;
     module.mw.set_session_start_date.should.be.a.function;
-    num_nonfuncs[name]++;
-    module.mw_gen.should.be.an.Object;
-    module.mw_gen.check_post_has_req_fields.should.be.a.function;
     num_nonfuncs[name]++;
   });
 

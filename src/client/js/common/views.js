@@ -7,16 +7,12 @@ define(function(require) {
 
   AppObj.module('Common.Views', function(Views, AppObj, Backbone, Marionette, $, _) {
     logger.trace('AppObj.module -- enter');
-    Views.AppObjItemView = Marionette.ItemView.extend({ __name: 'AppObjItemView' });
-    Views.AppObjCollectionView = Marionette.CollectionView.extend({ __name: 'AppObjCollectionView' });
-    Views.AppObjCompositeView = Marionette.CompositeView.extend({ __name: 'AppObjCompositeView' });
-    Views.AppObjLayout = Marionette.LayoutView.extend({ __name: 'AppObjLayout' });
-    Views.AppObjRegion = Marionette.Region.extend({ __name: 'AppObjRegion' });
+    require('js/base/views');
 
     /**
      * A base view for any view containing a form whose values need to be validated
      */
-    Views.AppObjFormItemView = Views.AppObjItemView.extend({
+    Views.AppObjFormItemView = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'AppObjFormItemView',
 
       /** Check __form_element_id_prefix is set - expect sub classes with custom initialise to call this */
@@ -58,7 +54,7 @@ define(function(require) {
     /**
      * A view component that can be used in many layouts to display a flash message
      */
-    Views.FlashMessageView = Views.AppObjItemView.extend({
+    Views.FlashMessageView = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'FlashMessageView',
       template: _.template(require('text!js/common/templates/flash_message.html'), { variable: 'data' }),
       triggers: {
@@ -68,9 +64,18 @@ define(function(require) {
     });
 
     /**
+     * A view component for displaying the version info. The template expects to receive: data.datestring,
+     * data.npm_version, data.git_describe
+     */
+    Views.VersionInfoView = AppObj.Base.Views.AppObjItemView.extend({
+      __name: 'VersionInfoView',
+      template: _.template(require('text!js/common/templates/version_info.html'), { variable: 'data' })
+    });
+
+    /**
      * Display a simple, static text header in an h1 element
      */
-    Views.H1Header = AppObj.Common.Views.AppObjItemView.extend({
+    Views.H1Header = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'H1Header',
       template: _.template(require('text!js/common/templates/h1_header.html'), { variable: 'data' })
     });
@@ -78,7 +83,7 @@ define(function(require) {
     /**
      * A confirmation prompt (can be used modelessly)
      */
-    Views.ConfirmationPrompt = AppObj.Common.Views.AppObjItemView.extend({
+    Views.ConfirmationPrompt = AppObj.Base.Views.AppObjItemView.extend({
       __name: 'ConfirmationPrompt',
       template: _.template(require('text!js/common/templates/confirmation_prompt.html'), { variable: 'data' }),
       triggers: {

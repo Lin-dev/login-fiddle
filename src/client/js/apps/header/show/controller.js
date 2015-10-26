@@ -2,6 +2,7 @@ define(function(require) {
   'use strict';
 
   var AppObj = require('js/app/obj');
+  var Display = require('js/display/obj');
   var logger = AppObj.logger.get('root/js/apps/header/show/controller');
   logger.trace('require:lambda -- enter');
 
@@ -28,9 +29,10 @@ define(function(require) {
             logger.trace('event - childview:navigate -- exit');
           });
 
-          AppObj.region_navbar.show(view);
+          Display.tainer.show_in('navbar', view);
         })
-        .fail(AppObj.on_promise_fail_gen('HeaderApp.Show.controller.show_header'));
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'HeaderApp.Show.controller.show_header'))
+        .done();
         logger.trace('show_header -- exit');
       },
 
@@ -56,7 +58,8 @@ define(function(require) {
             navitem_collection.trigger('reset');
           }
         })
-        .fail(AppObj.on_promise_fail_gen('HeaderApp.Show.controller.set_active_navitem'));
+        .fail(AppObj.handle_rejected_promise.bind(undefined, 'HeaderApp.Show.controller.set_active_navitem'))
+        .done();
         logger.trace('set_active_navitem -- exit');
       }
     };
