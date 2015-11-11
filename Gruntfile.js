@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     // Plugin tasks
     clean: {
       all: {
-        src: ['build', '**/*~', '**/.*~', '.grunt', 'src/logs', '**/*.pyc']
+        src: ['build', '**/*~', '**/.*~', '.grunt', 'src/logs', '**/*.pyc', './.sonar']
       }
     },
 
@@ -83,6 +83,33 @@ module.exports = function(grunt) {
               },
               urlArgs: 'bust=' + (new Date()).getTime() // no cache for testing / development only
             }
+          }
+        }
+      }
+    },
+
+    sonarRunner: {
+      analysis: {
+        options: {
+          debug: true,
+          separator: '\n',
+          sonar: {
+            host: {
+              url: 'http://localhost:29000'
+            },
+            jdbc: {
+              url: 'jdbc:postgresql://localhost/sonar',
+              username: 'sonar',
+              password: 'sonar'
+            },
+
+            projectKey: 'fiddle:login:1.1.0',
+            projectName: 'login-fiddle',
+            projectVersion: '1.1.0',
+            sources: ['src'].join(','),
+            exclusions: ['node_modules/**', 'src/server/node_modules/**', 'src/client/bower_components/**'].join(','),
+            language: 'js',
+            sourceEncoding: 'UTF-8'
           }
         }
       }
@@ -182,8 +209,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('assemble', ['exec:mkdir', 'exec:copy']);
   grunt.registerTask('metadata', ['usebanner', 'version_file']);
-  grunt.registerTask('build_test', ['jshint', 'mochaTest', 'jasmine', 'git-is-clean']);
-  grunt.registerTask('test', ['jshint', 'mochaTest', 'jasmine']);
+  grunt.registerTask('build_test', ['jshint', 'mochaTest', 'jasmine', 'sonarRunner', 'git-is-clean']);
+  grunt.registerTask('test', ['jshint', 'mochaTest', 'jasmine', 'sonarRunner']);
 
   grunt.registerTask('build', ['build_test', 'clean', 'assemble', 'metadata', 'exec:compress']);
   grunt.registerTask('dirty_build', ['test', 'clean', 'assemble', 'metadata', 'exec:compress']);
