@@ -102,8 +102,9 @@ module.exports = function(grunt) {
               username: 'sonar',
               password: 'sonar'
             },
-
-            projectKey: 'fiddle:login:1.1.0',
+            login: 'loginfiddle',
+            password: 'loginfiddle',
+            projectKey: 'fiddle:login',
             projectName: 'login-fiddle',
             projectVersion: '1.1.0',
             sources: ['src'].join(','),
